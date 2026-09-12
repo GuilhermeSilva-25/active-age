@@ -1,3 +1,8 @@
+/**
+ * Evento disparado quando o HTML é completamente carregado.
+ * Responsável por renderizar os botões da barra de navegação (NavLinks)
+ * dinamicamente, dependendo se existe um usuário logado no localStorage.
+ */
 document.addEventListener("DOMContentLoaded", () => {
   const navLinks = document.getElementById("nav-links");
   const usuarioLogado = JSON.parse(localStorage.getItem("activeAgeUser"));
@@ -17,11 +22,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+/**
+ * Realiza o logout do usuário atual.
+ * Remove os dados da sessão do localStorage e redireciona para a página inicial.
+ */
 function fazerLogout() {
   localStorage.removeItem("activeAgeUser");
   window.location.href = "index.html";
 }
 
+/**
+ * Elemento HTML do formulário de cadastro.
+ * Se existir na página, aplica as lógicas de alternância de perfil (Paciente/Médico)
+ * e o evento de submissão (submit) para salvar o novo usuário no localStorage.
+ * 
+ * @type {HTMLElement | null}
+ */
 const formCadastro = document.getElementById("formCadastro");
 
 if (formCadastro) {
@@ -92,6 +108,13 @@ if (formCadastro) {
   });
 }
 
+/**
+ * Elemento HTML do formulário de login.
+ * Valida o e-mail e senha inseridos comparando com a base salva no localStorage.
+ * Em caso de sucesso, inicia a "sessão" do usuário.
+ * 
+ * @type {HTMLElement | null}
+ */
 const formLogin = document.getElementById("formLogin");
 
 if (formLogin) {
@@ -121,6 +144,12 @@ if (formLogin) {
   });
 }
 
+/**
+ * Lógica de inicialização do Dashboard.
+ * Funciona como um "Guarda de Rota" (Route Guard): se não houver usuário logado,
+ * redireciona o usuário imediatamente para a página de login.
+ * Se houver, personaliza a tela de acordo com o tipo de usuário (MEDICO ou PACIENTE).
+ */
 const dashTitle = document.getElementById("dashTitle");
 if (dashTitle) {
   const usuarioLogado = JSON.parse(localStorage.getItem("activeAgeUser"));
