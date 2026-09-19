@@ -6,12 +6,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (navLinks) {
     if (usuarioLogado) {
+      let linkPainel =
+        usuarioLogado.tipo === "PACIENTE"
+          ? "dashboard-paciente.html"
+          : "dashboard-medico.html";
+
       navLinks.innerHTML = `
-                <li class="nav-item me-lg-3"><a class="btn btn-primary" href="#">Meu Painel</a></li>
+                <li class="nav-item me-lg-3"><a class="btn btn-primary" href="${linkPainel}">Meu Painel</a></li>
                 <li class="nav-item"><button class="btn btn-outline-danger" id="btnLogout">Sair</button></li>
             `;
       document.getElementById("btnLogout").addEventListener("click", () => {
-        sessionStorage.removeItem("activeAgeUser");
+        sessionStorage.clear();
         window.location.href = "index.html";
       });
     } else {
