@@ -54,3 +54,35 @@ export const login = async (req: Request, res: Response): Promise<any> => {
     return res.status(500).json({ erro: "Erro interno no servidor" });
   }
 };
+
+export const cadastro = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { nome, email, senha, tipoUsuario } = req.body;
+
+    const [resultUsuario]: any = await pool.query(
+      "INSERT INTO usuarios (nome, email, senha, tipo_usuario) VALUES (?, ?, ?, ?)",
+      [nome, email, senha, tipoUsuario],
+    );
+    const usuarioId = resultUsuario.insertId;
+
+    if (tipoUsuario === "MEDICO") {
+      await pool.query(
+        "INSERT INTO medicos (usuario_id, crm, especialidade) VALUES (?, ?, ?)",
+        [usuarioId, "CRM-GERAL", "Clínico Geral"],
+      );
+    } else {
+      await pool.query(
+        "INSERT INTO pacientes (usuario_id, data_nascimento) VALUES (?, ?)",
+        [usuarioId, "1980-01-01"],
+      );
+    }
+
+    return res
+      .status(201)
+      .json({ mensagem: "Cadastro realizado com sucesso!" });
+  } catch (error: any) {
+    if (error.code === "ER_DUP_ENTRY")
+      return res.status(409).json({ erro: "E-mail já existe" });
+    return res.status(500).json({ erro: "Erro interno" });
+  }
+};

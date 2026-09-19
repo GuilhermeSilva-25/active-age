@@ -64,3 +64,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+const formCadastro = document.getElementById("formCadastro");
+if (formCadastro) {
+  formCadastro.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const nome = document.getElementById("nome").value;
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+    const tipoUsuario = document.querySelector(
+      'input[name="tipoUsuario"]:checked',
+    ).value;
+
+    try {
+      const response = await fetch("/api/auth/cadastro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, email, senha, tipoUsuario }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Sucesso!",
+          text: "Conta criada com sucesso.",
+        }).then(() => (window.location.href = "login.html"));
+      } else {
+        Swal.fire({ icon: "error", title: "Ops", text: data.erro });
+      }
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "Erro", text: "Falha no servidor." });
+    }
+  });
+}
