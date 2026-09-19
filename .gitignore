@@ -1,0 +1,80 @@
+# ==========================================
+# .gitignore - Active Age (Semestres 1 ao 6)
+# ==========================================
+
+# --- Sistema Operacional e Editores ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Variáveis de Ambiente e Segredos (Todos os Semestres) ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+
+# --- Node.js / TypeScript / React / Front-End (Semestres 1, 2 e 3) ---
+node_modules/
+dist/
+build/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+.nyc_output/
+.next/
+.nuxt/
+
+# --- Mobile: React Native / Flutter (Semestre 4) ---
+# Expo / React Native
+.expo/
+.expo-shared/
+android/app/build/
+android/.gradle/
+ios/Pods/
+ios/build/
+*.jks
+*.keystore
+
+# Flutter
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# --- Python / Machine Learning / NLP (Semestres 5 e 6) ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+ENV/
+.ipynb_checkpoints/
+pip-log.txt
+pip-delete-this-directory.txt
+# Extensões para evitar commitar modelos pesados de IA ou datasets grandes
+*.csv
+*.dat
+*.pkl
+*.h5
+*.model
+
+# --- Logs e Arquivos de Banco de Dados ---
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
