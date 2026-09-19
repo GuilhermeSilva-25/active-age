@@ -1,0 +1,34 @@
+USE active_age;
+
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  tipo_usuario ENUM('PACIENTE', 'MEDICO', 'ADMIN') NOT NULL
+);
+
+CREATE TABLE pacientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL UNIQUE,
+  data_nascimento DATE NOT NULL,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+CREATE TABLE medicos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL UNIQUE,
+  crm VARCHAR(20) UNIQUE NOT NULL,
+  especialidade VARCHAR(100) NOT NULL,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+CREATE TABLE agendamentos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  paciente_id INT NOT NULL,
+  medico_id INT NOT NULL,
+  data_hora DATETIME NOT NULL,
+  status ENUM('AGENDADO', 'CANCELADO', 'CONCLUIDO') DEFAULT 'AGENDADO',
+  FOREIGN KEY (paciente_id) REFERENCES pacientes(id) ON DELETE CASCADE,
+  FOREIGN KEY (medico_id) REFERENCES medicos(id) ON DELETE CASCADE
+);
