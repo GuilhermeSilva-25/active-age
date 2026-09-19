@@ -22,11 +22,19 @@ export class AgendamentoController {
 
   static async agendar(req: Request, res: Response): Promise<any> {
     try {
-      const { paciente_id, medico_id, data_hora } = req.body;
+      const { usuario_id, medico_id, data_hora } = req.body;
+      
+      // Formata a data garantindo que o MySQL consiga ler (remove o T e o Z)
+      const dataFormatada = data_hora.replace('T', ' ').replace('Z', '').split('.')[0];
 
       const [result]: any = await pool.query(
-        "INSERT INTO agendamentos (paciente_id, medico_id, data_hora) VALUES (?, ?, ?)",
-        [paciente_id, medico_id, data_hora],
+        "INSERT INTO agendamentos (paciente_id, medico_id, data_hora) VALUES ((SELECT id FROM pacientes WHERE usuario_id = ?), ?, ?)",
+        [usuario_id, medico_id, dataFormatada],
+      );
+
+      await pool.query(
+        "UPDATE horarios_disponiveis SET status = 'OCUPADO' WHERE medico_id = ? AND data_hora = ?",
+        [medico_id, dataFormatada]
       );
 
       return res.status(201).json({
@@ -34,6 +42,7 @@ export class AgendamentoController {
         idAgendamento: result.insertId,
       });
     } catch (error: any) {
+      console.error(error);
       return res.status(500).json({ erro: "Erro interno ao agendar consulta" });
     }
   }
