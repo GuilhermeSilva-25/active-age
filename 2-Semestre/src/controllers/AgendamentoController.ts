@@ -51,14 +51,29 @@ export class AgendamentoController {
     try {
       const { id } = req.params;
 
-      const [result]: any = await pool.query(
+      // Busca qual era o horário e o médico deste agendamento
+      const [rows]: any = await pool.query(
+        "SELECT medico_id, data_hora FROM agendamentos WHERE id = ?",
+        [id]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({ erro: "Agendamento não encontrado" });
+      }
+
+      const agendamento = rows[0];
+
+      // Atualiza o status do agendamento para CANCELADO
+      await pool.query(
         'UPDATE agendamentos SET status = "CANCELADO" WHERE id = ?',
         [id],
       );
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ erro: "Agendamento não encontrado" });
-      }
+      // Devolve o horário para a "prateleira" (status LIVRE)
+      await pool.query(
+        "UPDATE horarios_disponiveis SET status = 'LIVRE' WHERE medico_id = ? AND data_hora = ?",
+        [agendamento.medico_id, agendamento.data_hora]
+      );
 
       return res.json({ mensagem: "Agendamento cancelado com sucesso!" });
     } catch (error) {
