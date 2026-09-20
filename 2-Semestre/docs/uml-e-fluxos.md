@@ -52,17 +52,32 @@ Mapeamento do fluxo onde o Paciente escolhe um médico fake no Front-End e reali
 sequenceDiagram
     actor P as Paciente
     participant F as View (HTML/JS)
-    participant API as AgendamentoController (TS)
+    participant API as Backend (Node/TS)
     participant DAO as Banco de Dados (MySQL)
 
-    P->>F: Clica em "Agendar" na Dra. Ada Lovelace
-    F->>API: POST /api/agendamentos {medicoId, dataHora}
-    API->>DAO: INSERT INTO agendamentos...
-    Note over DAO: Trigger trg_evitar_choque_horario valida conflito.
-    DAO-->>API: Status 200 (Sucesso na Inserção)
-    API-->>F: JSON { success: true, idAgendamento: 1 }
-    F-->>P: "Agendamento Realizado com Sucesso!"
-    P->>F: Clica no botão "Acessar Teleconsulta"
+    Note over P,DAO: Fase 1: Carregamento da Vitrine
+    P->>F: Acessa o Dashboard do Paciente
+    F->>API: GET /api/horarios/livres
+    API->>DAO: SELECT * FROM horarios_disponiveis WHERE status = 'LIVRE'
+    DAO-->>API: Retorna os slots e dados dos médicos
+    API-->>F: JSON [ { horario_id, data_hora, medico_nome... } ]
+    F-->>P: Renderiza os dropdowns dinâmicos
+
+    Note over P,DAO: Fase 2: Reserva do Horário
+    P->>F: Seleciona Dra. Ada Lovelace, escolhe a data e clica "Agendar"
+    F->>API: POST /api/agendamentos { usuario_id, medico_id, horario_id }
+    
+    API->>DAO: SELECT data_hora FROM horarios_disponiveis WHERE id = horario_id
+    DAO-->>API: Retorna a data correspondente
+    
+    API->>DAO: INSERT INTO agendamentos (paciente_id, medico_id, data_hora)
+    API->>DAO: UPDATE horarios_disponiveis SET status = 'OCUPADO' WHERE id = horario_id
+    
+    DAO-->>API: Status 201 (Created)
+    API-->>F: JSON { mensagem: "Sucesso", idAgendamento: X }
+    F-->>P: "Consulta agendada!" (SweetAlert)
+    
+    Note over P,F: Fase 3: Telemedicina
+    P->>F: Clica no botão "Acessar Sala" na tabela
     F-->>P: Redireciona para /sala-video-fake.html
 ```
-
