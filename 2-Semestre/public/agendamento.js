@@ -153,6 +153,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function carregarMeusHorariosLivres() {
+    const tabela = document.getElementById("tabelaMeusHorarios");
+    if (!tabela || usuarioLogado.tipo !== "MEDICO") return;
+
+    try {
+      const res = await fetch("/api/horarios/livres");
+      const horarios = await res.json();
+      
+      const meusLivres = horarios.filter(h => h.medico_nome === usuarioLogado.nome);
+      tabela.innerHTML = "";
+      
+      if (meusLivres.length === 0) {
+         tabela.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Nenhum horário livre disponível na sua vitrine.</td></tr>";
+         return;
+      }
+
+      meusLivres.forEach(h => {
+        const dataFmt = new Date(h.data_hora).toLocaleString("pt-BR");
+        tabela.innerHTML += `
+          <tr>
+            <td>${dataFmt}</td>
+            <td><button class="btn btn-sm btn-outline-danger" onclick="excluirHorario(${h.horario_id})">Remover</button></td>
+          </tr>
+        `;
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  carregarMeusHorariosLivres();
   carregarAgendamentos();
 });
 
@@ -161,6 +192,13 @@ window.cancelarConsulta = async function (idAgendamento) {
     await fetch("/api/agendamentos/" + idAgendamento + "/cancelar", {
       method: "PUT",
     });
+    window.location.reload();
+  }
+};
+
+window.excluirHorario = async function (idHorario) {
+  if (confirm("Tem certeza que deseja remover este horário livre da vitrine?")) {
+    await fetch("/api/horarios/" + idHorario, { method: "DELETE" });
     window.location.reload();
   }
 };

@@ -37,4 +37,14 @@ export class HorarioController {
       return res.status(500).json({ erro: "Erro ao buscar horários livres." });
     }
   }
+
+  static async excluir(req: Request, res: Response): Promise<any> {
+    try {
+      const { id } = req.params;
+      await pool.query("DELETE FROM horarios_disponiveis WHERE id = ?", [id]);
+      return res.json({ mensagem: "Horário removido com sucesso!" });
+    } catch (error) {
+      return res.status(500).json({ erro: "Erro ao remover horário." });
+    }
+  }
 }
