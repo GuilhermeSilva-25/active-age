@@ -1,7 +1,17 @@
 import { Request, Response } from "express";
 import pool from "../config/database";
 
+/**
+ * Controlador responsável pelas operações de Agendamentos de consultas.
+ */
 export class AgendamentoController {
+  /**
+   * Lista todos os agendamentos registrados no sistema (visão administrativa/geral).
+   * 
+   * @param {Request} req - Objeto de requisição do Express.
+   * @param {Response} res - Objeto de resposta do Express.
+   * @returns {Promise<any>} Lista de agendamentos com nomes e status.
+   */
   static async listar(req: Request, res: Response): Promise<any> {
     try {
       const query = `
@@ -20,6 +30,14 @@ export class AgendamentoController {
     }
   }
 
+  /**
+   * Cria um novo agendamento a partir da escolha do paciente.
+   * Regra de Negócio: O agendamento vincula o id do paciente ao slot do médico e ocupa o horário.
+   * 
+   * @param {Request} req - Requisição contendo usuario_id, medico_id e horario_id.
+   * @param {Response} res - Resposta indicando o sucesso da marcação.
+   * @returns {Promise<any>} Resposta em JSON.
+   */
   static async agendar(req: Request, res: Response): Promise<any> {
     try {
       const { usuario_id, medico_id, horario_id } = req.body;
@@ -36,6 +54,7 @@ export class AgendamentoController {
         [usuario_id, medico_id, data_hora],
       );
 
+      // Bloqueia o slot do médico para que não receba agendamento duplicado
       await pool.query(
         "UPDATE horarios_disponiveis SET status = 'OCUPADO' WHERE id = ?",
         [horario_id]
@@ -51,11 +70,19 @@ export class AgendamentoController {
     }
   }
 
+  /**
+   * Cancela uma consulta previamente agendada.
+   * Regra de Negócio: Ao cancelar, o slot deve ser devolvido à vitrine de horários livres do médico.
+   * 
+   * @param {Request} req - Requisição contendo o ID do agendamento nos parâmetros de rota.
+   * @param {Response} res - Resposta da operação de cancelamento.
+   * @returns {Promise<any>} Resposta em JSON.
+   */
   static async cancelar(req: Request, res: Response): Promise<any> {
     try {
       const { id } = req.params;
 
-      // Busca qual era o horário e o médico deste agendamento
+      // Busca dados antes de cancelar para restituir a agenda do médico
       const [rows]: any = await pool.query(
         "SELECT medico_id, data_hora FROM agendamentos WHERE id = ?",
         [id]
@@ -67,13 +94,12 @@ export class AgendamentoController {
 
       const agendamento = rows[0];
 
-      // Atualiza o status do agendamento para CANCELADO
       await pool.query(
         'UPDATE agendamentos SET status = "CANCELADO" WHERE id = ?',
         [id],
       );
 
-      // Devolve o horário para a "prateleira" (status LIVRE)
+      // Devolve a disponibilidade do médico após o cancelamento do paciente
       await pool.query(
         "UPDATE horarios_disponiveis SET status = 'LIVRE' WHERE medico_id = ? AND data_hora = ?",
         [agendamento.medico_id, agendamento.data_hora]

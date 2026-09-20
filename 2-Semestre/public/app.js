@@ -1,9 +1,12 @@
+/**
+ * Inicializa os ouvintes de eventos principais de autenticação e UI na carga do documento.
+ */
 document.addEventListener("DOMContentLoaded", () => {
   const formLogin = document.getElementById("formLogin");
-
   const navLinks = document.getElementById("nav-links");
   const usuarioLogado = JSON.parse(sessionStorage.getItem("activeAgeUser"));
 
+  // Lógica de manipulação da Navbar (mostra botões diferentes dependendo se o usuário está logado)
   if (navLinks) {
     if (usuarioLogado) {
       let linkPainel =
@@ -27,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Intercepta a submissão do formulário de login para enviar dados à API
   if (formLogin) {
     formLogin.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -45,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (response.ok) {
           sessionStorage.setItem("activeAgeUser", JSON.stringify(data.usuario));
-
           window.location.href = data.redirectUrl;
         } else {
           Swal.fire({
@@ -66,6 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const formCadastro = document.getElementById("formCadastro");
+
+// Intercepta o formulário de cadastro para registro de novos usuários
 if (formCadastro) {
   formCadastro.addEventListener("submit", async (e) => {
     e.preventDefault();

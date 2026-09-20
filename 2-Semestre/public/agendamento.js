@@ -1,3 +1,6 @@
+/**
+ * Inicializa a tela de agendamentos e dashboards (Paciente ou Médico) com base na sessão atual.
+ */
 document.addEventListener("DOMContentLoaded", () => {
   const usuarioLogado = JSON.parse(sessionStorage.getItem("activeAgeUser"));
 
@@ -12,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const formAgendamento = document.getElementById("formAgendamento");
+  
+  // Regra de Negócio: Intercepta a marcação de consulta pelo Paciente
   if (formAgendamento) {
     formAgendamento.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -42,6 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /**
+   * @async
+   * @function carregarHorariosDisponiveis
+   * @description Busca horários livres na API e preenche dinamicamente os `<select>` do paciente.
+   */
   async function carregarHorariosDisponiveis() {
     const medicoSelect = document.getElementById("medicoId");
     const dataHoraSelect = document.getElementById("dataHora");
@@ -80,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarHorariosDisponiveis();
 
   const formHorario = document.getElementById("formHorario");
+  
+  // Regra de Negócio: Permite ao médico abrir novos blocos de horários em sua agenda
   if (formHorario && usuarioLogado.tipo === "MEDICO") {
     formHorario.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -102,6 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /**
+   * @async
+   * @function carregarAgendamentos
+   * @description Lista as consultas marcadas dependendo do perfil (Paciente ou Médico).
+   */
   async function carregarAgendamentos() {
     try {
       const response = await fetch("/api/agendamentos");
@@ -153,6 +170,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  /**
+   * @async
+   * @function carregarMeusHorariosLivres
+   * @description Puxa os slots ociosos disponibilizados pelo médico autenticado e exibe na vitrine.
+   */
   async function carregarMeusHorariosLivres() {
     const tabela = document.getElementById("tabelaMeusHorarios");
     if (!tabela || usuarioLogado.tipo !== "MEDICO") return;
@@ -187,6 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarAgendamentos();
 });
 
+/**
+ * Função global para cancelar consulta agendada.
+ * Regra de Negócio: O cancelamento por ambas as partes usa o mesmo endpoint e devolve o slot à vitrine.
+ * @param {number} idAgendamento - Identificador da consulta.
+ */
 window.cancelarConsulta = async function (idAgendamento) {
   if (confirm("Tem certeza que deseja cancelar esta consulta?")) {
     await fetch("/api/agendamentos/" + idAgendamento + "/cancelar", {
@@ -196,6 +223,10 @@ window.cancelarConsulta = async function (idAgendamento) {
   }
 };
 
+/**
+ * Remove um horário livre disponibilizado pelo médico.
+ * @param {number} idHorario - Identificador do slot na tabela horarios_disponiveis.
+ */
 window.excluirHorario = async function (idHorario) {
   if (confirm("Tem certeza que deseja remover este horário livre da vitrine?")) {
     await fetch("/api/horarios/" + idHorario, { method: "DELETE" });
@@ -203,6 +234,9 @@ window.excluirHorario = async function (idHorario) {
   }
 };
 
+/**
+ * Simula a entrada na sala virtual de telemedicina.
+ */
 window.acessarSala = function () {
   window.location.href = "sala-video-fake.html";
 };

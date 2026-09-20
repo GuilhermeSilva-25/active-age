@@ -3,6 +3,13 @@ import pool from "../config/database";
 import { Paciente } from "../models/Paciente";
 import { Medico } from "../models/Medico";
 
+/**
+ * Autentica um usuário no sistema e retorna seus dados com a URL de redirecionamento.
+ *
+ * @param {Request} req - Objeto de requisição do Express contendo email e senha no body.
+ * @param {Response} res - Objeto de resposta do Express.
+ * @returns {Promise<any>} Resposta em JSON com os dados do usuário e rota destino.
+ */
 export const login = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, senha } = req.body;
@@ -55,6 +62,13 @@ export const login = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+/**
+ * Cria uma nova conta de usuário (Paciente ou Médico) e a vincula nas tabelas filhas.
+ *
+ * @param {Request} req - Requisição contendo nome, email, senha e tipoUsuario.
+ * @param {Response} res - Resposta HTTP indicando sucesso ou erro.
+ * @returns {Promise<any>} Resposta em JSON de status.
+ */
 export const cadastro = async (req: Request, res: Response): Promise<any> => {
   try {
     const { nome, email, senha, tipoUsuario } = req.body;

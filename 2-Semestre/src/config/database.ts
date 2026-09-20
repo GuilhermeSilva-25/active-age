@@ -1,5 +1,9 @@
 import mysql from "mysql2/promise";
 
+/**
+ * Configuração e inicialização do Pool de conexões do MySQL.
+ * O pool é responsável por gerenciar a performance e o limite máximo de queries simultâneas.
+ */
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",
