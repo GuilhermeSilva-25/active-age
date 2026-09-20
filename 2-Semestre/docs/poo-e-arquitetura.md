@@ -1,31 +1,30 @@
-# 🏗️ POO e Arquitetura de Software
+# 🧱 POO e Arquitetura de Software
 
 O Back-End do Active Age no 2º Semestre foi totalmente construído utilizando **TypeScript**, garantindo tipagem estática rigorosa e a aplicação prática dos pilares da **Programação Orientada a Objetos (POO)** exigidos pela disciplina de Técnicas de Programação I.
 
-## 🏛️ Padrão Arquitetural: MVC (Model-View-Controller)
-A aplicação está organizada no padrão MVC para separar a lógica de apresentação, das regras de negócio e manipulação de dados:
+## 🏗️ Padrão Arquitetural: MVC (Model-View-Controller)
+A aplicação está minuciosamente organizada no padrão MVC para isolar as responsabilidades:
 
-* **View:** As páginas estáticas criadas no 1º Semestre (HTML/JS) que fazem requisições à API.
-* **Controller:** Classes TS (ex: `AgendamentoController`) responsáveis por receber as requisições HTTP (Express.js), validar payloads de entrada e acionar as regras de negócio.
-* **Model:** Classes que representam as entidades de domínio e os Repositórios que contêm os comandos SQL (Data Access Object - DAO) comunicando-se com o MySQL.
+* **View:** Componentizada nos HTMLs e arquivos estáticos localizados em `/public`. Recebem injeção de dados via `Fetch API`.
+* **Controller:** Classes TypeScript na pasta `/src/controllers` (ex: `AgendamentoController`, `AuthController`) que representam a camada de Negócios e controle de Tráfego do Node/Express.
+* **Model:** Classes na pasta `/src/models` que espelham perfeitamente o comportamento e as identidades descritas nas tabelas do Banco de Dados, unindo lógica estruturada à POO.
 
 ---
 
 ## 🧬 Pilares da POO Aplicados no TypeScript
 
 ### 1. Abstração e Herança
-A tabela de usuários no banco de dados reflete uma lógica clássica de Orientação a Objetos. 
-* Criamos uma classe abstrata `Usuario` contendo propriedades comuns (`id`, `nome`, `email`, `senha`) e métodos-base de validação. 
-* As classes `Medico` e `Paciente` utilizam a palavra-chave `extends Usuario`, herdando esses campos genéricos e implementando os seus próprios atributos exclusivos (como `crm` para o médico e `dataNascimento` para o paciente).
+A engenharia de tabelas do banco de dados reflete uma lógica clássica de Orientação a Objetos no servidor.
+* Criamos uma **classe abstrata** `Usuario` contendo propriedades globais (`id`, `nome`, `email`, `senha`) e métodos-base.
+* As classes `Medico` e `Paciente` utilizam a palavra-chave `extends Usuario`, herdando esses campos genéricos e implementando comportamentos exclusivos (como buscar crm e recuperar a data de nascimento).
 
 ### 2. Encapsulamento
-No TypeScript, utilizamos extensamente os modificadores de acesso:
-* `private`: As credenciais de banco de dados e os identificadores de sessão ficam ocultos.
-* `protected`: Atributos da classe pai acessíveis apenas pelas classes filhas.
-* Alterações no estado (exemplo: mudar o status de um Agendamento) só ocorrem por meio de métodos de negócio (ex: `agendamento.cancelarConsulta()`), e nunca acessando a propriedade diretamente (`agendamento.status = 'CANCELADO'`).
+Utilizamos intensivamente o bloqueio de atributos utilizando os Modificadores de Acesso do TypeScript:
+* `private`: Todos os dados sigilosos e internos (CRM, Aniversário) ficam fechados, só podem ser recuperados através de métodos `getters` públicos.
+* `protected`: Atributos da classe pai acessíveis exclusivamente pelas classes filhas.
 
-### 3. Polimorfismo
-A interface `IUsuarioAuth` declara o método de autenticação e de direcionamento. Quando o Login ocorre, tanto instâncias de Pacientes quanto de Médicos respondem ao método genérico `getDashboardRoute()`, porém com comportamentos polimórficos:
-* O Paciente devolve a URL estática: `/dashboard-paciente.html`.
-* O Médico devolve a URL estática: `/dashboard-medico.html`.
+### 3. Polimorfismo e Assinaturas Dinâmicas
+As rotas de autenticação lidam com requisições globais. Quando o Login ocorre no sistema, tanto a instância de `Paciente` quanto a instância de `Medico` acionam o mesmo método raiz (`getDashboardRoute()`). O motor de herança invoca de forma inteligente o retorno correto (Polimórfico) correspondente ao objeto criado dinamicamente, enviando a URL estática `dashboard-medico.html` ou `dashboard-paciente.html`.
 
+## 📚 Code Docs & JSDocs
+Mantendo o padrão adotado na engenharia de software profissional, todos os Controllers, Models, Classes e as chamadas JavaScript de interface da pasta `public/` estão cobertas pela documentação padronizada do **JSDoc/TSDoc**. Em vez de comentários lixos, preservamos apenas documentação explícita de **Regras de Negócio** para fácil compreensão dos domínios do problema.
