@@ -22,19 +22,23 @@ export class AgendamentoController {
 
   static async agendar(req: Request, res: Response): Promise<any> {
     try {
-      const { usuario_id, medico_id, data_hora } = req.body;
+      const { usuario_id, medico_id, horario_id } = req.body;
       
-      // Formata a data garantindo que o MySQL consiga ler (remove o T e o Z)
-      const dataFormatada = data_hora.replace('T', ' ').replace('Z', '').split('.')[0];
+      const [horarioRows]: any = await pool.query(
+        "SELECT data_hora FROM horarios_disponiveis WHERE id = ?",
+        [horario_id]
+      );
+      if (horarioRows.length === 0) return res.status(404).json({ erro: "Horário não encontrado" });
+      const data_hora = horarioRows[0].data_hora;
 
       const [result]: any = await pool.query(
         "INSERT INTO agendamentos (paciente_id, medico_id, data_hora) VALUES ((SELECT id FROM pacientes WHERE usuario_id = ?), ?, ?)",
-        [usuario_id, medico_id, dataFormatada],
+        [usuario_id, medico_id, data_hora],
       );
 
       await pool.query(
-        "UPDATE horarios_disponiveis SET status = 'OCUPADO' WHERE medico_id = ? AND data_hora = ?",
-        [medico_id, dataFormatada]
+        "UPDATE horarios_disponiveis SET status = 'OCUPADO' WHERE id = ?",
+        [horario_id]
       );
 
       return res.status(201).json({

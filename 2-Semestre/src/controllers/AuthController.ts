@@ -68,7 +68,7 @@ export const cadastro = async (req: Request, res: Response): Promise<any> => {
     if (tipoUsuario === "MEDICO") {
       await pool.query(
         "INSERT INTO medicos (usuario_id, crm, especialidade) VALUES (?, ?, ?)",
-        [usuarioId, "CRM-GERAL", "Clínico Geral"],
+        [usuarioId, "CRM-" + usuarioId, "Clínico Geral"],
       );
     } else {
       await pool.query(

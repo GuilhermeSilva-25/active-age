@@ -46,19 +46,14 @@
           <div class="col-md-5">
             <label class="fw-bold mb-1">Escolha o Especialista:</label>
             <select id="medicoId" class="form-select" required>
-              <option value="1">Dra. Ada Lovelace (Neurologia)</option>
-              <option value="2">Dr. Alan Turing (Cardiologia)</option>
-              <option value="3">Dr. Linus Torvalds (Geriatria)</option>
+              <option value="">Carregando médicos...</option>
             </select>
           </div>
           <div class="col-md-5">
-            <label class="fw-bold mb-1">Data e Hora:</label>
-            <input
-              type="datetime-local"
-              id="dataHora"
-              class="form-control"
-              required
-            />
+            <label class="fw-bold mb-1">Data e Hora Livre:</label>
+            <select id="dataHora" class="form-select" required>
+              <option value="">Selecione um médico primeiro</option>
+            </select>
           </div>
           <div class="col-md-2 d-flex align-items-end">
             <button type="submit" class="btn btn-primary w-100">Agendar</button>

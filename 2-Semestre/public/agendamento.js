@@ -16,13 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
     formAgendamento.addEventListener("submit", async (e) => {
       e.preventDefault();
       const medico_id = document.getElementById("medicoId").value;
-      const data_hora = document.getElementById("dataHora").value;
+      const horario_id = document.getElementById("dataHora").value;
 
       try {
         const response = await fetch("/api/agendamentos", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paciente_id: 1, medico_id, data_hora }),
+          body: JSON.stringify({ usuario_id: usuarioLogado.id, medico_id, horario_id }),
         });
 
         const data = await response.json();
@@ -32,8 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             icon: "success",
             title: "Sucesso!",
             text: "Sua consulta foi agendada.",
-          });
-          carregarAgendamentos();
+          }).then(() => window.location.reload());
         } else {
           Swal.fire({ icon: "error", title: "Atenção", text: data.erro });
         }
@@ -42,6 +41,43 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  async function carregarHorariosDisponiveis() {
+    const medicoSelect = document.getElementById("medicoId");
+    const dataHoraSelect = document.getElementById("dataHora");
+    if (!medicoSelect || !dataHoraSelect) return;
+
+    try {
+      const res = await fetch("/api/horarios/livres");
+      const horarios = await res.json();
+      
+      const medicos = {};
+      horarios.forEach(h => {
+        if (!medicos[h.medico_id]) medicos[h.medico_id] = { nome: h.medico_nome, horarios: [] };
+        medicos[h.medico_id].horarios.push(h);
+      });
+
+      medicoSelect.innerHTML = '<option value="">Selecione um médico...</option>';
+      for (const mId in medicos) {
+        medicoSelect.innerHTML += `<option value="${mId}">${medicos[mId].nome}</option>`;
+      }
+
+      medicoSelect.addEventListener("change", (e) => {
+        dataHoraSelect.innerHTML = '<option value="">Selecione o horário...</option>';
+        const selecionado = medicos[e.target.value];
+        if (selecionado) {
+          selecionado.horarios.forEach(h => {
+            const dataFmt = new Date(h.data_hora).toLocaleString("pt-BR");
+            dataHoraSelect.innerHTML += `<option value="${h.horario_id}">${dataFmt}</option>`;
+          });
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  carregarHorariosDisponiveis();
 
   const formHorario = document.getElementById("formHorario");
   if (formHorario && usuarioLogado.tipo === "MEDICO") {
