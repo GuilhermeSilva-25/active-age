@@ -20,8 +20,8 @@ export function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#beneficios" className="text-brown hover:text-brand-orange transition-colors font-medium">Benefícios</a>
-            <a href="#como-funciona" className="text-brown hover:text-brand-orange transition-colors font-medium">Como Funciona</a>
+            <a href="/#beneficios" className="text-brown hover:text-brand-orange transition-colors font-medium">Benefícios</a>
+            <a href="/#como-funciona" className="text-brown hover:text-brand-orange transition-colors font-medium">Como Funciona</a>
             
             <div className="flex items-center space-x-4 border-l-2 border-brand-pot pl-8 ml-4">
               <Link to="/login" className="text-brown-dark font-semibold hover:text-brand-orange transition-colors">
@@ -51,8 +51,8 @@ export function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 shadow-lg absolute w-full left-0 transition-all">
           <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
-            <a href="#beneficios" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown hover:bg-brand-pot/20 rounded-md font-medium">Benefícios</a>
-            <a href="#como-funciona" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown hover:bg-brand-pot/20 rounded-md font-medium">Como Funciona</a>
+            <a href="/#beneficios" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown hover:bg-brand-pot/20 rounded-md font-medium">Benefícios</a>
+            <a href="/#como-funciona" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown hover:bg-brand-pot/20 rounded-md font-medium">Como Funciona</a>
             <div className="border-t border-brand-pot/50 my-2"></div>
             <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown-dark font-semibold hover:bg-brand-pot/20 rounded-md">Entrar</Link>
             <Link to="/cadastro" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-center btn-primary w-full mt-4">Criar Conta</Link>
