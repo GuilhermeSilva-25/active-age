@@ -1,4 +1,5 @@
 USE active_age;
+SET NAMES utf8mb4;
 
 INSERT INTO
   usuarios (nome, email, senha, tipo_usuario)
