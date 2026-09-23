@@ -8,6 +8,7 @@ import {Privacidade} from './pages/Privacidade';
 import {AuthLayout} from './layouts/AuthLayout';
 import {Login} from './pages/auth/Login';
 import {CadastroEscolha} from './pages/auth/CadastroEscolha';
+import {CadastroPaciente} from './pages/auth/CadastroPaciente';
 
 function App() {
     return (
@@ -27,9 +28,7 @@ function App() {
 
                     {/* Rotas temporárias (Stub) para não quebrar a navegação até criarmos os formulários */}
                     <Route path="/cadastro" element={<CadastroEscolha/>}/>
-                    <Route path="/cadastro-paciente"
-                           element={<div className="text-center font-bold text-brand-orange">Cadastro Paciente (Em
-                               breve)</div>}/>
+                    <Route path="/cadastro-paciente" element={<CadastroPaciente/>}/>
                     <Route path="/cadastro-medico"
                            element={<div className="text-center font-bold text-brand-mint">Cadastro Médico (Em
                                breve)</div>}/>
