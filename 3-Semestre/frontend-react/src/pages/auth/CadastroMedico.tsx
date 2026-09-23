@@ -3,32 +3,9 @@ import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Link} from 'react-router-dom';
-import {ArrowRight, ArrowLeft, CheckCircle2} from 'lucide-react';
-
-const applyCpfMask = (value: string) => {
-    return value
-        .replace(/\D/g, '')
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-        .replace(/(-\d{2})\d+?$/, '$1');
-};
-
-const applyPhoneMask = (value: string) => {
-    return value
-        .replace(/\D/g, '')
-        .replace(/(\d{2})(\d)/, '($1) $2')
-        .replace(/(\d{5})(\d)/, '$1-$2')
-        .replace(/(-\d{4})\d+?$/, '$1');
-};
-
-const applyUfMask = (value: string) => {
-    return value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
-};
-
-const applyCrmMask = (value: string) => {
-    return value.replace(/\D/g, '').slice(0, 10);
-};
+import {ArrowRight, ArrowLeft} from 'lucide-react';
+import {applyCpfMask, applyPhoneMask, applyCrmMask, applyUfMask} from '../../utils/masks';
+import {ProgressBar} from '../../components/auth/ProgressBar';
 
 const doctorSchema = z.object({
     email: z.string().email('E-mail inválido.'),
@@ -102,35 +79,7 @@ export function CadastroMedico() {
                 <p className="text-brown">Junte-se à plataforma geriatra e abra seu consultório virtual.</p>
             </div>
 
-            {/* Barra de Progresso Visual (Tema Menta/Verde) */}
-            <div 
-                className="flex items-center justify-between mb-8 relative"
-                role="progressbar"
-                aria-valuemin={1}
-                aria-valuemax={3}
-                aria-valuenow={step}
-                aria-label={`Passo ${step} de 3 do cadastro de especialista`}
-            >
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-brand-pot/30 -z-10" aria-hidden="true"></div>
-                <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-brand-mint transition-all duration-500 -z-10 ${step === 1 ? 'w-0' : step === 2 ? 'w-1/2' : 'w-full'}`} aria-hidden="true"></div>
-                
-                {[1, 2, 3].map((item) => (
-                    <div 
-                        key={item} 
-                        className={`w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 transition-colors ${step >= item ? 'bg-brand-mint border-brand-mint text-brown-dark' : 'bg-white border-brand-pot text-brown-light'}`}
-                        aria-current={step === item ? 'step' : undefined}
-                    >
-                        {/* Texto exclusivo para Leitores de Tela */}
-                        <span className="sr-only">
-                            {step === item ? `Etapa atual: Passo ${item}` : step > item ? `Passo ${item} concluído` : `Passo ${item} pendente`}
-                        </span>
-                        {/* Elemento visual ignorado pelos leitores */}
-                        <span aria-hidden="true">
-                            {step > item ? <CheckCircle2 size={16} /> : item}
-                        </span>
-                    </div>
-                ))}
-            </div>
+            <ProgressBar currentStep={step} theme="mint" ariaLabel={`Passo ${step} de 3 do cadastro de especialista`} />
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
