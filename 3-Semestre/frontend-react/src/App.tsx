@@ -9,6 +9,7 @@ import {AuthLayout} from './layouts/AuthLayout';
 import {Login} from './pages/auth/Login';
 import {CadastroEscolha} from './pages/auth/CadastroEscolha';
 import {CadastroPaciente} from './pages/auth/CadastroPaciente';
+import {CadastroMedico} from './pages/auth/CadastroMedico';
 
 function App() {
     return (
@@ -23,15 +24,10 @@ function App() {
 
                 {/* === Grupo 2: Autenticação (Usa o AuthLayout com tela dividida) === */}
                 <Route element={<AuthLayout/>}>
-                    {/* Todas as rotas aqui dentro serão injetadas no <Outlet /> do AuthLayout */}
                     <Route path="/login" element={<Login/>}/>
-
-                    {/* Rotas temporárias (Stub) para não quebrar a navegação até criarmos os formulários */}
                     <Route path="/cadastro" element={<CadastroEscolha/>}/>
                     <Route path="/cadastro-paciente" element={<CadastroPaciente/>}/>
-                    <Route path="/cadastro-medico"
-                           element={<div className="text-center font-bold text-brand-mint">Cadastro Médico (Em
-                               breve)</div>}/>
+                    <Route path="/cadastro-medico" element={<CadastroMedico/>}/>
                     <Route path="/recuperar-senha"
                            element={<div className="text-center font-bold text-brown">Recuperação (Em breve)</div>}/>
                 </Route>
