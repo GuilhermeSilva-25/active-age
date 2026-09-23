@@ -1,4 +1,5 @@
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {PublicLayout} from './layouts/PublicLayout';
 import {Home} from './pages/Home';
 import {QuemSomos} from './pages/QuemSomos';
 import {Servicos} from './pages/Servicos';
@@ -16,12 +17,14 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* === Grupo 1: Site Institucional (Usa o layout padrão com Navbar e Footer) === */}
-                <Route path="/" element={<Home/>}/>
-                <Route path="/quem-somos" element={<QuemSomos/>}/>
-                <Route path="/servicos" element={<Servicos/>}/>
-                <Route path="/termos" element={<TermosUso/>}/>
-                <Route path="/privacidade" element={<Privacidade/>}/>
+                {/* === Grupo 1: Site Institucional (Usa o PublicLayout com Navbar e Footer) === */}
+                <Route element={<PublicLayout/>}>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/quem-somos" element={<QuemSomos/>}/>
+                    <Route path="/servicos" element={<Servicos/>}/>
+                    <Route path="/termos" element={<TermosUso/>}/>
+                    <Route path="/privacidade" element={<Privacidade/>}/>
+                </Route>
 
                 {/* === Grupo 2: Autenticação (Usa o AuthLayout com tela dividida) === */}
                 <Route element={<AuthLayout/>}>
