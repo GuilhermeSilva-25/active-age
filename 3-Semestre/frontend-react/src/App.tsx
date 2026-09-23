@@ -10,6 +10,7 @@ import {Login} from './pages/auth/Login';
 import {CadastroEscolha} from './pages/auth/CadastroEscolha';
 import {CadastroPaciente} from './pages/auth/CadastroPaciente';
 import {CadastroMedico} from './pages/auth/CadastroMedico';
+import {RecuperarSenha} from './pages/auth/RecuperarSenha';
 
 function App() {
     return (
@@ -28,8 +29,7 @@ function App() {
                     <Route path="/cadastro" element={<CadastroEscolha/>}/>
                     <Route path="/cadastro-paciente" element={<CadastroPaciente/>}/>
                     <Route path="/cadastro-medico" element={<CadastroMedico/>}/>
-                    <Route path="/recuperar-senha"
-                           element={<div className="text-center font-bold text-brown">Recuperação (Em breve)</div>}/>
+                    <Route path="/recuperar-senha" element={<RecuperarSenha/>}/>
                 </Route>
             </Routes>
         </Router>
