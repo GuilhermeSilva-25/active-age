@@ -1,4 +1,4 @@
-import { HeartPulse, ShieldCheck, Users, Target, Eye, Heart, MonitorSmartphone, Lock, Award, Lightbulb } from 'lucide-react';
+import { ShieldCheck, Users, Target, Eye, Heart, MonitorSmartphone, Lock, Award, Lightbulb } from 'lucide-react';
 
 export function QuemSomos() {
   return (
