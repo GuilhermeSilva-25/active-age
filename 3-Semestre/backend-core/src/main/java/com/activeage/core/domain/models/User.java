@@ -27,6 +27,26 @@ public class User {
     private String id;
 
     /**
+     * Nome completo do usuário.
+     */
+    private String fullName;
+
+    /**
+     * Documento de identificação (CPF) do usuário.
+     */
+    private String cpf;
+
+    /**
+     * Telefone de contato do usuário.
+     */
+    private String phone;
+
+    /**
+     * Data de nascimento do usuário.
+     */
+    private String birthDate;
+
+    /**
      * E-mail de acesso do usuário. Deve ser único no sistema.
      * Utilizado como credencial principal de login.
      */

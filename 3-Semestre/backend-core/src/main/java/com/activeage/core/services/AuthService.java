@@ -2,50 +2,70 @@ package com.activeage.core.services;
 
 import com.activeage.core.domain.enums.Role;
 import com.activeage.core.domain.models.User;
+import com.activeage.core.dtos.requests.LoginRequest;
 import com.activeage.core.dtos.requests.PatientRegisterRequest;
 import com.activeage.core.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
+import com.activeage.core.utils.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 /**
- * Serviço responsável pela lógica de negócio de Autenticação e Cadastro.
- * Intermedia a comunicação entre os Controladores (APIs) e o Banco de Dados,
- * aplicando regras como verificação de duplicidade e criptografia.
+ * Serviço que concentra as regras de negócio de Autenticação.
  */
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
     /**
-     * Registra um novo paciente na plataforma.
-     * Verifica se o e-mail já existe, aplica o hash na senha e salva no MongoDB.
+     * Registra um novo paciente verificando se o email já existe, criptografando a senha
+     * e configurando a permissão base padrão (PATIENT).
      *
-     * @param request DTO contendo os dados previamente validados vindos do frontend.
-     * @return O usuário recém-criado e persistido no banco.
-     * @throws IllegalArgumentException se o e-mail já estiver em uso no sistema.
+     * @param request DTO com os dados do paciente oriundos do front-end.
+     * @return O objeto User salvo no banco de dados.
      */
     public User registerPatient(PatientRegisterRequest request) {
-
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Este e-mail já está em uso na plataforma.");
+            throw new IllegalArgumentException("Este e-mail já está em uso.");
         }
 
-        User newUser = new User();
-        newUser.setEmail(request.getEmail());
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setCpf(request.getCpf());
+        user.setPhone(request.getPhone());
+        user.setBirthDate(request.getBirthDate());
+        user.setTermsAccepted(request.isTermsAccepted());
+        user.setRole(Role.ROLE_PACIENTE);
 
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        return userRepository.save(user);
+    }
 
-        newUser.setRole(Role.ROLE_PACIENTE);
-        newUser.setTermsAccepted(request.isTermsAccepted());
-        newUser.setCreatedAt(LocalDateTime.now());
-        newUser.setActive(true);
+    /**
+     * Efetua o login do usuário validando as credenciais.
+     * Caso o e-mail não exista ou a senha não bata, retorna uma exceção genérica
+     * para proteger contra ataques de força bruta ou enumeração (RF001).
+     *
+     * @param request DTO contendo e-mail e senha.
+     * @return O Token JWT gerado para a sessão do usuário.
+     */
+    public String login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Credenciais inválidas."));
 
-        return userRepository.save(newUser);
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Credenciais inválidas.");
+        }
+
+        return jwtUtil.generateToken(user.getEmail());
     }
 }
