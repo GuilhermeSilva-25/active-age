@@ -7,17 +7,19 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Filtro de segurança que intercepta todas as requisições HTTP para validar o Crachá Digital (JWT).
- * Ele extrai o token do Cookie Seguro e autentica o usuário no contexto do Spring Security,
- * garantindo o RF001 (Sessões Stateless com Cookies Seguros).
+ * Extrai o token do Cookie Seguro, valida sua integridade e configura o Contexto de Segurança
+ * com as permissões (Roles) do usuário (RBAC).
  */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -48,9 +50,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (token != null && jwtUtil.isTokenValid(token)) {
             String email = jwtUtil.getEmailFromToken(token);
+            String role = jwtUtil.getRoleFromToken(token);
+
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
+                    new UsernamePasswordAuthenticationToken(email, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
