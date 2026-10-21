@@ -1,0 +1,120 @@
+# PLANO DE RELEASE E ROADMAP DE SPRINTS
+## Plataforma Active Age — Telessaúde Geriátrica Integral
+### Faculdade de Tecnologia de Diadema (Fatec Luigi Papaiz) — DSM 3º Semestre
+**Metodologia:** Spec-Driven Development (SDD) & Gestão Ágil (Scrum/Kanban)
+
+---
+
+### 1. Visão Geral do Release Plan
+
+O **Plano de Release** formaliza o planejamento e as entregas incrementais do sistema **Active Age** ao longo do 3º Semestre letivo. O objetivo é estabelecer marcos de entrega funcionais, verificáveis e em ambiente de produção (Render + Vercel + MongoDB Atlas), permitindo que cada pacote de funcionalidades seja testado ponta a ponta antes da abertura da fase subsequente.
+
+---
+
+### 2. Release Atual: v0.1.0-alpha — Fundação, Identidade e Autenticação Segura
+
+* **Status:** **Entregue e Operacional em Produção (Live)** ✅
+* **Data da Release:** 21 de Outubro de 2026
+* **Ambiente de Produção:**
+  * **Frontend (Vercel):** Aplicação SPA em React 19 com proxy reverso e rewrite de rotas.
+  * **Backend (Render):** [https://active-age-backend-mgyw.onrender.com](https://active-age-backend-mgyw.onrender.com) (Spring Boot 3 em container Docker).
+  * **Banco de Dados (MongoDB Atlas):** Cluster em nuvem na coleção `users`.
+* **Casos de Uso Cobertos:** **UC01** (Cadastrar-se na Plataforma) e **UC02** (Autenticar-se / Login).
+
+#### 2.1. Funcionalidades Entregues nesta Release
+
+| ID | Funcionalidade | Descrição da Entrega | Status |
+|---|---|---|---|
+| **REL-01** | **Cadastro de Paciente / Cuidador** | Formulário guiado em 3 etapas com máscaras de CPF e telefone, cálculo dinâmico de maioridade (18+ anos), consentimento obrigatório da LGPD e integração com a API Spring via `POST /api/auth/register-patient`. | Concluído ✅ |
+| **REL-02** | **Cadastro de Médico Geriatra** | Formulário guiado em 3 etapas com máscaras de CRM e UF, termo de responsabilidade ética do CFM e persistência real no MongoDB via `POST /api/auth/register-doctor`. | Concluído ✅ |
+| **REL-03** | **Autenticação Segura (Login)** | Validação de credenciais via hash BCrypt, emissão de token JWT stateless transportado via Cookie seguro (`HttpOnly`, `Secure`, `SameSite=Strict`), blindando a aplicação contra ataques XSS. | Concluído ✅ |
+| **REL-04** | **Proteção contra Força Bruta (Rate Limiting)** | Algoritmo Token Bucket via **Bucket4j** na camada de serviço, bloqueando o e-mail por 15 minutos após 5 erros consecutivos de senha. | Concluído ✅ |
+| **REL-05** | **Perfil do Usuário Autenticado** | Endpoint protegido `GET /api/auth/me` para resolução do perfil ativo a partir do cookie da sessão. | Concluído ✅ |
+| **REL-06** | **Encerramento de Sessão (Logout)** | Endpoint `POST /api/auth/logout` que invalida o cookie seguro com `maxAge=0` no navegador. | Concluído ✅ |
+| **REL-07** | **Navbar Reativa & Acessível** | Barra de navegação com alternância dinâmica: exibe *"Olá, Nome (Perfil)"* e botão *"Sair"* quando autenticado; botões de login/cadastro quando anônimo. | Concluído ✅ |
+| **REL-08** | **Identidade Visual & Favicon Oficial** | Substituição dos assets do Vite pelo favicon personalizado (coração + eletrocardiograma terracota) e título semântico da aba. | Concluído ✅ |
+| **REL-09** | **Documentação OpenAPI / Swagger** | Endpoints documentados e testáveis interativamente em `/swagger-ui/index.html` e `/v3/api-docs`. | Concluído ✅ |
+
+#### 2.2. Critérios de Aceite Validados (Testes BDD)
+- [x] Cadastro de paciente com e-mail duplicado bloqueado com mensagem amigável.
+- [x] Paciente menor de 18 anos impedido de submeter o cadastro.
+- [x] Cadastro de médico com CRM inválido impedido pelo schema de validação.
+- [x] Senhas criptografadas com hash irreversível no MongoDB Atlas.
+- [x] Login com 5 senhas erradas aciona trava de 15 minutos do Bucket4j.
+- [x] Logout apaga a credencial e restabelece a Navbar no estado público.
+
+---
+
+### 3. Roadmap de Releases Futuras (Sprint Backlog)
+
+A evolução do produto foi dividida em **5 Sprints incrementais**, garantindo foco e controle rigoroso de qualidade:
+
+```mermaid
+gantt
+    title Roadmap de Releases do Active Age (3º Semestre)
+    dateFormat  YYYY-MM-DD
+    section Entregue
+    Release v0.1.0 (Fundação & Auth)        :done, r1, 2026-10-15, 2026-10-21
+    section Próximas Sprints
+    Release v0.2.0 (Dashboards & Admin)     :active, r2, 2026-10-22, 2026-11-04
+    Release v0.3.0 (Vitrine & Agendamento)  :r3, 2026-11-05, 2026-11-18
+    Release v0.4.0 (Prontuário & Documentos):r4, 2026-11-19, 2026-12-02
+    Release v0.5.0 (Teleconsulta & Pagamento):r5, 2026-12-03, 2026-12-16
+```
+
+---
+
+#### 📅 Sprint 2 — Release v0.2.0: Proteção de Rotas, Dashboards e Moderação (UC03, UC04, UC05)
+* **Objetivo:** Fornecer a área logada para Pacientes e Médicos, estruturar a guarda de rotas na SPA e criar o painel de moderação administrativa de CRM.
+* **Entregas Previstas:**
+  1. Componente `ProtectedRoute` no React para barrar acessos não autenticados a páginas internas.
+  2. **Dashboard do Paciente:** Visualização de resumo, atalho para busca de médicos e lista de próximas consultas.
+  3. **Dashboard do Médico:** Visualização de resumo, status da validação do CRM e atalho para gestão de agenda.
+  4. **Upload do CRM (UC03):** Interface para o médico enviar foto da carteira profissional do CRM/RQE.
+  5. **Painel do Administrador (UC04 / UC05):** Área restrita com role `ROLE_ADMIN` para aprovar, rejeitar ou suspender contas de médicos.
+
+---
+
+#### 📅 Sprint 3 — Release v0.3.0: Vitrine de Horários e Agendamento Concorrente (UC08, UC09, UC10)
+* **Objetivo:** Migrar e expandir a lógica de slots de horários do 2º Semestre para o Spring Boot + MongoDB, garantindo busca inteligente e reserva sem *double-booking*.
+* **Entregas Previstas:**
+  1. Coleção e entidade `HorarioDisponivel` no MongoDB Atlas.
+  2. Médico cria, visualiza e remove slots de horários livres em sua agenda (UC10).
+  3. Busca e filtros inteligentes de médicos aprovados pelo paciente (UC08).
+  4. Reserva de consulta atômica com bloqueio imediato do slot para `OCUPADO` (UC09 / RN001).
+  5. Cancelamento pelo paciente com antecedência de 24h e devolução do slot para `LIVRE` (RN002).
+
+---
+
+#### 📅 Sprint 4 — Release v0.4.0: Prontuário Ético Eletrônico e Documentos Digitais (UC11, UC13, UC14, UC15, UC16)
+* **Objetivo:** Implementar o núcleo clínico da plataforma com conformidade legal do CFM e cofre digital vitalício de saúde.
+* **Entregas Previstas:**
+  1. Upload de laudos e exames antigos pelo paciente via GridFS / Storage (UC11).
+  2. Médico visualiza histórico de exames anexados pelo paciente durante o atendimento (UC13).
+  3. Registro de Prontuário Eletrônico (Anamnese, Diagnóstico e Conduta) com trava de **imutabilidade** após finalizado (UC14 / RN003).
+  4. Emissão de Receitas, Pedidos de Exames e Atestados em formato PDF assinado (UC15).
+  5. Download de documentos médicos gerados diretamente pelo painel do paciente (UC16).
+
+---
+
+#### 📅 Sprint 5 — Release v0.5.0: Teleconsulta Integrada e Fluxo Financeiro (UC06, UC07, UC12, UC17)
+* **Objetivo:** Integrar a sala de videoconferência nativa para a consulta médica e acoplar a gestão de pagamentos por consulta e assinatura recorrente do médico.
+* **Entregas Previstas:**
+  1. Sala de teleconsulta integrada no navegador com áudio/vídeo seguro e link exclusivo (UC12).
+  2. Processamento de pagamento da consulta no momento da confirmação do agendamento (UC06 / RN005).
+  3. Gestão de cobrança de mensalidade SaaS para manutenção do consultório virtual do médico (UC07 / RN004).
+  4. Módulo de avaliação pós-consulta e feedback do paciente (UC17).
+
+---
+
+### 4. Critérios de Transição de Release (Gateways de Qualidade)
+
+Para que uma nova Release seja promovida para produção, ela deve obrigatoriamente cumprir:
+1. **Spec Aprovada:** Todas as funcionalidades da Sprint devem ter suas especificações técnicas pré-aprovadas pelo PO.
+2. **Testes Caixa-Preta BDD:** Todos os cenários (caminhos felizes e tristes) devem ser documentados e homologados.
+3. **Build e Testes Automatizados:** O pipeline de compilação do Maven e do Vite deve rodar sem falhas.
+4. **Deploy em Produção Homologado:** O backend no Render e o frontend na Vercel devem estar comunicando-se com status HTTP 200.
+
+---
+*Plano de Release aprovado para execução contínua.*  
+*Projeto Integrador Active Age — Fatec Diadema 2026.*
