@@ -22,3 +22,12 @@ Este projeto está sendo construído de forma iterativa ao longo de 6 semestres 
 - [📁 4º Semestre](./4-Semestre) - Mundo Mobile e Automação (React Native/Flutter e CI/CD).
 - [📁 5º Semestre](./5-Semestre) - Segurança, LGPD e Nuvem (Cloud, Machine Learning Básica).
 - [📁 6º Semestre](./6-Semestre) - Telessaúde de Ponta e NLP (WebRTC, Speech-to-Text).
+
+## 🤖 Governança & Desenvolvimento com IA (Antigravity)
+
+O desenvolvimento a partir do 3º Semestre adota a metodologia **Spec-Driven Development (SDD)** e governança assistida por IA:
+- 📋 [Regras & Contexto Operacional do Agente (GEMINI.md)](./GEMINI.md)
+- 💻 [Guia de Desenvolvimento Multimáquinas & Onboarding](./3-Semestre/docs_ia/GUIA_DESENVOLVIMENTO_MULTIMAQUINAS.md)
+- 🚀 [Plano de Release & Roadmap de Sprints](./3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md)
+- 🧪 [Roteiro de Testes BDD (Modelo Fatec)](./3-Semestre/docs_ia/ROTEIRO_DE_TESTES_BDD_ACTIVE_AGE.md)
+- 📚 [Contexto Operacional e Governança SDD](./3-Semestre/docs_ia/CONTEXTO_OPERACIONAL_E_GOVERNANCA_SDD.md)
