@@ -1,10 +1,58 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, LogOut, User as UserIcon } from 'lucide-react';
 import logoImg from '../../assets/logo-active-age.png';
 
+interface UserProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  role: 'ROLE_PACIENTE' | 'ROLE_MEDICO' | 'ROLE_ADMIN';
+  crm?: string;
+  ufCrm?: string;
+}
+
 export function Navbar() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const profile: UserProfile = await response.json();
+          setCurrentUser(profile);
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (err) {
+        setCurrentUser(null);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Erro ao realizar logout', err);
+    } finally {
+      setCurrentUser(null);
+      navigate('/');
+    }
+  };
+
+  const getRoleLabel = (role: string) => {
+    if (role === 'ROLE_MEDICO') return 'Médico(a)';
+    if (role === 'ROLE_ADMIN') return 'Admin';
+    return 'Paciente';
+  };
+
+  const firstName = currentUser?.fullName ? currentUser.fullName.split(' ')[0] : '';
 
   return (
     <nav className="w-full bg-white shadow-sm sticky top-0 z-50">
@@ -24,12 +72,33 @@ export function Navbar() {
             <a href="/#como-funciona" className="text-brown hover:text-brand-orange transition-colors font-medium">Como Funciona</a>
             
             <div className="flex items-center space-x-4 border-l-2 border-brand-pot pl-8 ml-4">
-              <Link to="/login" className="text-brown-dark font-semibold hover:text-brand-orange transition-colors">
-                Entrar
-              </Link>
-              <Link to="/cadastro" className="btn-primary">
-                Criar Conta
-              </Link>
+              {currentUser ? (
+                <>
+                  <div className="flex items-center gap-2 text-brown-dark font-medium px-3 py-1.5 rounded-lg bg-brand-pot/20">
+                    <UserIcon size={18} className="text-brand-orange" />
+                    <span className="text-sm">
+                      Olá, <strong>{firstName}</strong> ({getRoleLabel(currentUser.role)})
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-1.5 text-red-600 hover:text-red-700 font-semibold px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
+                    title="Encerrar sessão segura"
+                  >
+                    <LogOut size={18} />
+                    Sair
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="text-brown-dark font-semibold hover:text-brand-orange transition-colors">
+                    Entrar
+                  </Link>
+                  <Link to="/cadastro" className="btn-primary">
+                    Criar Conta
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -54,8 +123,28 @@ export function Navbar() {
             <a href="/#beneficios" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown hover:bg-brand-pot/20 rounded-md font-medium">Benefícios</a>
             <a href="/#como-funciona" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown hover:bg-brand-pot/20 rounded-md font-medium">Como Funciona</a>
             <div className="border-t border-brand-pot/50 my-2"></div>
-            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown-dark font-semibold hover:bg-brand-pot/20 rounded-md">Entrar</Link>
-            <Link to="/cadastro" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-center btn-primary w-full mt-4">Criar Conta</Link>
+            {currentUser ? (
+              <>
+                <div className="px-3 py-2 text-sm text-brown-dark font-medium bg-brand-pot/20 rounded-md">
+                  Conectado como <strong>{currentUser.fullName}</strong> ({getRoleLabel(currentUser.role)})
+                </div>
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full text-left px-3 py-3 text-red-600 font-semibold hover:bg-red-50 rounded-md flex items-center gap-2"
+                >
+                  <LogOut size={18} />
+                  Sair da Conta
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-brown-dark font-semibold hover:bg-brand-pot/20 rounded-md">Entrar</Link>
+                <Link to="/cadastro" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-center btn-primary w-full mt-4">Criar Conta</Link>
+              </>
+            )}
           </div>
         </div>
       )}

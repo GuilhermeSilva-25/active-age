@@ -1,11 +1,11 @@
-import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {z} from 'zod';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {Link} from 'react-router-dom';
-import {ArrowRight, ArrowLeft} from 'lucide-react';
-import {applyCpfMask, applyPhoneMask, applyCrmMask, applyUfMask} from '../../utils/masks';
-import {ProgressBar} from '../../components/auth/ProgressBar';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { applyCpfMask, applyPhoneMask, applyCrmMask, applyUfMask } from '../../utils/masks';
+import { ProgressBar } from '../../components/auth/ProgressBar';
 
 const doctorSchema = z.object({
     email: z.string().email('E-mail inválido.'),
@@ -22,11 +22,15 @@ const doctorSchema = z.object({
     ufCrm: z.string().length(2, 'Insira a UF.'),
 
     termsAccepted: z.boolean().refine((val) => val === true, 'Você precisa aceitar os termos de responsabilidade médica.'),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: 'As senhas não coincidem.',
+    path: ['confirmPassword'],
 });
 
 type DoctorFormInputs = z.infer<typeof doctorSchema>;
 
 export function CadastroMedico() {
+    const navigate = useNavigate();
     const [step, setStep] = useState(1);
 
     const {
@@ -35,7 +39,7 @@ export function CadastroMedico() {
         trigger,
         getValues,
         setError,
-        formState: {errors, isSubmitting},
+        formState: { errors, isSubmitting },
     } = useForm<DoctorFormInputs>({
         resolver: zodResolver(doctorSchema),
     });
@@ -51,7 +55,7 @@ export function CadastroMedico() {
             const senha = getValues('password');
             const confirmacao = getValues('confirmPassword');
             if (senha !== confirmacao) {
-                setError('confirmPassword', {type: 'manual', message: 'As senhas não coincidem.'});
+                setError('confirmPassword', { type: 'manual', message: 'As senhas não coincidem.' });
                 return;
             }
         }
@@ -62,15 +66,35 @@ export function CadastroMedico() {
     const prevStep = () => setStep(step - 1);
 
     const onSubmit = async (data: DoctorFormInputs) => {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log('Dados do Médico prontos para o Java Spring:', data);
-        alert("Cadastro Médico simulado com sucesso!");
+        try {
+            const response = await fetch('/api/auth/register-doctor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                alert('Cadastro de médico realizado com sucesso! Você já pode fazer login no seu consultório virtual.');
+                navigate('/login');
+            } else {
+                const errorMsg = await response.text();
+                setError('root', {
+                    type: 'server',
+                    message: errorMsg || 'Ocorreu um erro ao processar o cadastro.',
+                });
+            }
+        } catch (error) {
+            setError('root', {
+                type: 'network',
+                message: 'Falha na comunicação com o servidor. Tente novamente mais tarde.',
+            });
+        }
     };
 
-    const {onChange: cpfOnChange, ...cpfRegister} = register('cpf');
-    const {onChange: phoneOnChange, ...phoneRegister} = register('phone');
-    const {onChange: crmOnChange, ...crmRegister} = register('crm');
-    const {onChange: ufOnChange, ...ufRegister} = register('ufCrm');
+    const { onChange: cpfOnChange, ...cpfRegister } = register('cpf');
+    const { onChange: phoneOnChange, ...phoneRegister } = register('phone');
+    const { onChange: crmOnChange, ...crmRegister } = register('crm');
+    const { onChange: ufOnChange, ...ufRegister } = register('ufCrm');
 
     return (
         <div className="w-full animate-fade-in py-4">
@@ -86,28 +110,42 @@ export function CadastroMedico() {
                 {/* === ETAPA 1: ACESSO === */}
                 {step === 1 && (
                     <div className="animate-fade-in space-y-5">
-                        <h3 className="font-bold text-brand-mint border-b border-brand-pot/50 pb-2">1. Dados de
-                            Acesso</h3>
+                        <h3 className="font-bold text-brand-mint border-b border-brand-pot/50 pb-2">1. Dados de Acesso</h3>
                         <div>
                             <label className="block text-sm font-bold text-brown-dark mb-1">E-mail Profissional</label>
-                            <input type="email" placeholder="dr@email.com"
-                                   className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none" {...register('email')} />
-                            {errors.email &&
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.email.message}</p>}
+                            <input
+                                type="email"
+                                placeholder="dr@email.com"
+                                className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none"
+                                {...register('email')}
+                            />
+                            {errors.email && (
+                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.email.message}</p>
+                            )}
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-brown-dark mb-1">Senha</label>
-                            <input type="password" placeholder="Mínimo 6 caracteres"
-                                   className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none" {...register('password')} />
-                            {errors.password &&
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.password.message}</p>}
+                            <input
+                                type="password"
+                                placeholder="Mínimo 6 caracteres"
+                                className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none"
+                                {...register('password')}
+                            />
+                            {errors.password && (
+                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.password.message}</p>
+                            )}
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-brown-dark mb-1">Confirme sua Senha</label>
-                            <input type="password" placeholder="Digite a senha novamente"
-                                   className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none" {...register('confirmPassword')} />
-                            {errors.confirmPassword &&
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.confirmPassword.message}</p>}
+                            <input
+                                type="password"
+                                placeholder="Digite a senha novamente"
+                                className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none"
+                                {...register('confirmPassword')}
+                            />
+                            {errors.confirmPassword && (
+                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.confirmPassword.message}</p>
+                            )}
                         </div>
                     </div>
                 )}
@@ -115,110 +153,151 @@ export function CadastroMedico() {
                 {/* === ETAPA 2: DADOS PROFISSIONAIS === */}
                 {step === 2 && (
                     <div className="animate-fade-in space-y-5">
-                        <h3 className="font-bold text-brand-mint border-b border-brand-pot/50 pb-2">2. Identificação
-                            Profissional</h3>
+                        <h3 className="font-bold text-brand-mint border-b border-brand-pot/50 pb-2">2. Identificação Profissional</h3>
                         <div>
                             <label className="block text-sm font-bold text-brown-dark mb-1">Nome Completo</label>
-                            <input type="text" placeholder="Nome e sobrenome"
-                                   className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none" {...register('fullName')} />
-                            {errors.fullName &&
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.fullName.message}</p>}
+                            <input
+                                type="text"
+                                placeholder="Nome e sobrenome"
+                                className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none"
+                                {...register('fullName')}
+                            />
+                            {errors.fullName && (
+                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.fullName.message}</p>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-bold text-brown-dark mb-1">CPF</label>
-                                <input type="text" placeholder="000.000.000-00"
-                                       className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none" {...cpfRegister}
-                                       onChange={(e) => {
-                                           e.target.value = applyCpfMask(e.target.value);
-                                           cpfOnChange(e);
-                                       }}/>
-                                {errors.cpf &&
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.cpf.message}</p>}
+                                <input
+                                    type="text"
+                                    placeholder="000.000.000-00"
+                                    className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none"
+                                    {...cpfRegister}
+                                    onChange={(e) => {
+                                        e.target.value = applyCpfMask(e.target.value);
+                                        cpfOnChange(e);
+                                    }}
+                                />
+                                {errors.cpf && (
+                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.cpf.message}</p>
+                                )}
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-brown-dark mb-1">Celular
-                                    (WhatsApp)</label>
-                                <input type="tel" placeholder="(00) 00000-0000"
-                                       className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none" {...phoneRegister}
-                                       onChange={(e) => {
-                                           e.target.value = applyPhoneMask(e.target.value);
-                                           phoneOnChange(e);
-                                       }}/>
-                                {errors.phone &&
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.phone.message}</p>}
+                                <label className="block text-sm font-bold text-brown-dark mb-1">Celular (WhatsApp)</label>
+                                <input
+                                    type="tel"
+                                    placeholder="(00) 00000-0000"
+                                    className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none"
+                                    {...phoneRegister}
+                                    onChange={(e) => {
+                                        e.target.value = applyPhoneMask(e.target.value);
+                                        phoneOnChange(e);
+                                    }}
+                                />
+                                {errors.phone && (
+                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.phone.message}</p>
+                                )}
                             </div>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4">
                             <div className="col-span-2">
                                 <label className="block text-sm font-bold text-brown-dark mb-1">CRM</label>
-                                <input type="text" placeholder="Apenas números"
-                                       className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none" {...crmRegister}
-                                       onChange={(e) => {
-                                           e.target.value = applyCrmMask(e.target.value);
-                                           crmOnChange(e);
-                                       }}/>
-                                {errors.crm &&
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.crm.message}</p>}
+                                <input
+                                    type="text"
+                                    placeholder="Apenas números"
+                                    className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none"
+                                    {...crmRegister}
+                                    onChange={(e) => {
+                                        e.target.value = applyCrmMask(e.target.value);
+                                        crmOnChange(e);
+                                    }}
+                                />
+                                {errors.crm && (
+                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.crm.message}</p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-brown-dark mb-1">Estado (UF)</label>
-                                <input type="text" placeholder="Ex: SP"
-                                       className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none text-center" {...ufRegister}
-                                       onChange={(e) => {
-                                           e.target.value = applyUfMask(e.target.value);
-                                           ufOnChange(e);
-                                       }}/>
-                                {errors.ufCrm &&
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.ufCrm.message}</p>}
+                                <input
+                                    type="text"
+                                    placeholder="Ex: SP"
+                                    className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-mint focus:ring-4 focus:ring-brand-mint/20 outline-none text-center"
+                                    {...ufRegister}
+                                    onChange={(e) => {
+                                        e.target.value = applyUfMask(e.target.value);
+                                        ufOnChange(e);
+                                    }}
+                                />
+                                {errors.ufCrm && (
+                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.ufCrm.message}</p>
+                                )}
                             </div>
                         </div>
-                        <p className="text-xs text-brown italic">Obs: Solicitaremos foto do seu CRM no dashboard para
-                            liberar as teleconsultas.</p>
+                        <p className="text-xs text-brown italic">Obs: Solicitaremos foto do seu CRM no dashboard para liberar as teleconsultas.</p>
                     </div>
                 )}
 
                 {/* === ETAPA 3: CONSENTIMENTOS === */}
                 {step === 3 && (
                     <div className="animate-fade-in space-y-5">
-                        <h3 className="font-bold text-brand-mint border-b border-brand-pot/50 pb-2">3. Responsabilidades
-                            Legais</h3>
-                        <p className="text-brown text-sm">Para atender na Active Age, você deve estar ciente das regras
-                            do Conselho Federal de Medicina.</p>
+                        <h3 className="font-bold text-brand-mint border-b border-brand-pot/50 pb-2">3. Responsabilidades Legais</h3>
+                        <p className="text-brown text-sm">Para atender na Active Age, você deve estar ciente das regras do Conselho Federal de Medicina.</p>
 
-                        <label
-                            className="flex items-start gap-3 p-4 border border-brand-pot/50 rounded-xl bg-brand-pot/5 cursor-pointer hover:bg-brand-mint/10 transition-colors">
-                            <input type="checkbox"
-                                   className="mt-1 w-5 h-5 accent-brand-mint" {...register('termsAccepted')} />
+                        <label className="flex items-start gap-3 p-4 border border-brand-pot/50 rounded-xl bg-brand-pot/5 cursor-pointer hover:bg-brand-mint/10 transition-colors">
+                            <input
+                                type="checkbox"
+                                className="mt-1 w-5 h-5 accent-brand-mint"
+                                {...register('termsAccepted')}
+                            />
                             <span className="text-sm text-brown-dark">
-                Declaro que as informações fornecidas são verdadeiras, estou com o CRM ativo, e aceito os <Link
-                                to="/termos" target="_blank" className="text-brand-mint font-bold hover:underline">Termos de Uso</Link> assumindo total responsabilidade ética pelo ato médico na plataforma.
-              </span>
+                                Declaro que as informações fornecidas são verdadeiras, estou com o CRM ativo, e aceito os{' '}
+                                <Link to="/termos" target="_blank" className="text-brand-mint font-bold hover:underline">
+                                    Termos de Uso
+                                </Link>{' '}
+                                assumindo total responsabilidade ética pelo ato médico na plataforma.
+                            </span>
                         </label>
-                        {errors.termsAccepted &&
-                            <p className="text-red-500 text-sm mt-1 font-bold">{errors.termsAccepted.message}</p>}
+                        {errors.termsAccepted && (
+                            <p className="text-red-500 text-sm mt-1 font-bold">{errors.termsAccepted.message}</p>
+                        )}
+
+                        {errors.root && (
+                            <div className="bg-red-50 text-red-600 p-4 rounded-lg font-bold border border-red-200 text-sm text-center">
+                                {errors.root.message}
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {/* === BOTÕES === */}
                 <div className="flex gap-4 pt-6 mt-4 border-t border-brand-pot/30">
                     {step > 1 && (
-                        <button type="button" onClick={prevStep}
-                                className="btn-secondary w-1/3 flex justify-center items-center gap-2 py-4">
-                            <ArrowLeft size={20}/> Voltar
+                        <button
+                            type="button"
+                            onClick={prevStep}
+                            className="btn-secondary w-1/3 flex justify-center items-center gap-2 py-4"
+                        >
+                            <ArrowLeft size={20} /> Voltar
                         </button>
                     )}
 
                     {step < 3 ? (
-                        <button type="button" onClick={nextStep}
-                                className={`bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold rounded-xl transition-all flex justify-center items-center gap-2 py-4 ${step === 1 ? 'w-full' : 'w-2/3'}`}>
-                            Próximo <ArrowRight size={20}/>
+                        <button
+                            type="button"
+                            onClick={nextStep}
+                            className={`bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold rounded-xl transition-all flex justify-center items-center gap-2 py-4 ${step === 1 ? 'w-full' : 'w-2/3'}`}
+                        >
+                            Próximo <ArrowRight size={20} />
                         </button>
                     ) : (
-                        <button type="submit" disabled={isSubmitting}
-                                className="bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold rounded-xl transition-all w-2/3 flex justify-center items-center gap-2 py-4 disabled:opacity-70">
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold rounded-xl transition-all w-2/3 flex justify-center items-center gap-2 py-4 disabled:opacity-70"
+                        >
                             {isSubmitting ? 'Criando Consultório...' : 'Finalizar Cadastro'}
                         </button>
                     )}
