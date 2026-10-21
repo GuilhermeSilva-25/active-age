@@ -2,6 +2,7 @@ package com.activeage.core.services;
 
 import com.activeage.core.domain.enums.Role;
 import com.activeage.core.domain.models.User;
+import com.activeage.core.dtos.requests.DoctorRegisterRequest;
 import com.activeage.core.dtos.requests.LoginRequest;
 import com.activeage.core.dtos.requests.PatientRegisterRequest;
 import com.activeage.core.repositories.UserRepository;
@@ -13,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -67,6 +70,36 @@ public class AuthService {
         user.setBirthDate(request.getBirthDate());
         user.setTermsAccepted(request.isTermsAccepted());
         user.setRole(Role.ROLE_PACIENTE);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setActive(true);
+
+        return userRepository.save(user);
+    }
+
+    /**
+     * Registra um novo médico geriatra na plataforma verificando duplicidade de e-mail,
+     * criptografando a senha com BCrypt e configurando a permissão ROLE_MEDICO.
+     *
+     * @param request DTO com os dados profissionais do médico.
+     * @return O objeto User do médico persistido no MongoDB.
+     */
+    public User registerDoctor(DoctorRegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Este e-mail já está em uso.");
+        }
+
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setCpf(request.getCpf());
+        user.setPhone(request.getPhone());
+        user.setCrm(request.getCrm());
+        user.setUfCrm(request.getUfCrm().toUpperCase());
+        user.setTermsAccepted(request.isTermsAccepted());
+        user.setRole(Role.ROLE_MEDICO);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setActive(true);
 
         return userRepository.save(user);
     }
@@ -92,5 +125,15 @@ public class AuthService {
         }
 
         return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+    }
+
+    /**
+     * Busca os dados do usuário autenticado a partir do e-mail extraído do token JWT.
+     *
+     * @param email E-mail do usuário.
+     * @return Optional contendo o usuário se encontrado.
+     */
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

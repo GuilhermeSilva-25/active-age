@@ -66,6 +66,16 @@ public class User {
     private Role role;
 
     /**
+     * Registro profissional no Conselho Regional de Medicina (Exclusivo para ROLE_MEDICO).
+     */
+    private String crm;
+
+    /**
+     * Unidade Federativa do CRM do médico (Ex: SP, RJ - Exclusivo para ROLE_MEDICO).
+     */
+    private String ufCrm;
+
+    /**
      * Indicador de consentimento dos termos de uso e política de privacidade (TCLE).
      * Registro obrigatório para a conformidade com a LGPD.
      */
