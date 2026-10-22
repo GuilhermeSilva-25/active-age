@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { applyCpfMask, applyPhoneMask, applyCrmMask, applyUfMask } from '../../utils/masks';
 import { ProgressBar } from '../../components/auth/ProgressBar';
+import { FeedbackModal } from '../../components/common/FeedbackModal';
 
 const doctorSchema = z.object({
     email: z.string().email('E-mail inválido.'),
@@ -32,6 +33,7 @@ type DoctorFormInputs = z.infer<typeof doctorSchema>;
 export function CadastroMedico() {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     const {
         register,
@@ -74,8 +76,7 @@ export function CadastroMedico() {
             });
 
             if (response.ok) {
-                alert('Cadastro de médico realizado com sucesso! Você já pode fazer login no seu consultório virtual.');
-                navigate('/login');
+                setIsSuccessModalOpen(true);
             } else {
                 const errorMsg = await response.text();
                 setError('root', {
@@ -304,6 +305,15 @@ export function CadastroMedico() {
                 </div>
 
             </form>
+
+            <FeedbackModal
+                isOpen={isSuccessModalOpen}
+                type="success"
+                title="Cadastro Realizado com Sucesso!"
+                message="Seu cadastro médico foi registrado no Active Age. Você já pode acessar seu consultório virtual e iniciar seus atendimentos."
+                confirmText="Fazer Login Agora"
+                onConfirm={() => navigate('/login')}
+            />
         </div>
     );
 }

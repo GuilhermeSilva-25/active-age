@@ -34,6 +34,7 @@ O **Plano de Release** formaliza o planejamento e as entregas incrementais do si
 | **REL-07** | **Navbar Reativa & Acessível** | Barra de navegação com alternância dinâmica: exibe *"Olá, Nome (Perfil)"* e botão *"Sair"* quando autenticado; botões de login/cadastro quando anônimo. | Concluído ✅ |
 | **REL-08** | **Identidade Visual & Favicon Oficial** | Substituição dos assets do Vite pelo favicon personalizado (coração + eletrocardiograma terracota) e título semântico da aba. | Concluído ✅ |
 | **REL-09** | **Documentação OpenAPI / Swagger** | Endpoints documentados e testáveis interativamente em `/swagger-ui/index.html` e `/v3/api-docs`. | Concluído ✅ |
+| **REL-10** | **Sistema de Modais Acessíveis (IHC / WCAG)** | Componente reutilizável `FeedbackModal.tsx` substituindo alerts nativos bloqueantes. Suporte a variantes (sucesso, erro, alerta, info), ícones Lucide descritivos, backdrop blur e botões com alvos táteis ampliados (48px+) para geriatria. | Concluído ✅ |
 
 #### 2.2. Critérios de Aceite Validados (Testes BDD)
 - [x] Cadastro de paciente com e-mail duplicado bloqueado com mensagem amigável.
@@ -42,6 +43,7 @@ O **Plano de Release** formaliza o planejamento e as entregas incrementais do si
 - [x] Senhas criptografadas com hash irreversível no MongoDB Atlas.
 - [x] Login com 5 senhas erradas aciona trava de 15 minutos do Bucket4j.
 - [x] Logout apaga a credencial e restabelece a Navbar no estado público.
+- [x] Comunicação de sucesso/erro via modal acessível (`FeedbackModal`) com foco gerenciado e alvos táteis ampliados para geriatria (WCAG 2.1 AA).
 
 ---
 

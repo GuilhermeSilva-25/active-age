@@ -85,6 +85,7 @@ As mensagens de commit no Git devem seguir obrigatoriamente a convenção:
 * **Contraste:** Todo texto deve respeitar a taxa mínima de contraste de 4.5:1 (Nível AA).
 * **Fontes:** Tamanho mínimo de fonte padrão para idosos: `text-base` (16px) e inputs grandes (`py-3`, `text-lg`).
 * **Leitores de Tela:** Elementos de formulário e barras de progresso devem conter marcações semânticas ARIA (`role`, `aria-label`, `aria-current`, `sr-only`).
+* **Diálogos e Modais de Feedback:** Proibição de diálogos nativos bloqueantes (`window.alert()`). Utilização obrigatória do componente acessível `FeedbackModal.tsx` com foco gerenciado via teclado (`ref.current.focus()`), fechamento por tecla `Escape`, alvos táteis mínimos de 48px e contraste WCAG AA.
 
 ---
 

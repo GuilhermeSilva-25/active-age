@@ -34,7 +34,7 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
   * *Data de Nascimento:* `12/05/1955` (idade: 71 anos)
   * *Celular/WhatsApp:* `(11) 98765-4321`
   * *Aceite dos Termos de Uso e LGPD:* `Marcado (true)`
-* **Então** o sistema grava o registro no banco com status ativo E criptografa a senha com hash BCrypt E atribui a permissão `ROLE_PACIENTE` E exibe a mensagem de sucesso *"Cadastro realizado com sucesso! Você já pode fazer login."* E redireciona o usuário para a tela de Login.
+* **Então** o sistema grava o registro no banco com status ativo E criptografa a senha com hash BCrypt E atribui a permissão `ROLE_PACIENTE` E exibe o modal acessível `FeedbackModal` com título *"Cadastro Realizado com Sucesso!"* E ao clicar em *"Fazer Login Agora"* redireciona o usuário para a tela de Login.
 
 ---
 
@@ -106,7 +106,7 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
   * *CRM:* `181500`
   * *UF do CRM:* `SP`
   * *Aceite dos Termos de Responsabilidade Médica (CFM):* `Marcado (true)`
-* **Então** o sistema cadastra o médico no banco com o CRM e a UF informados E criptografa a senha com BCrypt E atribui a permissão `ROLE_MEDICO` E exibe a mensagem *"Cadastro de médico realizado com sucesso! Você já pode fazer login no seu consultório virtual."* E redireciona para a tela de Login.
+* **Então** o sistema cadastra o médico no banco com o CRM e a UF informados E criptografa a senha com BCrypt E atribui a permissão `ROLE_MEDICO` E exibe o modal acessível `FeedbackModal` com título *"Cadastro Realizado com Sucesso!"* E ao clicar em *"Fazer Login Agora"* redireciona para a tela de Login.
 
 ---
 

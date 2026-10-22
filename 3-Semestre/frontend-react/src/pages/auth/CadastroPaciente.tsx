@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { applyCpfMask, applyPhoneMask } from "../../utils/masks";
 import { ProgressBar } from "../../components/auth/ProgressBar";
+import { FeedbackModal } from "../../components/common/FeedbackModal";
 
 const patientSchema = z
   .object({
@@ -58,6 +59,7 @@ type PatientFormInputs = z.infer<typeof patientSchema>;
 export function CadastroPaciente() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const {
     register,
@@ -107,8 +109,7 @@ export function CadastroPaciente() {
       });
 
       if (response.ok) {
-        alert("Cadastro realizado com sucesso! Você já pode fazer login.");
-        navigate("/login");
+        setIsSuccessModalOpen(true);
       } else {
         const errorMsg = await response.text();
         setError("root", {
@@ -367,6 +368,14 @@ export function CadastroPaciente() {
           )}
         </div>
       </form>
+      <FeedbackModal
+        isOpen={isSuccessModalOpen}
+        type="success"
+        title="Cadastro Realizado com Sucesso!"
+        message="Seu cadastro foi realizado no Active Age. Agora você já pode fazer login e acessar seu painel de saúde."
+        confirmText="Fazer Login Agora"
+        onConfirm={() => navigate("/login")}
+      />
     </div>
   );
 }
