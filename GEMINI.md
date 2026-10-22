@@ -60,9 +60,10 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Entidade `User` com campos médicos (`crm`, `ufCrm`).
   - DTO de validação `DoctorRegisterRequest` com Jakarta.
   - Criptografia BCrypt no `AuthService`.
-  - Endpoints de autenticação: `POST /api/auth/register-doctor`, `GET /api/auth/me`, `POST /api/auth/logout`.
+  - Endpoints de autenticação: `POST /api/auth/register-doctor`, `GET /api/auth/me`, `POST /api/auth/logout`, `GET /api/auth/check-email`.
   - Frontend integrado com formulário real, feedback de erro/sucesso e Navbar reativa.
   - Sistema de modais acessíveis com `FeedbackModal.tsx` em substituição ao `window.alert()`.
+  - Checagem assíncrona de e-mail prévio na Etapa 1 e alternância de visibilidade de senhas (olhinho).
   - Deploy no Render e Vercel funcionando em produção.
 - **Release v0.2.0 (Sprint 2) — [PRÓXIMA ETAPA A INICIAR]:**
   - Micro Tarefa 1.2: Componente `ProtectedRoute.tsx` no React para proteção de rotas privadas.

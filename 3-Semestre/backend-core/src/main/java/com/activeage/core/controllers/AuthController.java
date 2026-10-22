@@ -57,6 +57,23 @@ public class AuthController {
     }
 
     /**
+     * Endpoint público para verificar a disponibilidade de um e-mail antes do avanço de etapas de cadastro.
+     *
+     * @param email E-mail a ser pesquisado.
+     * @return 200 OK com mapa JSON { "available": boolean, "message": string }.
+     */
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmailAvailability(@RequestParam String email) {
+        boolean available = authService.isEmailAvailable(email);
+        Map<String, Object> response = new HashMap<>();
+        response.put("available", available);
+        if (!available) {
+            response.put("message", "Este e-mail já está em uso.");
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Endpoint público para realizar login.
      * Ao autenticar com sucesso, retorna um Cookie Seguro (HttpOnly) contendo o Token JWT.
      *

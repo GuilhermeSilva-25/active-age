@@ -35,15 +35,19 @@ O **Plano de Release** formaliza o planejamento e as entregas incrementais do si
 | **REL-08** | **Identidade Visual & Favicon Oficial** | Substituição dos assets do Vite pelo favicon personalizado (coração + eletrocardiograma terracota) e título semântico da aba. | Concluído ✅ |
 | **REL-09** | **Documentação OpenAPI / Swagger** | Endpoints documentados e testáveis interativamente em `/swagger-ui/index.html` e `/v3/api-docs`. | Concluído ✅ |
 | **REL-10** | **Sistema de Modais Acessíveis (IHC / WCAG)** | Componente reutilizável `FeedbackModal.tsx` substituindo alerts nativos bloqueantes. Suporte a variantes (sucesso, erro, alerta, info), ícones Lucide descritivos, backdrop blur e botões com alvos táteis ampliados (48px+) para geriatria. | Concluído ✅ |
+| **REL-11** | **Validação Antecipada de E-mail (Etapa 1)** | Endpoint `GET /api/auth/check-email` e verificação assíncrona com feedback imediato no avanço da Etapa 1 dos cadastros, impedindo transição se o e-mail já existir. | Concluído ✅ |
+| **REL-12** | **Controle de Visibilidade de Senha (IHC / WCAG)** | Alternância dinâmica (`Eye` / `EyeOff`) nos campos de senha (Login e Cadastros), permitindo ao público idoso auditar o que digitou. | Concluído ✅ |
 
 #### 2.2. Critérios de Aceite Validados (Testes BDD)
 - [x] Cadastro de paciente com e-mail duplicado bloqueado com mensagem amigável.
+- [x] Transição da Etapa 1 bloqueada imediatamente se o e-mail já estiver cadastrado.
 - [x] Paciente menor de 18 anos impedido de submeter o cadastro.
 - [x] Cadastro de médico com CRM inválido impedido pelo schema de validação.
 - [x] Senhas criptografadas com hash irreversível no MongoDB Atlas.
 - [x] Login com 5 senhas erradas aciona trava de 15 minutos do Bucket4j.
 - [x] Logout apaga a credencial e restabelece a Navbar no estado público.
 - [x] Comunicação de sucesso/erro via modal acessível (`FeedbackModal`) com foco gerenciado e alvos táteis ampliados para geriatria (WCAG 2.1 AA).
+- [x] Alternância de visualização de senhas nos campos de login e cadastro.
 
 ---
 

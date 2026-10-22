@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { applyCpfMask, applyPhoneMask } from "../../utils/masks";
 import { ProgressBar } from "../../components/auth/ProgressBar";
 import { FeedbackModal } from "../../components/common/FeedbackModal";
@@ -60,6 +60,9 @@ export function CadastroPaciente() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
 
   const {
     register,
@@ -90,6 +93,27 @@ export function CadastroPaciente() {
           message: "As senhas não coincidem.",
         });
         return;
+      }
+
+      setIsCheckingEmail(true);
+      try {
+        const emailVal = getValues("email");
+        const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(emailVal)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.available) {
+            setError("email", {
+              type: "manual",
+              message: data.message || "Este e-mail já está em uso.",
+            });
+            setIsCheckingEmail(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao verificar e-mail:", err);
+      } finally {
+        setIsCheckingEmail(false);
       }
     }
 
@@ -172,12 +196,22 @@ export function CadastroPaciente() {
               <label className="block text-sm font-bold text-brown-dark mb-1">
                 Senha
               </label>
-              <input
-                type="password"
-                placeholder="Mínimo 6 caracteres"
-                className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/20 outline-none"
-                {...register("password")}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Mínimo 6 caracteres"
+                  className="w-full pl-4 pr-12 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/20 outline-none"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-brown-light hover:text-brown-dark transition-colors focus:outline-none"
+                  aria-label={showPassword ? "Ocultar senha" : "Exibir senha"}
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1 font-bold">
                   {errors.password.message}
@@ -188,12 +222,22 @@ export function CadastroPaciente() {
               <label className="block text-sm font-bold text-brown-dark mb-1">
                 Confirme sua Senha
               </label>
-              <input
-                type="password"
-                placeholder="Digite a senha novamente"
-                className="w-full px-4 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/20 outline-none"
-                {...register("confirmPassword")}
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Digite a senha novamente"
+                  className="w-full pl-4 pr-12 py-3 rounded-lg border border-brand-pot/80 focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/20 outline-none"
+                  {...register("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-brown-light hover:text-brown-dark transition-colors focus:outline-none"
+                  aria-label={showConfirmPassword ? "Ocultar senha" : "Exibir senha"}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-red-500 text-sm mt-1 font-bold">
                   {errors.confirmPassword.message}
@@ -353,9 +397,18 @@ export function CadastroPaciente() {
             <button
               type="button"
               onClick={nextStep}
-              className={`btn-primary flex justify-center items-center gap-2 py-4 ${step === 1 ? "w-full" : "w-2/3"}`}
+              disabled={isCheckingEmail}
+              className={`btn-primary flex justify-center items-center gap-2 py-4 ${step === 1 ? "w-full" : "w-2/3"} disabled:opacity-70`}
             >
-              Próximo <ArrowRight size={20} />
+              {isCheckingEmail ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" /> Verificando...
+                </>
+              ) : (
+                <>
+                  Próximo <ArrowRight size={20} />
+                </>
+              )}
             </button>
           ) : (
             <button

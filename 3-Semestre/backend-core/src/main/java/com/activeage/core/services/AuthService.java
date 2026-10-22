@@ -136,4 +136,17 @@ public class AuthService {
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    /**
+     * Verifica a disponibilidade de um endereço de e-mail na base de dados.
+     *
+     * @param email E-mail a ser verificado.
+     * @return true se o e-mail estiver disponível para cadastro, false caso já exista.
+     */
+    public boolean isEmailAvailable(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        return !userRepository.existsByEmail(email.trim());
+    }
 }

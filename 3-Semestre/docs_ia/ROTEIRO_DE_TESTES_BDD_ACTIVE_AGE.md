@@ -40,14 +40,14 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ### Cenário 2: Cadastro de Paciente com E-mail Inválido ou Duplicado
 * **Dado que** o usuário tenta cadastrar um endereço de `<e-mail>`
-* **Quando** confirma a submissão dos dados de acesso
-* **Então** o sistema rejeita a operação e apresenta a `<mensagem>` correspondente
+* **Quando** clica no botão "Próximo" na Etapa 1
+* **Então** o sistema rejeita a operação com a `<mensagem>` correspondente e bloqueia o avanço para a Etapa 2
 
 | Caso de Teste | E-mail Fornecido | Senha | Confirmação | Mensagem Esperada / Comportamento |
 |---|---|---|---|---|
 | TC-PAC-01 | `antonio.silva` | `Senha123` | `Senha123` | *"E-mail inválido."* |
 | TC-PAC-02 | *(vazio)* | `Senha123` | `Senha123` | *"E-mail inválido."* |
-| TC-PAC-03 | `antonio@email.com` *(já cadastrado)* | `Senha123` | `Senha123` | *"Este e-mail já está em uso."* |
+| TC-PAC-03 | `antonio@email.com` *(já cadastrado)* | `Senha123` | `Senha123` | *"Este e-mail já está em uso."* (bloqueia avanço para a Etapa 2) |
 
 ---
 
@@ -82,6 +82,19 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 | Caso de Teste | E-mail | Senha | Confirmação | Mensagem Esperada |
 |---|---|---|---|---|
 | TC-PAC-07 | luiza@email.com | `Segredo123` | `Segredo999` | *"As senhas não coincidem."* |
+
+---
+
+### Cenário 6: Visualização e Ocultação de Senha (IHC / Acessibilidade)
+* **Dado que** o usuário está na tela de Login ou na Etapa 1 do Cadastro (Paciente ou Médico)
+* **Quando** digita sua senha e clica no ícone do "olho" (`Eye`)
+* **Então** o texto da senha é revelado (`type="text"`) e o ícone alterna para o olho riscado (`EyeOff`)
+* **E** ao clicar novamente, a senha volta a ficar oculta (`type="password"`)
+
+| Caso de Teste | Campo Testado | Ação do Usuário | Comportamento Esperado |
+|---|---|---|---|
+| TC-PAC-08 | Senha | Clicar no botão do olho | Alterna entre visível e oculto instantaneamente |
+| TC-PAC-09 | Confirme sua Senha | Clicar no botão do olho | Alterna de forma independente sem alterar o campo de senha principal |
 
 ---
 

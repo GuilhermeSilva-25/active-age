@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Por favor, insira um e-mail válido."),
@@ -13,6 +14,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 
 export function Login() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -113,15 +115,27 @@ export function Login() {
             </div>
             <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              className={`w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-4 focus:outline-none transition-all ${
+              className={`w-full pl-10 pr-12 py-3 rounded-lg border focus:ring-4 focus:outline-none transition-all ${
                 errors.password
                   ? "border-red-500 focus:ring-red-200 bg-red-50"
                   : "border-brand-pot/80 focus:border-brand-orange focus:ring-brand-orange/20 bg-white"
               }`}
               {...register("password")}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-brown-light hover:text-brown-dark transition-colors focus:outline-none"
+              aria-label={showPassword ? "Ocultar senha" : "Exibir senha"}
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
           </div>
           {errors.password && (
             <p className="mt-1 text-sm text-red-600 font-bold">
