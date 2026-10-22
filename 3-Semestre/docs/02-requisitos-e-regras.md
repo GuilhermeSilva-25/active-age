@@ -27,7 +27,7 @@ Definem os atributos de qualidade, tecnologia e segurança da plataforma (Atuali
 | ID | Categoria | Descrição |
 |---|---|---|
 | **RNF001** | Arquitetura (Front) | O Front-End será uma SPA desenvolvida em **React com TypeScript** e Vite, hospedado na plataforma **Vercel**. |
-| **RNF002** | Arquitetura (Back) | O Back-End principal será construído em **Java 21 com Spring Boot**, hospedado na plataforma **Railway**. |
+| **RNF002** | Arquitetura (Back) | O Back-End principal será construído em **Java 21 com Spring Boot**, hospedado na plataforma **Render** (Docker container). |
 | **RNF003** | Arquitetura (Banco) | A persistência de dados será feita no **MongoDB Atlas** (NoSQL), ideal para lidar com a variação estrutural de Prontuários e Documentos Médicos. |
 | **RNF004** | Microsserviços | Integrações externas (APIs de Pagamento, Vídeo e/ou PDF) serão delegadas para **Microsserviços**, não bloqueando o *thread pool* da API principal. |
 | **RNF005** | Documentação | A API Restful deve ser documentada via OpenAPI (**Swagger** / `springdoc-openapi`) e as classes/métodos devem possuir **Javadoc**. |

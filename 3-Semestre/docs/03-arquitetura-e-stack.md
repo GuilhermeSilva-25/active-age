@@ -7,7 +7,7 @@ Este documento descreve as decisões de System Design, infraestrutura e as ferra
 | Camada | Tecnologia Principal | Hospedagem | Descrição |
 |---|---|---|---|
 | **Front-End** | **React + Vite** (TypeScript) | **Vercel** | Aplicação construída como SPA (Single Page Application). Vite é utilizado pelo tempo de *build* ultrarrápido. TypeScript garante segurança de tipagem. |
-| **Back-End** | **Java 21 + Spring Boot** | **Railway** | API RESTful responsável pelo *Core Domain*. Utiliza os módulos Spring Web, Spring Security e Spring Data. |
+| **Back-End** | **Java 21 + Spring Boot** | **Render** | API RESTful responsável pelo *Core Domain*. Utiliza os módulos Spring Web, Spring Security e Spring Data. |
 | **Banco de Dados** | **MongoDB** (NoSQL) | **Mongo Atlas** | Banco orientado a documentos (JSON/BSON), permitindo flexibilidade na estruturação de prontuários médicos e armazenamento de arquivos via *GridFS*. |
 
 ## 2. Visão Lógica (Arquitetura do Back-End)
