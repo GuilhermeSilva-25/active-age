@@ -68,10 +68,11 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Tratador Global de Exceções (`GlobalExceptionHandler`) mapeando erros de credenciais para HTTP 400 Bad Request.
   - Linha conectora de etapas no `ProgressBar` e ícone `AlertCircle` em todas as mensagens de erro (IHC/WCAG).
   - Deploy no Render e Vercel funcionando em produção.
-- **Release v0.2.0 (Sprint 2) — [PRÓXIMA ETAPA A INICIAR]:**
-  - Micro Tarefa 1.2: Componente `ProtectedRoute.tsx` no React para proteção de rotas privadas.
-  - Telas segregadas de Dashboard: `DashboardPaciente.tsx` e `DashboardMedico.tsx`.
-  - Módulo de Credenciamento Médico: UC03 (Upload de CRM com validação de formato e tamanho) e UC04 (Aprovação/Reprovação por Perfil Admin).
+- **Release v0.2.0 (Sprint 2) — [EM ANDAMENTO]:**
+  - Micro Tarefa 2.1 [CONCLUÍDA]: Blindagem RBAC com `ProtectedRoute.tsx`, `AdminLayout.tsx`, `AdminDashboard.tsx` e Seeding de Administrador (`admin@activeage.com` / `AdminPassword2026!`).
+  - Micro Tarefa 2.2 [PRÓXIMA ETAPA]: Módulo de Credenciamento Médico (UC03 Upload de CRM e UC04 Fila de Validação/Aprovação Admin com justificativa).
+  - Micro Tarefa 2.3: Gestão de Usuários & Trilha de Auditoria (`audit_logs`).
+  - Micro Tarefa 2.4: Dashboards segregados de Paciente e Médico.
 
 ---
 

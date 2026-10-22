@@ -77,12 +77,11 @@ gantt
 
 #### 📅 Sprint 2 — Release v0.2.0: Proteção de Rotas, Dashboards e Moderação (UC03, UC04, UC05)
 * **Objetivo:** Fornecer a área logada para Pacientes e Médicos, estruturar a guarda de rotas na SPA e criar o painel de moderação administrativa de CRM.
-* **Entregas Previstas:**
-  1. Componente `ProtectedRoute` no React para barrar acessos não autenticados a páginas internas.
-  2. **Dashboard do Paciente:** Visualização de resumo, atalho para busca de médicos e lista de próximas consultas.
-  3. **Dashboard do Médico:** Visualização de resumo, status da validação do CRM e atalho para gestão de agenda.
-  4. **Upload do CRM (UC03):** Interface para o médico enviar foto da carteira profissional do CRM/RQE.
-  5. **Painel do Administrador (UC04 / UC05):** Área restrita com role `ROLE_ADMIN` para aprovar, rejeitar ou suspender contas de médicos.
+* **Status das Entregas:**
+  - [x] **Micro Tarefa 2.1 (Concluída ✅):** Componente `ProtectedRoute.tsx` com validação de RBAC, Layout Administrativo (`AdminLayout.tsx`), Painel Inicial (`AdminDashboard.tsx`) e Seeding automático de usuário `ROLE_ADMIN` (`DataInitializer.java`).
+  - [ ] **Micro Tarefa 2.2 (A Fazer ⏳):** Módulo de Credenciamento Médico (Upload de CRM, Fila de espera e Aprovação/Reprovação pelo Admin com justificativa).
+  - [ ] **Micro Tarefa 2.3 (A Fazer ⏳):** Gestão de Usuários & Trilha de Auditoria Imutável (Coleção `audit_logs`).
+  - [ ] **Micro Tarefa 2.4 (A Fazer ⏳):** Dashboards segregados de Paciente e Médico (`DashboardPaciente.tsx` e `DashboardMedico.tsx`).
 
 ---
 

@@ -13,6 +13,10 @@ import {CadastroPaciente} from './pages/auth/CadastroPaciente';
 import {CadastroMedico} from './pages/auth/CadastroMedico';
 import {RecuperarSenha} from './pages/auth/RecuperarSenha';
 
+import {ProtectedRoute} from './components/auth/ProtectedRoute';
+import {AdminLayout} from './layouts/AdminLayout';
+import {AdminDashboard} from './pages/admin/AdminDashboard';
+
 function App() {
     return (
         <Router>
@@ -33,6 +37,16 @@ function App() {
                     <Route path="/cadastro-paciente" element={<CadastroPaciente/>}/>
                     <Route path="/cadastro-medico" element={<CadastroMedico/>}/>
                     <Route path="/recuperar-senha" element={<RecuperarSenha/>}/>
+                </Route>
+
+                {/* === Grupo 3: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}
+                <Route element={<ProtectedRoute requiredRole="ROLE_ADMIN"/>}>
+                    <Route element={<AdminLayout/>}>
+                        <Route path="/admin" element={<AdminDashboard/>}/>
+                        <Route path="/admin/medicos" element={<AdminDashboard/>}/>
+                        <Route path="/admin/usuarios" element={<AdminDashboard/>}/>
+                        <Route path="/admin/auditoria" element={<AdminDashboard/>}/>
+                    </Route>
                 </Route>
             </Routes>
         </Router>

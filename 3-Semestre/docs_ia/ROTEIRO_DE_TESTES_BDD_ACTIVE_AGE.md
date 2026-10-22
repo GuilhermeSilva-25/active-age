@@ -192,6 +192,51 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 4. Funcionalidade: Controle de Acesso Baseado em Papéis (RBAC) & Painel Admin (Micro Tarefa 2.1)
+
+### História de Usuário (User Story)
+* **Como** um Administrador do sistema
+* **Eu quero** acessar uma área restrita e protegida por permissão `ROLE_ADMIN`
+* **Para que** eu possa gerenciar credenciais de médicos, moderar usuários e auditar logs com segurança
+
+---
+
+### Cenário 1: Acesso Não Autenticado a Rota Protegida (Caminho Triste)
+* **Dado que** um usuário anônimo (sem cookie de sessão ativo) digita diretamente a URL `/admin`
+* **Quando** o componente `ProtectedRoute` intercepta o acesso
+* **Então** o sistema barra o carregamento do painel administrativo E redireciona o usuário imediatamente para a tela de Login (`/login`).
+
+| Caso de Teste | URL Solicitada | Estado da Sessão | Comportamento Esperado |
+|---|---|---|---|
+| TC-ADM-01 | `/admin` | Não autenticado | Redirecionamento automático para `/login` |
+
+---
+
+### Cenário 2: Acesso com Perfil Sem Privilégio Administrativo (Caminho Triste)
+* **Dado que** o usuário está autenticado com perfil `ROLE_PACIENTE` ou `ROLE_MEDICO`
+* **Quando** tenta acessar a URL `/admin`
+* **Então** o componente `ProtectedRoute` identifica a divergência de permissão E exibe a tela de *"Acesso Restrito"* com botão para retornar à página inicial, impedindo a visualização dos dados de gestão.
+
+| Caso de Teste | Perfil Logado | Rota Alvo | Comportamento Esperado |
+|---|---|---|---|
+| TC-ADM-02 | `ROLE_PACIENTE` | `/admin` | Exibe tela de "Acesso Restrito" |
+| TC-ADM-03 | `ROLE_MEDICO` | `/admin` | Exibe tela de "Acesso Restrito" |
+
+---
+
+### Cenário 3: Autenticação de Administrador e Acesso ao Painel (Caminho Feliz)
+* **Dado que** o usuário possui as credenciais de administrador semeadas no banco:
+  * *E-mail:* `admin@activeage.com`
+  * *Senha:* `AdminPassword2026!`
+* **Quando** realiza o login com sucesso e navega para `/admin`
+* **Então** o `ProtectedRoute` autoriza o acesso E o layout administrativo (`AdminLayout`) é renderizado com a barra lateral de gestão, indicador de `ROLE_ADMIN` e os cards de métricas operacionais (`AdminDashboard`).
+
+| Caso de Teste | E-mail | Senha | Perfil | Comportamento Esperado |
+|---|---|---|---|---|
+| TC-ADM-04 | `admin@activeage.com` | `AdminPassword2026!` | `ROLE_ADMIN` | Acesso concedido ao Painel Administrativo (`/admin`) |
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.
