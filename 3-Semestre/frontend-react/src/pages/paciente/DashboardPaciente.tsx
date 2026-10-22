@@ -1,0 +1,358 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+    CalendarPlus,
+    Calendar,
+    FileHeart,
+    HelpCircle,
+    User,
+    HeartPulse,
+    Clock,
+    Sparkles,
+    PhoneCall,
+    LogOut,
+    CheckCircle2
+} from 'lucide-react';
+import { FeedbackModal } from '../../components/common/FeedbackModal';
+
+interface PatientProfile {
+    id: string;
+    fullName: string;
+    email: string;
+    role: string;
+    phone?: string;
+    birthDate?: string;
+    active: boolean;
+}
+
+export function DashboardPaciente() {
+    const navigate = useNavigate();
+    const [profile, setProfile] = useState<PatientProfile | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    // Feedback Modal
+    const [feedback, setFeedback] = useState<{
+        isOpen: boolean;
+        type: 'success' | 'error' | 'warning' | 'info';
+        title: string;
+        message: string;
+    }>({
+        isOpen: false,
+        type: 'info',
+        title: '',
+        message: '',
+    });
+
+    useEffect(() => {
+        const loadProfile = async () => {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const data: PatientProfile = await response.json();
+                    setProfile(data);
+                } else {
+                    navigate('/login');
+                }
+            } catch (err) {
+                console.error('Erro ao buscar perfil do paciente:', err);
+                navigate('/login');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadProfile();
+    }, [navigate]);
+
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (err) {
+            console.error('Erro ao efetuar logout:', err);
+        } finally {
+            navigate('/login');
+        }
+    };
+
+    const handleFeatureNotice = (featureName: string, releaseDetail: string) => {
+        setFeedback({
+            isOpen: true,
+            type: 'info',
+            title: featureName,
+            message: `${releaseDetail} Fique tranquilo, estamos preparando um ambiente seguro e de fácil acesso para você!`,
+        });
+    };
+
+    // Formatador de data humanizado em português
+    const todayFormatted = new Intl.DateTimeFormat('pt-BR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date());
+
+    const capitalizedDate = todayFormatted.charAt(0).toUpperCase() + todayFormatted.slice(1);
+    const firstName = profile?.fullName ? profile.fullName.split(' ')[0] : 'Paciente';
+
+    return (
+        <div className="min-h-screen bg-[#FDFBF7] text-brown-dark font-sans pb-16">
+            {/* Barra Superior de Boas-Vindas */}
+            <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-brand-orange/10 border-2 border-brand-orange/30 flex items-center justify-center text-brand-orange shadow-inner">
+                            <User className="w-7 h-7" />
+                        </div>
+                        <div>
+                            <span className="text-xs font-bold uppercase tracking-wider text-brand-orange block">
+                                Portal do Paciente & Cuidador
+                            </span>
+                            <h1 className="text-xl sm:text-2xl font-black text-brown-dark">
+                                Olá, {loading ? '...' : firstName}!
+                            </h1>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => handleFeatureNotice('Canais de Suporte & Cuidador', 'Nosso atendimento telefônico e via WhatsApp geriátrico está disponível de segunda a sexta, das 8h às 19h.')}
+                            className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-brand-pot bg-brand-pot/10 hover:bg-brand-pot/30 text-brown-dark text-sm font-bold transition-all shadow-xs"
+                            title="Precisa de ajuda com a plataforma?"
+                        >
+                            <PhoneCall className="w-4 h-4 text-brand-orange" />
+                            Precisa de Ajuda?
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-bold transition-all shadow-xs"
+                            title="Encerrar sessão com segurança"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            <span className="hidden sm:inline">Sair com Segurança</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+                {/* Saudação com Data e Mensagem Humanizada */}
+                <div className="bg-gradient-to-r from-orange-50 via-white to-amber-50 rounded-3xl p-6 sm:p-8 border border-orange-200/60 shadow-sm relative overflow-hidden">
+                    <div className="relative z-10 max-w-2xl">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-orange/15 text-brand-orange text-xs sm:text-sm font-bold mb-3">
+                            <Sparkles className="w-4 h-4" />
+                            {capitalizedDate}
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-black text-brown-dark tracking-tight mb-2">
+                            Que bom ter você aqui com a gente.
+                        </h2>
+                        <p className="text-brown-light text-base sm:text-lg leading-relaxed">
+                            Cuidar da sua saúde e bem-estar nunca foi tão simples. Aqui você pode agendar consultas com médicos geriatras especializados, consultar suas receitas e acessar suas salas de atendimento sem sair de casa.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Grid de Ações Rápidas Táteis Ampliadas (IHC Geriátrico) */}
+                <div>
+                    <h3 className="text-xl sm:text-2xl font-black text-brown-dark mb-4 flex items-center gap-2">
+                        <HeartPulse className="w-6 h-6 text-brand-orange" />
+                        O que você deseja fazer hoje?
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* Card 1: Agendar Teleconsulta */}
+                        <div
+                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A Vitrine de Médicos Geriatras e a escolha de horários livres sem sobreposição serão ativadas na próxima Release v0.3.0!')}
+                            role="button"
+                            tabIndex={0}
+                            className="group p-6 sm:p-7 rounded-2xl bg-white border-2 border-brand-orange/30 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                        >
+                            <div className="flex items-start gap-4">
+                                <div className="w-14 h-14 rounded-2xl bg-brand-orange/10 border border-brand-orange/20 flex items-center justify-center text-brand-orange shrink-0 group-hover:scale-105 transition-transform">
+                                    <CalendarPlus className="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h4 className="text-xl font-black text-brown-dark group-hover:text-brand-orange transition-colors">
+                                        Agendar Consulta Geriátrica
+                                    </h4>
+                                    <p className="text-brown-light text-base mt-1.5 leading-snug">
+                                        Encontre médicos especialistas credenciados, confira dias e horários livres e marque sua teleconsulta com facilidade.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-brand-pot/30 flex items-center justify-between">
+                                <span className="text-xs font-bold uppercase tracking-wider text-brand-orange">
+                                    Disponível na v0.3.0
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 text-sm font-black text-brand-orange group-hover:translate-x-1 transition-transform">
+                                    Marcar Consulta →
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Card 2: Minhas Consultas Agendadas */}
+                        <div
+                            onClick={() => handleFeatureNotice('Minhas Consultas', 'Seu histórico e acompanhamento em tempo real de consultas agendadas estará disponível junto ao módulo de agenda.')}
+                            role="button"
+                            tabIndex={0}
+                            className="group p-6 sm:p-7 rounded-2xl bg-white border-2 border-brand-pot/60 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                        >
+                            <div className="flex items-start gap-4">
+                                <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0 group-hover:scale-105 transition-transform">
+                                    <Calendar className="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h4 className="text-xl font-black text-brown-dark group-hover:text-brand-orange transition-colors">
+                                        Minhas Consultas & Horários
+                                    </h4>
+                                    <p className="text-brown-light text-base mt-1.5 leading-snug">
+                                        Veja detalhes dos seus compromissos médicos agendados, links da sala de teleconsulta e instruções prévias.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-brand-pot/30 flex items-center justify-between">
+                                <span className="text-xs font-bold uppercase tracking-wider text-brown-light">
+                                    0 consultas pendentes
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 text-sm font-black text-brown-dark group-hover:text-brand-orange group-hover:translate-x-1 transition-transform">
+                                    Ver Meus Horários →
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Card 3: Meu Cofre de Saúde & Documentos */}
+                        <div
+                            onClick={() => handleFeatureNotice('Cofre de Documentos de Saúde', 'O módulo com download seguro de Receitas Digitais, Pedidos de Exames e Atestados com assinatura ICP-Brasil será entregue na Release v0.4.0!')}
+                            role="button"
+                            tabIndex={0}
+                            className="group p-6 sm:p-7 rounded-2xl bg-white border-2 border-brand-pot/60 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                        >
+                            <div className="flex items-start gap-4">
+                                <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 shrink-0 group-hover:scale-105 transition-transform">
+                                    <FileHeart className="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h4 className="text-xl font-black text-brown-dark group-hover:text-brand-orange transition-colors">
+                                        Meu Cofre de Saúde
+                                    </h4>
+                                    <p className="text-brown-light text-base mt-1.5 leading-snug">
+                                        Acesse suas receitas com assinatura digital ICP-Brasil, pedidos de exames laboratoriais e laudos anteriores com total sigilo.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-brand-pot/30 flex items-center justify-between">
+                                <span className="text-xs font-bold uppercase tracking-wider text-blue-700">
+                                    Conformidade CFM / LGPD
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 text-sm font-black text-brown-dark group-hover:text-brand-orange group-hover:translate-x-1 transition-transform">
+                                    Abrir Cofre →
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Card 4: Ajuda & Conexão com Cuidador */}
+                        <div
+                            onClick={() => handleFeatureNotice('Ajuda e Cuidador Familiar', 'Nossos canais de suporte contam com atendimento humanizado para esclarecer dúvidas sobre áudio, vídeo e agendamentos.')}
+                            role="button"
+                            tabIndex={0}
+                            className="group p-6 sm:p-7 rounded-2xl bg-white border-2 border-brand-pot/60 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                        >
+                            <div className="flex items-start gap-4">
+                                <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0 group-hover:scale-105 transition-transform">
+                                    <HelpCircle className="w-8 h-8" />
+                                </div>
+                                <div>
+                                    <h4 className="text-xl font-black text-brown-dark group-hover:text-brand-orange transition-colors">
+                                        Suporte & Cuidador Familiar
+                                    </h4>
+                                    <p className="text-brown-light text-base mt-1.5 leading-snug">
+                                        Orientações passo a passo para conectar seu cuidador, testar câmera e microfone e tirar dúvidas frequentes.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-brand-pot/30 flex items-center justify-between">
+                                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                                    Acessibilidade Geriátrica
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 text-sm font-black text-brown-dark group-hover:text-brand-orange group-hover:translate-x-1 transition-transform">
+                                    Obter Ajuda →
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Seção: Próximas Consultas (Estado Vazio Amigável) */}
+                <div className="bg-white rounded-3xl border border-brand-pot/40 p-6 sm:p-8 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-brand-pot/30 gap-4">
+                        <div>
+                            <h3 className="text-xl sm:text-2xl font-black text-brown-dark">
+                                Próxima Consulta Agendada
+                            </h3>
+                            <p className="text-brown-light text-sm mt-0.5">
+                                Acompanhe os horários marcados com seus especialistas
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A vitrine com busca inteligente de médicos geriatras estará ativa na Release v0.3.0!')}
+                            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
+                        >
+                            <CalendarPlus className="w-4 h-4" />
+                            Buscar Médico Geriatra
+                        </button>
+                    </div>
+
+                    {/* Empty State Acolhedor */}
+                    <div className="py-12 text-center max-w-md mx-auto">
+                        <div className="w-16 h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-4">
+                            <Clock className="w-8 h-8" />
+                        </div>
+                        <h4 className="text-lg font-bold text-brown-dark mb-1">
+                            Nenhuma consulta marcada no momento
+                        </h4>
+                        <p className="text-brown-light text-sm leading-relaxed mb-6">
+                            Você não possui nenhuma teleconsulta agendada para os próximos dias. Agende uma conversa preventiva com nossos médicos geriatras.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A vitrine com busca inteligente de médicos geriatras estará ativa na Release v0.3.0!')}
+                            className="px-6 py-3 rounded-xl border border-brand-orange text-brand-orange hover:bg-orange-50 font-bold text-sm transition-all inline-flex items-center gap-2"
+                        >
+                            <CalendarPlus className="w-4 h-4" />
+                            Agendar Minha Primeira Consulta
+                        </button>
+                    </div>
+                </div>
+
+                {/* Card de Dica de Saúde Geriátrica & Longevidade */}
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200/80 flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block">
+                            Dica de Longevidade Ativa • Equipe Multidisciplinar Active Age
+                        </span>
+                        <h4 className="text-lg font-bold text-brown-dark mt-0.5">
+                            Hidratação diária e rotina de sono
+                        </h4>
+                        <p className="text-brown-dark/80 text-sm mt-1 leading-relaxed">
+                            A percepção de sede pode diminuir com o passar dos anos. Mantenha uma garrafinha de água fresca por perto ao longo do dia e evite telas luminosas pelo menos 1 hora antes de dormir para melhorar a qualidade do seu repouso.
+                        </p>
+                    </div>
+                </div>
+            </main>
+
+            {/* Modal de Feedback Acessível */}
+            <FeedbackModal
+                isOpen={feedback.isOpen}
+                type={feedback.type}
+                title={feedback.title}
+                message={feedback.message}
+                onConfirm={() => setFeedback({ ...feedback, isOpen: false })}
+            />
+        </div>
+    );
+}

@@ -33,6 +33,31 @@ export function Login() {
       });
 
       if (response.ok) {
+        // Redirecionamento inteligente baseado no perfil do usuário autenticado
+        try {
+          const meRes = await fetch("/api/auth/me");
+          if (meRes.ok) {
+            const profile = await meRes.json();
+            if (profile.role === "ROLE_ADMIN") {
+              navigate("/admin");
+              return;
+            }
+            if (profile.role === "ROLE_MEDICO") {
+              if (profile.dossierStatus === "APPROVED") {
+                navigate("/medico/dashboard");
+              } else {
+                navigate("/medico/credenciamento");
+              }
+              return;
+            }
+            if (profile.role === "ROLE_PACIENTE") {
+              navigate("/paciente/dashboard");
+              return;
+            }
+          }
+        } catch (meError) {
+          console.error("Erro ao identificar perfil pós-login:", meError);
+        }
         navigate("/");
       } else {
         const errorText = await response.text();

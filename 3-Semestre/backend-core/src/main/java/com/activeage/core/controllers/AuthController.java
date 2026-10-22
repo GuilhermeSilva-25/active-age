@@ -125,6 +125,14 @@ public class AuthController {
         profile.put("role", user.getRole().name());
         profile.put("crm", user.getCrm());
         profile.put("ufCrm", user.getUfCrm());
+        profile.put("cpf", user.getCpf());
+        profile.put("phone", user.getPhone());
+        profile.put("birthDate", user.getBirthDate());
+        profile.put("active", user.isActive());
+        profile.put("dossierStatus", user.getDossierStatus() != null ? user.getDossierStatus().name() : null);
+        profile.put("rejectionReason", user.getRejectionReason());
+        profile.put("trialExpiresAt", user.getTrialExpiresAt());
+        profile.put("approvedAt", user.getApprovedAt());
 
         return ResponseEntity.ok(profile);
     }

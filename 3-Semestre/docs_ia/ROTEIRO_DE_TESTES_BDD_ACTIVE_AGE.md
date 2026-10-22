@@ -379,6 +379,54 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 5. Funcionalidade: Dashboards Segregados e Redirecionamento Pós-Login (UC01, UC02, UC03, UC08, UC10)
+
+### História de Usuário (User Story)
+* **Como** um Paciente idoso, Cuidador ou Médico Geriatra
+* **Eu quero** ser direcionado após o login para um ambiente específico às minhas necessidades
+* **Para que** eu possa acessar minhas teleconsultas com máxima acessibilidade (Paciente) ou operar meu consultório virtual em conformidade com as exigências do CFM (Médico)
+
+---
+
+### Cenário 1: Redirecionamento Inteligente e Acessibilidade do Paciente (Caminho Feliz)
+* **Dado que** o paciente `antonio.silva@email.com` (`ROLE_PACIENTE`) realiza login com sucesso
+* **Quando** a autenticação é concluída
+* **Então** o sistema redireciona automaticamente para `/paciente/dashboard` E renderiza botões táteis ampliados para o público idoso (WCAG 2.1 AA) E exibe atalhos para agendamento, consultas, cofre de saúde e suporte.
+
+---
+
+### Cenário 2: Redirecionamento de Médico com Dossiê Pendente e Exibição de Banner Regulatório (Caminho Feliz / CFM)
+* **Dado que** o médico `carlos.med@email.com` (`ROLE_MEDICO`) possui o status de dossiê `PENDING_DOCS` ou `UNDER_REVIEW`
+* **Quando** realiza o login na plataforma
+* **Então** o sistema direciona para `/medico/credenciamento` ou para `/medico/dashboard` exibindo um banner proeminente de aviso da Resolução CFM nº 2.314/2022 E mantém bloqueadas as ferramentas clínicas de abertura de agenda e teleconsulta até a aprovação.
+
+| Caso de Teste | Status do Dossiê | Ação Pós-Login | Comportamento do Consultório |
+|---|---|---|---|
+| TC-DSH-01 | `PENDING_DOCS` | Alerta de envio de documentos pendente | Ferramentas clínicas bloqueadas com botão para completar dossiê |
+| TC-DSH-02 | `UNDER_REVIEW` | Alerta de análise em andamento pelo auditor | Consultório bloqueado aguardando homologação do CRM |
+| TC-DSH-03 | `DOCS_REJECTED` | Alerta vermelho com justificativa técnica | Consultório bloqueado com botão para retificar documento |
+
+---
+
+### Cenário 3: Redirecionamento de Médico Homologado para o Consultório Virtual (Caminho Feliz)
+* **Dado que** a médica `helena.med@email.com` (`ROLE_MEDICO`) possui o status de dossiê `APPROVED`
+* **Quando** realiza o login com sucesso
+* **Então** o sistema redireciona diretamente para `/medico/dashboard` E exibe o selo de homologação do CRM E apresenta as métricas de consultório, a degustação SaaS de 15 dias e os atalhos clínicos ativados.
+
+---
+
+### Cenário 4: Tentativa de Acesso a Painel Cruzado não Autorizado (Caminho Triste / RBAC)
+* **Dado que** o paciente está autenticado com `ROLE_PACIENTE`
+* **Quando** tenta digitar diretamente na barra do navegador a URL `/medico/dashboard` ou `/admin`
+* **Então** o componente `ProtectedRoute.tsx` intercepta o acesso E impede a exibição da tela E redireciona o usuário para seu painel permitido ou para a página inicial.
+
+| Caso de Teste | Perfil Autenticado | Rota Tentada | Resultado Esperado |
+|---|---|---|---|
+| TC-DSH-04 | `ROLE_PACIENTE` | `/admin` ou `/medico/dashboard` | Acesso bloqueado por RBAC com redirecionamento protetivo |
+| TC-DSH-05 | `ROLE_MEDICO` | `/admin` | Acesso bloqueado por RBAC com redirecionamento protetivo |
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

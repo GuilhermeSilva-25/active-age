@@ -75,13 +75,13 @@ gantt
 
 ---
 
-#### 📅 Sprint 2 — Release v0.2.0: Proteção de Rotas, Dashboards e Moderação (UC03, UC04, UC05)
+#### 📅 Sprint 2 — Release v0.2.0: Proteção de Rotas, Dashboards e Moderação (UC03, UC04, UC05) — [CONCLUÍDA ✅]
 * **Objetivo:** Fornecer a área logada para Pacientes e Médicos, estruturar a guarda de rotas na SPA e criar o painel de moderação administrativa de CRM.
 * **Status das Entregas:**
   - [x] **Micro Tarefa 2.1 (Concluída ✅):** Componente `ProtectedRoute.tsx` com validação de RBAC, Layout Administrativo (`AdminLayout.tsx`), Painel Inicial (`AdminDashboard.tsx`) e Seeding automático de usuário `ROLE_ADMIN` (`DataInitializer.java`).
   - [x] **Micro Tarefa 2.2 (Concluída ✅):** Módulo de Credenciamento Médico Integral (Dossiê Ético-Profissional em 4 Pilares: Habilitação, Regularidade Ética, Telemedicina ICP-Brasil Res. CFM nº 2.314/2022 e Dados Financeiros; Upload progressivo seguro com armazenamento isolado; Fila de Auditoria do Admin com conferência de checklist, visualizador seguro de documentos, trilha de auditoria `audit_logs` e aprovação/rejeição com justificativa obrigatória).
   - [x] **Micro Tarefa 2.3 (Concluída ✅):** Gestão de Usuários & Trilha de Auditoria Imutável (Listagem de Pacientes, Médicos e Admins com filtros por papel e status; Moderação com soft-lock e trava de auto-inativação; Painel de Trilha de Auditoria global em `audit_logs` com contadores 24h, filtros por tipo de evento e modal de inspeção detalhada em conformidade com CFM e SBIS NGS1).
-  - [ ] **Micro Tarefa 2.4 (A Fazer ⏳):** Dashboards segregados de Paciente e Médico (`DashboardPaciente.tsx` e `DashboardMedico.tsx`).
+  - [x] **Micro Tarefa 2.4 (Concluída ✅):** Dashboards Segregados de Paciente e Médico (`DashboardPaciente.tsx` com acessibilidade WCAG 2.1 AA e botões táteis ampliados para o público idoso; `DashboardMedico.tsx` com banner regulatório condicional da Res. CFM nº 2.314/2022, métricas de consultório e degustação SaaS de 15 dias; Redirecionamento inteligente pós-login e Navbar reativa).
 
 ---
 

@@ -70,11 +70,13 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Tratador Global de Exceções (`GlobalExceptionHandler`) mapeando erros de credenciais para HTTP 400 Bad Request.
   - Linha conectora de etapas no `ProgressBar` e ícone `AlertCircle` em todas as mensagens de erro (IHC/WCAG).
   - Deploy no Render e Vercel funcionando em produção.
-- **Release v0.2.0 (Sprint 2) — [EM ANDAMENTO]:**
+- **Release v0.2.0 (Sprint 2) — [CONCLUÍDA / PRONTA PARA PRODUÇÃO]:**
   - Micro Tarefa 2.1 [CONCLUÍDA]: Blindagem RBAC com `ProtectedRoute.tsx`, `AdminLayout.tsx`, `AdminDashboard.tsx` e Seeding de Administrador (`admin@activeage.com` / `AdminPassword2026!`).
   - Micro Tarefa 2.2 [CONCLUÍDA]: Módulo de Credenciamento Médico Integral (Dossiê em 4 Pilares: Habilitação, Regularidade Ética, Telemedicina ICP-Brasil Res. CFM nº 2.314/2022 e Dados Financeiros; Upload seguro privado, Trilha de Auditoria `audit_logs` e Fila de Auditoria do Admin com aprovação/rejeição com justificativa obrigatória).
   - Micro Tarefa 2.3 [CONCLUÍDA]: Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`) com moderação de status, trava de auto-bloqueio, contadores 24h e conformidade SBIS NGS1/LGPD Art. 37.
-  - Micro Tarefa 2.4 [PRÓXIMA ETAPA]: Dashboards segregados de Paciente e Médico (`DashboardPaciente.tsx` e `DashboardMedico.tsx`).
+  - Micro Tarefa 2.4 [CONCLUÍDA]: Dashboards segregados de Paciente (`DashboardPaciente.tsx` com acessibilidade WCAG 2.1 AA) e Médico (`DashboardMedico.tsx` com banner regulatório Res. CFM nº 2.314/2022, métricas de consultório e degustação SaaS de 15 dias), roteamento inteligente pós-login e Navbar reativa.
+- **Release v0.3.0 (Sprint 3) — [PRÓXIMA ETAPA]:**
+  - Vitrine de Horários Livres, Gestão de Agenda Médica e Agendamento Concorrente sem Double-Booking (UC08, UC09, UC10 / RN001, RN002).
 
 ---
 

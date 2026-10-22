@@ -19,7 +19,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-02** | **Micro Tarefa 2.1: Blindagem RBAC, Layout Administrativo e Seed Admin** | UC01, UC02, UC04 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.1_BLINDAGEM_RBAC_E_LAYOUT_ADMIN.md](./SPEC_SDD_MICRO_TAREFA_2.1_BLINDAGEM_RBAC_E_LAYOUT_ADMIN.md) |
 | **SPEC-03** | **Micro Tarefa 2.2: Módulo de Credenciamento Médico Integral (Dossiê 4 Pilares e Auditoria Admin)** | UC03, UC04, UC05 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.2_CREDENCIAMENTO_MEDICO.md](./SPEC_SDD_MICRO_TAREFA_2.2_CREDENCIAMENTO_MEDICO.md) |
 | **SPEC-04** | **Micro Tarefa 2.3: Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`)** | UC01, UC02, UC04, UC05 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.3_GESTAO_USUARIOS_E_AUDITORIA.md](./SPEC_SDD_MICRO_TAREFA_2.3_GESTAO_USUARIOS_E_AUDITORIA.md) |
-| **SPEC-05** | **Micro Tarefa 2.4: Dashboards Segregados de Paciente e Médico** | UC01, UC02, UC03, UC07, UC08, UC09, UC10, UC12, UC14, UC16 | **Submetida / Em Aprovação ⏳** | [SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md](./SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md) |
+| **SPEC-05** | **Micro Tarefa 2.4: Dashboards Segregados de Paciente e Médico** | UC01, UC02, UC03, UC07, UC08, UC09, UC10, UC12, UC14, UC16 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md](./SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md) |
 
 ---
 

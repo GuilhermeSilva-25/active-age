@@ -1,7 +1,7 @@
 # ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MICRO TAREFA 2.4
 ## Dashboards Segregados de Paciente e Médico (`DashboardPaciente.tsx` e `DashboardMedico.tsx`)
 ### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Submetida para Aprovação do PO (Guilherme) ⏳  
+**Status:** Concluída e Homologada ✅  
 **Data:** 22 de Outubro de 2026  
 **Casos de Uso Cobertos:** UC01, UC02, UC03, UC07, UC08, UC09, UC10, UC12, UC14, UC16 (Centralização dos Fluxos de Pacientes e Médicos)  
 **Requisitos Atendidos:** RF001, RF002, RF003, RF004, RF008, RNF001, RNF002, RNF004 (Acessibilidade IHC/WCAG 2.1 AA), RNF007, RN007  
@@ -164,12 +164,12 @@ flowchart TD
 
 ### 6. Critérios de Aceite da Spec (DoD)
 
-- [ ] Usuário com perfil `ROLE_PACIENTE` autenticado é redirecionado após o login para `/paciente/dashboard`.
-- [ ] O `DashboardPaciente.tsx` apresenta interface de alta acessibilidade com fontes legíveis, botões táteis ampliados e atalhos para agendamento, consultas e cofre de saúde.
-- [ ] Usuário com perfil `ROLE_MEDICO` autenticado é redirecionado após o login para `/medico/dashboard` ou `/medico/credenciamento`.
-- [ ] O `DashboardMedico.tsx` exibe banner informativo claro caso o status do CRM esteja como `PENDING_DOCS`, `UNDER_REVIEW` ou `DOCS_REJECTED`, impedindo o uso clínico antes da homologação.
-- [ ] O `DashboardMedico.tsx` com status `APPROVED` exibe métricas do consultório, status da assinatura (15 dias grátis) e atalhos para a agenda e teleconsulta.
-- [ ] Tentativas de acessar `/paciente/dashboard` sem autenticação ou com papel indevido são barradas pelo `ProtectedRoute.tsx`.
-- [ ] Tentativas de acessar `/medico/dashboard` sem autenticação ou com papel indevido são barradas pelo `ProtectedRoute.tsx`.
-- [ ] O `Navbar.tsx` apresenta atalho direto *"Meu Painel"* para o usuário autenticado.
-- [ ] Toda a compilação do TypeScript/Vite e do Spring Boot roda com zero erros.
+- [x] Usuário com perfil `ROLE_PACIENTE` autenticado é redirecionado após o login para `/paciente/dashboard`.
+- [x] O `DashboardPaciente.tsx` apresenta interface de alta acessibilidade com fontes legíveis, botões táteis ampliados e atalhos para agendamento, consultas e cofre de saúde.
+- [x] Usuário com perfil `ROLE_MEDICO` autenticado é redirecionado após o login para `/medico/dashboard` ou `/medico/credenciamento`.
+- [x] O `DashboardMedico.tsx` exibe banner informativo claro caso o status do CRM esteja como `PENDING_DOCS`, `UNDER_REVIEW` ou `DOCS_REJECTED`, impedindo o uso clínico antes da homologação.
+- [x] O `DashboardMedico.tsx` com status `APPROVED` exibe métricas do consultório, status da assinatura (15 dias grátis) e atalhos para a agenda e teleconsulta.
+- [x] Tentativas de acessar `/paciente/dashboard` sem autenticação ou com papel indevido são barradas pelo `ProtectedRoute.tsx`.
+- [x] Tentativas de acessar `/medico/dashboard` sem autenticação ou com papel indevido são barradas pelo `ProtectedRoute.tsx`.
+- [x] O `Navbar.tsx` apresenta atalho direto *"Meu Painel"* para o usuário autenticado.
+- [x] Toda a compilação do TypeScript/Vite e do Spring Boot roda com zero erros.

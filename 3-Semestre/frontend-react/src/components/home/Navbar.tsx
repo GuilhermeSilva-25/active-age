@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, User as UserIcon } from 'lucide-react';
+import { Menu, X, LogOut, User as UserIcon, LayoutDashboard } from 'lucide-react';
 import logoImg from '../../assets/logo-active-age.png';
 
 interface UserProfile {
@@ -10,6 +10,7 @@ interface UserProfile {
   role: 'ROLE_PACIENTE' | 'ROLE_MEDICO' | 'ROLE_ADMIN';
   crm?: string;
   ufCrm?: string;
+  dossierStatus?: string;
 }
 
 export function Navbar() {
@@ -52,6 +53,14 @@ export function Navbar() {
     return 'Paciente';
   };
 
+  const getDashboardPath = (role: string, dossierStatus?: string) => {
+    if (role === 'ROLE_ADMIN') return '/admin';
+    if (role === 'ROLE_MEDICO') {
+      return dossierStatus === 'APPROVED' ? '/medico/dashboard' : '/medico/credenciamento';
+    }
+    return '/paciente/dashboard';
+  };
+
   const firstName = currentUser?.fullName ? currentUser.fullName.split(' ')[0] : '';
 
   return (
@@ -74,6 +83,14 @@ export function Navbar() {
             <div className="flex items-center space-x-4 border-l-2 border-brand-pot pl-8 ml-4">
               {currentUser ? (
                 <>
+                  <Link
+                    to={getDashboardPath(currentUser.role, currentUser.dossierStatus)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-orange text-white text-xs font-bold hover:bg-brand-orange/90 transition-all shadow-xs"
+                    title="Acessar painel do usuário"
+                  >
+                    <LayoutDashboard size={15} />
+                    Meu Painel
+                  </Link>
                   <div className="flex items-center gap-2 text-brown-dark font-medium px-3 py-1.5 rounded-lg bg-brand-pot/20">
                     <UserIcon size={18} className="text-brand-orange" />
                     <span className="text-sm">
@@ -125,6 +142,14 @@ export function Navbar() {
             <div className="border-t border-brand-pot/50 my-2"></div>
             {currentUser ? (
               <>
+                <Link
+                  to={getDashboardPath(currentUser.role, currentUser.dossierStatus)}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full text-left px-3 py-3 text-brand-orange font-bold hover:bg-orange-50 rounded-md flex items-center gap-2"
+                >
+                  <LayoutDashboard size={18} />
+                  Acessar Meu Painel
+                </Link>
                 <div className="px-3 py-2 text-sm text-brown-dark font-medium bg-brand-pot/20 rounded-md">
                   Conectado como <strong>{currentUser.fullName}</strong> ({getRoleLabel(currentUser.role)})
                 </div>
