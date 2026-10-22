@@ -70,8 +70,8 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Deploy no Render e Vercel funcionando em produção.
 - **Release v0.2.0 (Sprint 2) — [EM ANDAMENTO]:**
   - Micro Tarefa 2.1 [CONCLUÍDA]: Blindagem RBAC com `ProtectedRoute.tsx`, `AdminLayout.tsx`, `AdminDashboard.tsx` e Seeding de Administrador (`admin@activeage.com` / `AdminPassword2026!`).
-  - Micro Tarefa 2.2 [PRÓXIMA ETAPA]: Módulo de Credenciamento Médico (UC03 Upload de CRM e UC04 Fila de Validação/Aprovação Admin com justificativa).
-  - Micro Tarefa 2.3: Gestão de Usuários & Trilha de Auditoria (`audit_logs`).
+  - Micro Tarefa 2.2 [PRÓXIMA ETAPA / SPEC EM APROVAÇÃO]: Módulo de Credenciamento Médico Integral (Dossiê em 4 Pilares: Habilitação, Regularidade Ética, Telemedicina ICP-Brasil Res. CFM nº 2.314/2022 e Dados Financeiros; Upload seguro privado, Trilha de Auditoria `audit_logs` e Fila de Auditoria do Admin com aprovação/rejeição com justificativa obrigatória).
+  - Micro Tarefa 2.3: Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`).
   - Micro Tarefa 2.4: Dashboards segregados de Paciente e Médico.
 
 ---

@@ -281,7 +281,7 @@ export function CadastroMedico() {
                                 )}
                             </div>
                         </div>
-                        <p className="text-xs text-brown italic">Obs: Solicitaremos foto do seu CRM no dashboard para liberar as teleconsultas.</p>
+                        <p className="text-xs text-brown italic">Obs: Para conformidade com a Resolução CFM nº 2.314/2022 e segurança dos pacientes, após a conclusão do pré-cadastro você enviará os documentos do Dossiê de Credenciamento no painel para liberação do consultório.</p>
                     </div>
                 )}
 
@@ -298,11 +298,14 @@ export function CadastroMedico() {
                                 {...register('termsAccepted')}
                             />
                             <span className="text-sm text-brown-dark">
-                                Declaro que as informações fornecidas são verdadeiras, estou com o CRM ativo, e aceito os{' '}
+                                Declaro que as informações fornecidas são verdadeiras, estou com o CRM ativo, aceito os{' '}
                                 <Link to="/termos" target="_blank" className="text-brand-mint font-bold hover:underline">
                                     Termos de Uso
                                 </Link>{' '}
-                                assumindo total responsabilidade ética pelo ato médico na plataforma.
+                                e a{' '}
+                                <Link to="/privacidade" target="_blank" className="text-brand-mint font-bold hover:underline">
+                                    Política de Privacidade
+                                </Link>, e estou ciente da obrigatoriedade do envio do Dossiê de Credenciamento e comprovação de Certificado ICP-Brasil para atuação em telemedicina (Res. CFM nº 2.314/2022).
                             </span>
                         </label>
                         {errors.termsAccepted && (
@@ -352,7 +355,7 @@ export function CadastroMedico() {
                             disabled={isSubmitting}
                             className="bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold rounded-xl transition-all w-2/3 flex justify-center items-center gap-2 py-4 disabled:opacity-70"
                         >
-                            {isSubmitting ? 'Criando Consultório...' : 'Finalizar Cadastro'}
+                            {isSubmitting ? 'Registrando...' : 'Finalizar Pré-Cadastro'}
                         </button>
                     )}
                 </div>
@@ -362,8 +365,8 @@ export function CadastroMedico() {
             <FeedbackModal
                 isOpen={isSuccessModalOpen}
                 type="success"
-                title="Cadastro Realizado com Sucesso!"
-                message="Seu cadastro médico foi registrado no Active Age. Você já pode acessar seu consultório virtual e iniciar seus atendimentos."
+                title="Pré-Cadastro Realizado com Sucesso!"
+                message="Seu acesso ao Active Age foi registrado! Para habilitar seu consultório virtual e emitir prescrições válidas conforme a Resolução CFM nº 2.314/2022, faça login e envie os documentos do seu Dossiê de Credenciamento."
                 confirmText="Fazer Login Agora"
                 onConfirm={() => navigate('/login')}
             />

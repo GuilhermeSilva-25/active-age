@@ -104,6 +104,8 @@ As mensagens de commit no Git devem seguir obrigatoriamente a convenção:
    * `ROLE_ADMIN`: Moderação de usuários e aprovação de CRM.
 5. **Consentimento Explícito (LGPD):** O cadastro de qualquer usuário exige o registro afirmativo (`termsAccepted = true`), associado à data/hora de criação para fins de auditoria legal.
 6. **Imutabilidade Clínica:** Registros de evolução clínica e prontuário médico concluídos não podem sofrer comandos de alteração (`UPDATE`) ou exclusão (`DELETE`), respeitando as normas éticas do CFM.
+7. **Segurança e Confidencialidade dos Documentos Médicos:** Os arquivos que compõem o Dossiê de Credenciamento do Médico (CRM, Diploma, Certidões, Comprovante ICP-Brasil e dados fiscais/bancários) são gravados em repositório privado, com bloqueio total de visualização direta sem autenticação. O acesso é restrito via RBAC a auditores (`ROLE_ADMIN`) e ao titular. Cada visualização, download ou alteração gera compulsoriamente um registro permanente na trilha de auditoria (`audit_logs`) com IP, timestamp e ID do auditor.
+8. **Conformidade Estrita com a Resolução CFM nº 2.314/2022:** A prática de telemedicina na plataforma requer obrigatoriamente a comprovação prévia de Certificado Digital padrão ICP-Brasil (A1 ou A3) pelo médico para assinatura válida de documentos clínicos, e ciência de cadastramento da modalidade de telemedicina perante o CRM estadual. Nenhum médico tem permissão de abrir agenda ou atender antes da homologação integral do seu dossiê.
 
 ---
 
@@ -125,7 +127,7 @@ Uma micro tarefa só é considerada **CONCLUÍDA** quando todos os itens abaixo 
 | Módulo | Casos de Uso (UC) | Descrição do Escopo | Status Atual |
 |---|---|---|---|
 | **M1: Fundação & Acesso** | UC01, UC02 | Cadastro de Paciente e Médico, Login Seguro, Rate Limit, Logout | **Concluído e Live** ✅ |
-| **M2: Credenciamento & Gestão** | UC03, UC04, UC05 | Upload de documento de CRM pelo médico e tela de moderação do Admin | Especificação Pendente ⏳ |
+| **M2: Credenciamento & Gestão** | UC03, UC04, UC05 | Upload completo do Dossiê Médico (Habilitação, Ética, Telemedicina ICP-Brasil e Financeiro), Fila de Auditoria do Admin com Trilha de Auditoria (`audit_logs`) e aprovação/rejeição com justificativa | Em Especificação / Andamento 🚧 |
 | **M3: Vitrine & Agendamento** | UC08, UC09, UC10 | Vitrine de horários livres, busca inteligente e reserva de consultas sem double-booking | Especificação Pendente ⏳ |
 | **M4: Prontuário & Documentos** | UC11, UC13, UC14, UC15, UC16 | Upload de exames prévios, prontuário imutável e emissão/download de receitas (PDF) | Especificação Pendente ⏳ |
 | **M5: Teleconsulta & Finanças** | UC06, UC07, UC12, UC17 | Sala de teleconsulta segura, pagamento integrado de consulta e assinatura do médico | Especificação Pendente ⏳ |

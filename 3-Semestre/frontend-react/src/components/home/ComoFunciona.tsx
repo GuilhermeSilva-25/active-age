@@ -62,8 +62,8 @@ export function ComoFunciona() {
               <div className="flex items-start gap-6">
                 <div className="w-12 h-12 rounded-full bg-brand-mint text-brown-dark flex items-center justify-center font-bold text-lg shadow-md shrink-0">1</div>
                 <div className="bg-brand-blue/5 p-6 rounded-xl border border-brand-blue/20 w-full hover:-translate-y-1 transition-transform shadow-sm">
-                  <h4 className="text-lg font-bold text-brown-dark mb-2">Valide seu CRM (15 Dias Grátis)</h4>
-                  <p className="text-brown">Cadastre-se na plataforma. Após a nossa equipe validar suas credenciais médicas, você ganha 15 dias de teste totalmente gratuitos no consultório virtual.</p>
+                  <h4 className="text-lg font-bold text-brown-dark mb-2">Envie seu Dossiê e Valide seu CRM (15 Dias Grátis)</h4>
+                  <p className="text-brown">Cadastre-se e envie seus documentos comprobatórios e certificado ICP-Brasil. Após nossa auditoria aprovar sua habilitação médica (Res. CFM nº 2.314/2022), você ganha 15 dias de teste gratuitos no consultório virtual.</p>
                 </div>
               </div>
 

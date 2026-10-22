@@ -237,6 +237,95 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 5. Funcionalidade: Credenciamento Médico e Auditoria do Dossiê (UC03 / UC04 / RN007 / RN008)
+
+### História de Usuário (User Story)
+* **Como** um médico geriatra cadastrado
+* **Eu quero** enviar os documentos comprobatórios do meu Dossiê de Credenciamento (Habilitação, Regularidade Ética, Telemedicina ICP-Brasil e Dados Financeiros)
+* **Para que** a equipe de compliance da Active Age aprove meu perfil e libere meu consultório virtual conforme a Resolução CFM nº 2.314/2022
+
+* **Como** um Administrador / Auditor de Conformidade
+* **Eu quero** visualizar a fila de credenciamento, auditar os documentos em ambiente seguro e emitir parecer com justificativa
+* **Para que** a plataforma garanta a idoneidade profissional dos prestadores e mantenha a trilha de auditoria inviolável
+
+---
+
+### Cenário 1: Envio Progressivo do Dossiê pelo Médico (Caminho Feliz)
+* **Dado que** o médico `"dra.ada@activeage.com"` realizou o pré-cadastro com sucesso (status `PENDING_DOCS`)
+* **Quando** acessa seu painel de credenciamento e realiza o upload dos seguintes documentos obrigatórios:
+  * *CRM:* Arquivo PDF/JPG da Carteira de CRM frente e verso legíveis
+  * *Diploma:* Arquivo PDF/JPG do Diploma de Medicina reconhecido pelo MEC
+  * *Certidão Ética:* Arquivo PDF da Certidão emitida pelo CRM estadual
+  * *Comprovante ICP-Brasil:* Arquivo PDF/PNG de certificado digital válido (A1 ou A3)
+  * *Comprovante de Residência:* Arquivo PDF/PNG
+  * *Dados Bancários:* Chave PIX e conta do titular para recebimento
+* **Então** o sistema armazena os arquivos em repositório privado inacessível por URL pública E atualiza o status do dossiê para `UNDER_REVIEW` E exibe notificação com o modal acessível `FeedbackModal` informando que os documentos foram recebidos e estão em análise.
+
+---
+
+### Cenário 2: Tentativa de Envio de Documento com Formato Não Permitido ou Tamanho Excedido (Caminho Triste)
+* **Dado que** o médico tenta anexar um arquivo executável (`.exe`) ou documento com tamanho superior a 10MB
+* **Quando** submete o arquivo no formulário de credenciamento
+* **Então** o sistema rejeita o arquivo no cliente e no servidor com HTTP 400 Bad Request E exibe a mensagem de validação: *"Formato não suportado. Envie arquivos PDF, JPG ou PNG de até 10MB."* E não atualiza o status do dossiê.
+
+| Caso de Teste | Arquivo Testado | Tamanho | Extensão | Comportamento Esperado |
+|---|---|---|---|---|
+| TC-DOC-01 | `crm_foto.exe` | 1.2 MB | `.exe` | Rejeição imediata por tipo de mídia inválido |
+| TC-DOC-02 | `diploma_pesado.pdf` | 14.5 MB | `.pdf` | Rejeição por tamanho superior ao limite de 10MB |
+| TC-DOC-03 | `certidao_crm.pdf` | 850 KB | `.pdf` | Upload aceito com sucesso |
+
+---
+
+### Cenário 3: Médico com Dossiê Pendente ou em Análise Tenta Atender (Bloqueio de Regra RN008)
+* **Dado que** o médico está com status `PENDING_DOCS` ou `UNDER_REVIEW`
+* **Quando** tenta cadastrar horários livres na vitrine ou acessar a sala de teleconsulta
+* **Então** o sistema bloqueia a ação E exibe aviso de pendência: *"Seu consultório virtual será liberado assim que o seu Dossiê de Credenciamento for homologado pela equipe de auditoria."*.
+
+| Caso de Teste | Status do Médico | Ação Tentada | Resultado Esperado |
+|---|---|---|---|
+| TC-DOC-04 | `PENDING_DOCS` | Criar horário na vitrine | Bloqueio com aviso de documentação pendente |
+| TC-DOC-05 | `UNDER_REVIEW` | Abrir sala de teleconsulta | Bloqueio com aviso de auditoria em andamento |
+
+---
+
+### Cenário 4: Visualização Segura de Documento pelo Administrador com Registro de Auditoria (Caminho Feliz / RN007)
+* **Dado que** o auditor `admin@activeage.com` (`ROLE_ADMIN`) está logado no painel administrativo `/admin/credenciamento`
+* **Quando** clica para visualizar a Carteira de CRM do médico pendente
+* **Então** o backend verifica o perfil administrativo via RBAC E transmite o stream binário protegido E insere compulsoriamente um registro na coleção `audit_logs` contendo:
+  * `auditor_id`: ID do admin logado
+  * `target_user_id`: ID do médico titular
+  * `action`: `"VIEW_DOCUMENT"`
+  * `document_type`: `"CRM_CARD"`
+  * `ip_address`: IP de origem da requisição
+  * `timestamp`: Carimbo de data/hora oficial
+
+| Caso de Teste | Perfil Solicitante | Documento Solicitado | Resposta HTTP | Log Gravado em `audit_logs` |
+|---|---|---|---|---|
+| TC-DOC-06 | `ROLE_ADMIN` | CRM do Médico | 200 OK (Stream seguro) | Sim (com IP e timestamp) |
+| TC-DOC-07 | `ROLE_PACIENTE` | CRM do Médico | 403 Forbidden | Não (acesso bloqueado) |
+| TC-DOC-08 | `ROLE_MEDICO` (outro médico) | CRM do Colega | 403 Forbidden | Não (acesso bloqueado) |
+
+---
+
+### Cenário 5: Reprovação de Credenciamento com Justificativa Obrigatória (Caminho Alternativo)
+* **Dado que** o auditor identifica inconsistência no documento (exemplo: certidão vencida ou diploma sem verso legível)
+* **Quando** seleciona a opção "Reprovar / Solicitar Correção" no painel administrativo E preenche a justificativa: *"A cópia do Diploma está sem o verso onde consta o registro do MEC. Por favor, reenvie o documento completo."*
+* **Então** o sistema atualiza o status do médico para `DOCS_REJECTED` E salva a justificativa técnica E registra a ação em `audit_logs` E notifica o médico via painel para reenviar o documento apontado.
+
+| Caso de Teste | Justificativa Preenchida | Comportamento Esperado |
+|---|---|---|
+| TC-DOC-09 | *(vazia ou com menos de 10 caracteres)* | Bloqueia a reprovação exigindo preenchimento de justificativa detalhada |
+| TC-DOC-10 | Preenchida com texto válido | Grava status `DOCS_REJECTED`, persiste motivo e gera trilha de auditoria |
+
+---
+
+### Cenário 6: Homologação e Aprovação do Dossiê Médico (Caminho Feliz)
+* **Dado que** todos os documentos dos 4 pilares obrigatórios foram validados pelo auditor
+* **Quando** o administrador clica em "Homologar e Aprovar Credenciamento"
+* **Então** o sistema altera o status do médico para `APPROVED` E ativa o período de 15 dias de teste grátis E grava a aprovação em `audit_logs` E libera o acesso do médico à Vitrine de Horários e ao Consultório Virtual.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

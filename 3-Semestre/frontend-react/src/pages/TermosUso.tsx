@@ -3,7 +3,7 @@ export function TermosUso() {
     <main className="flex-grow bg-brand-pot/5">
       <div className="max-w-4xl mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold text-brown-dark mb-4">Termos de Uso</h1>
-        <p className="mb-12 text-brown font-medium">Última atualização: Setembro de 2026</p>
+        <p className="mb-12 text-brown font-medium">Conformidade com a Resolução CFM nº 2.314/2022 e Marco Legal — Última atualização: Outubro de 2026</p>
         
         <div className="prose prose-lg prose-headings:text-brown-dark prose-p:text-brown max-w-none">
           <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">1. Aceitação dos Termos</h2>
@@ -13,69 +13,81 @@ export function TermosUso() {
 
           <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">2. Serviços Oferecidos</h2>
           <p className="mb-6 leading-relaxed">
-            A Active Age é uma plataforma tecnológica que conecta pacientes (e seus cuidadores) a médicos geriatras. O sistema fornece toda a infraestrutura para telemedicina, mas <strong>não somos uma clínica médica nem prestamos serviços de emergência</strong>.
+            A Active Age é uma plataforma tecnológica de telessaúde geriátrica integral que conecta pacientes idosos (e seus cuidadores familiares) a médicos geriatras habilitados. A plataforma fornece a infraestrutura de comunicação e gestão clínica, mas <strong>não é uma instituição hospitalar nem presta serviços de emergência médica</strong>.
             <br/><br/>
-            <strong>Para Pacientes/Cuidadores:</strong> Busca de especialistas validados, agendamento de consultas, pagamentos seguros, realização de videochamadas e um cofre digital vitalício para o histórico de receitas, exames e atestados.
+            <strong>Para Pacientes/Cuidadores:</strong> Localização de especialistas com credenciais auditadas, agendamento de consultas com gestão de horários, pagamento integrado, realização de videochamadas seguras e cofre digital vitalício para exames, receitas e atestados.
             <br/><br/>
-            <strong>Para Médicos Geriatras:</strong> Consultório virtual com gestão automática de agenda, prontuário ético eletrônico integrado à tela de vídeo, emissão de prescrições com assinatura digital (padrão CFM) e garantia de recebimento (zero inadimplência).
+            <strong>Para Médicos Geriatras:</strong> Consultório virtual com gestão automatizada de agenda, prontuário eletrônico integrado à videochamada, emissão de prescrições e atestados com assinatura digital qualificada (ICP-Brasil / CFM) e garantia de repasse financeiro seguro.
           </p>
 
-          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">3. Cadastro e Contas de Usuário</h2>
-          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">3.1. Elegibilidade</h3>
+          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">3. Cadastro e Elegibilidade</h2>
+          
+          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">3.1. Elegibilidade e Dossiê de Credenciamento Médico</h3>
           <p className="mb-6 leading-relaxed">
-            Para utilizar a Plataforma, você deve ter no mínimo 18 anos de idade ou ser um cuidador legalmente responsável pelo paciente idoso. Médicos devem possuir registro ativo em seu respectivo Conselho Regional de Medicina (CRM). Todo cadastro médico passa por uma validação humana rigorosa antes da liberação do uso do sistema.
+            Para utilizar a Plataforma como Paciente ou Cuidador, o usuário deve ter no mínimo 18 anos completos ou ser o representante legal do idoso.
+            <br/><br/>
+            O cadastro de Médicos Geriatras opera sob um rigoroso processo de homologação profissional. O preenchimento do formulário inicial constitui um <strong>pré-cadastro</strong>, o qual <strong>não confere autorização imediata para disponibilização de horários ou realização de teleconsultas</strong>. Para que o perfil médico seja homologado e o consultório virtual liberado, o profissional deve submeter para auditoria o seu <strong>Dossiê de Credenciamento</strong> composto por:
           </p>
-          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">3.2. Assinatura Médica</h3>
+          <ul className="mb-6 space-y-2 list-disc list-inside text-brown">
+            <li><strong>Habilitação Profissional e Identificação:</strong> Cópia da Carteira do CRM (frente e verso com número e UF nítidos), Diploma de Graduação em Medicina reconhecido pelo MEC (frente e verso), Registro de Qualificação de Especialista (RQE, mandatório para identificação como especialista em Geriatria), Documento de Identidade com foto (CNH, RG ou Passaporte) e CPF.</li>
+            <li><strong>Regularidade Ética e Legal:</strong> Certidão de Regularidade Ético-Profissional emitida pelo CRM estadual competente, demonstrando situação cadastral ativa e ausência de penalidades éticas ou interdições vigentes.</li>
+            <li><strong>Requisitos Técnicos de Telemedicina (Res. CFM nº 2.314/2022):</strong> Comprovante de Certificado Digital padrão ICP-Brasil (A1 ou A3) indispensável para assinatura eletrônica de prescrições e prontuários; e Termo/Comprovante de Notificação e Cadastro de atuação em telemedicina no portal do CRM de origem.</li>
+            <li><strong>Dados Cadastrais e Financeiros:</strong> Comprovante de endereço, dados bancários/chave PIX em nome do próprio médico (ou de sua Pessoa Jurídica médica) para liquidação de honorários e, opcionalmente, Cartão CNPJ.</li>
+          </ul>
+
+          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">3.2. Período de Avaliação (15 Dias Grátis) e Assinatura</h3>
           <p className="mb-6 leading-relaxed">
-            Após a validação do CRM, o médico recebe 15 dias de teste totalmente gratuitos. Após esse período, o acesso contínuo ao consultório virtual estará condicionado à adesão de um plano de assinatura da plataforma.
+            Uma vez aprovado todo o Dossiê de Credenciamento pela auditoria da Active Age, o médico geriatra terá direito a um período de 15 (quinze) dias de teste totalmente gratuitos no consultório virtual. Findo esse período, a continuidade da disponibilização de vitrine de horários e atendimento estará vinculada à adesão a um plano de assinatura mensal da plataforma.
           </p>
 
-          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">4. Teleconsultas</h2>
-          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">4.1. Responsabilidades do Médico</h3>
+          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">4. Teleconsultas e Regulação Médica</h2>
+          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">4.1. Responsabilidades Éticas do Médico (Resolução CFM nº 2.314/2022)</h3>
           <p className="mb-6 leading-relaxed">
-            Os médicos são os únicos responsáveis pela qualidade do atendimento, pelas decisões clínicas, precisão dos diagnósticos, emissão de receitas e pelo cumprimento de todas as regulamentações éticas do CFM durante o uso da plataforma.
+            O médico é o único e soberano responsável pelas condutas clínicas, diagnósticos, evolução do prontuário eletrônico e emissão de receituários médicos. O profissional compromete-se a:
+            <br/><br/>
+            • Manter ativo e regular seu registro no respectivo CRM durante toda a sua permanência na plataforma;
+            <br/>
+            • Utilizar seu Certificado Digital ICP-Brasil individual em todas as prescrições, atestados e documentos clínicos emitidos via plataforma;
+            <br/>
+            • Avaliar a autonomia e segurança do idoso no ambiente domiciliar, recomendando atendimento presencial sempre que a condição clínica assim exigir;
+            <br/>
+            • Não divulgar título de especialista em Geriatria sem o devido registro RQE homologado no CRM.
           </p>
-          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">4.2. Responsabilidades do Paciente</h3>
+          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">4.2. Responsabilidades do Paciente e Cuidador</h3>
           <p className="mb-6 leading-relaxed">
-            Os pacientes (ou cuidadores) são responsáveis por fornecer informações de saúde completas e verdadeiras ao médico, além de garantir uma conexão de internet estável e um ambiente silencioso para a teleconsulta.
+            O paciente ou seu cuidador compromete-se a prestar informações clínicas e histórico de medicamentos verídicos, comparecer pontualmente à sala de vídeo e manter uma conexão de internet estável e privativa durante o ato médico.
           </p>
-          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">4.3. Cancelamento e Remarcação</h3>
+          <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">4.3. Política de Cancelamento e Rollback da Agenda</h3>
           <p className="mb-6 leading-relaxed">
-            Para assegurar a agenda dos profissionais contra inadimplência, as consultas são cobradas no ato do agendamento. Cancelamentos realizados pelo paciente com menos de 24 horas de antecedência não terão reembolso integral da taxa da consulta, conforme políticas detalhadas no fluxo de agendamento.
+            Para proteger os médicos contra a ociosidade da agenda, as consultas são quitadas no momento do agendamento. Cancelamentos solicitados pelo paciente com antecedência mínima de 24 (vinte e quatro) horas ensejam o cancelamento com restituição e liberação automática do horário na vitrine (*rollback*). Cancelamentos com prazo inferior a 24 horas não conferem direito a reembolso, salvo exceções de força maior devidamente analisadas.
           </p>
 
-          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">5. Privacidade e Dados Pessoais</h2>
+          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">5. Segurança e Sigilo dos Documentos do Médico</h2>
           <p className="mb-6 leading-relaxed">
-            A proteção do sigilo médico e dos seus dados é nossa prioridade absoluta. A coleta, uso, criptografia (E2EE) e guarda dos seus dados pessoais e de saúde são regidos pela nossa <a href="/privacidade" className="text-brand-orange font-bold hover:underline">Política de Privacidade (LGPD)</a>. Ao aceitar estes Termos, você também concorda com ela.
+            A Active Age compromete-se a resguardar a total confidencialidade do Dossiê de Credenciamento do médico. Todos os documentos comprobatórios enviados são armazenados em repositório criptografado, inacessíveis publicamente e auditados sob registro de acessos (<code>audit_logs</code>), conforme detalhado em nossa <a href="/privacidade" className="text-brand-orange font-bold hover:underline">Política de Privacidade (LGPD)</a>.
           </p>
 
-          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">6. Conduta do Usuário</h2>
+          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">6. Conduta Proibida</h2>
           <p className="mb-6 leading-relaxed">
-            Você concorda em usar a Plataforma de forma ética e em conformidade com as leis aplicáveis. É expressamente proibido publicar conteúdo ilegal ou ofensivo, violar direitos de terceiros, tentar fraudar o sistema de pagamentos ou gravar as videochamadas sem o consentimento formal de ambas as partes.
+            É expressamente vedado aos usuários: tentar burlar sistemas de controle e segurança, violar o sigilo profissional médico, gravar imagens ou áudios da teleconsulta sem consentimento expresso e mútuo por escrito, ou submeter documentos falsos ou adulterados (sujeito às sanções éticas do CFM e criminais do Código Penal Brasileiro).
           </p>
 
           <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">7. Limitação de Responsabilidade</h2>
           <p className="mb-6 leading-relaxed">
-            A Active Age fornece a tecnologia e facilita o encontro, mas <strong>não se responsabiliza sob nenhuma hipótese por danos resultantes de imperícia, imprudência ou negligência médica</strong>, uma vez que a relação médico-paciente é estabelecida diretamente entre as partes.
+            A Active Age disponibiliza a infraestrutura de intermediação e comunicação técnica em conformidade com as normas vigentes, mas <strong>não responde pelos atos privativos da medicina praticados pelos profissionais</strong>, os quais respondem civil, penal e eticamente por seus pareceres e condutas perante os Conselhos Regionais de Medicina.
           </p>
 
-          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">8. Modificações dos Termos</h2>
+          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">8. Foro e Legislação Aplicável</h2>
           <p className="mb-6 leading-relaxed">
-            A Active Age reserva-se o direito de modificar estes Termos a qualquer momento para refletir atualizações no sistema ou na legislação. Notificaremos os usuários sobre alterações significativas. O uso continuado após a notificação constitui aceitação dos novos Termos.
+            Estes Termos são regidos exclusivamente pela legislação da República Federativa do Brasil, em consonância com as resoluções do Conselho Federal de Medicina (CFM) e a Lei Geral de Proteção de Dados (LGPD). Fica eleito o Foro da Comarca de Diadema, Estado de São Paulo, para dirimir quaisquer litígios oriundos do presente termo.
           </p>
 
-          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">9. Disposições Gerais</h2>
+          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">9. Canal de Atendimento</h2>
           <p className="mb-6 leading-relaxed">
-            Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da comarca da sede da Active Age para dirimir quaisquer disputas judiciais, renunciando a qualquer outro.
-          </p>
-
-          <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">10. Contato</h2>
-          <p className="mb-6 leading-relaxed">
-            Para dúvidas sobre estes Termos de Uso, entre em contato conosco através do e-mail: <a href="mailto:contato@activeage.com.br" className="text-brand-orange font-bold hover:underline">contato@activeage.com.br</a>.
+            Para dúvidas institucionais ou suporte regulatório, entre em contato através do e-mail: <a href="mailto:contato@activeage.com.br" className="text-brand-orange font-bold hover:underline">contato@activeage.com.br</a>.
           </p>
         </div>
       </div>
     </main>
   );
 }
-
