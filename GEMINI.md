@@ -25,6 +25,7 @@
    - `refactor(...)`: refatoração sem alteração de comportamento
    - `ci(...)` / `chore(...)`: infraestrutura e dependências
 5. **Persistência de Conhecimento:** Toda documentação, relatório, spec ou plano gerado DEVE ser salvo na pasta oficial `3-Semestre/docs_ia/` e commitado no Git.
+6. **Compliance Ético-Médico Inegociável (CFM, SBIS & LGPD):** Proibição absoluta de comissões percentuais sobre consultas (vedação à dicotomia); arquitetura de Split Direto em gateway regulado; busca neutra e informativa sem ranking de estrelas ou destaque pago (Res. CFM nº 2.336/2023); exigência estrita de Certificado Digital ICP-Brasil (A1/A3) e prontuário certificado com Níveis de Garantia de Segurança NGS1/NGS2.
 
 ---
 
@@ -36,6 +37,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
 4. `3-Semestre/docs_ia/RELATORIO_ANALISE_INTEGRAL_PROJETO_INTEGRADOR.md`: Relatório completo alinhado ao PPC oficial da Fatec Diadema (2024/1).
 5. `3-Semestre/docs_ia/GUIA_DESENVOLVIMENTO_MULTIMAQUINAS.md`: Guia de configuração de ambiente e sincronização para trabalhar em múltiplos computadores.
 6. `3-Semestre/docs_ia/BACKLOG_FUNCIONALIDADES_FUTURAS.md`: Backlog arquitetural e de longo prazo, incluindo o desenho do microsserviço assíncrono de mensageria para recuperação de senha e alertas.
+7. `3-Semestre/docs_ia/MATRIZ_CONFORMIDADE_LEGAL_E_REGULATORIA_CFM_LGPD.md`: Matriz de compliance e governança regulatória (CFM Res. 2.314/2022, CFM Res. 2.336/2023, SBIS NGS1/NGS2, Split Direto sem Dicotomia e LGPD).
 
 ---
 
