@@ -326,6 +326,59 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 4. Funcionalidade: Gestão de Usuários e Trilha de Auditoria Global (UC01, UC02, UC04, UC05)
+
+### História de Usuário (User Story)
+* **Como** um Administrador do Active Age
+* **Eu quero** gerenciar as contas de usuários e inspecionar os registros de auditoria centralizados
+* **Para que** eu possa moderar acessos indevidos e garantir conformidade regulatória estrita com o CFM (NGS1) e a LGPD (Art. 37)
+
+---
+
+### Cenário 1: Listagem e Filtro de Usuários pelo Administrador (Caminho Feliz)
+* **Dado que** o administrador está autenticado com `ROLE_ADMIN` e acessa `/admin/usuarios`
+* **Quando** aplica o filtro por perfil `"ROLE_MEDICO"` ou pesquisa por `"CRM 123456"`
+* **Então** a tabela é atualizada dinamicamente exibindo apenas os profissionais correspondentes com suas informações cadastrais, status de credenciamento e situação da conta (`Ativo` ou `Inativo`).
+
+---
+
+### Cenário 2: Inativação de Usuário com Justificativa e Registro em `audit_logs` (Caminho Feliz)
+* **Dado que** o administrador seleciona a opção "Inativar Conta" de um paciente ou médico
+* **Quando** o modal de confirmação é exibido e o administrador insere a justificativa *"Suspeita de fraude cadastral"* e confirma
+* **Então** o backend atualiza o campo `active = false` do usuário E insere compulsoriamente um registro em `audit_logs` com ação `"DEACTIVATE_USER"` E exibe mensagem de sucesso via `FeedbackModal`.
+
+| Caso de Teste | Alvo da Ação | Justificativa | Status Resultante | Registro Gravado em `audit_logs` |
+|---|---|---|---|---|
+| TC-USR-01 | Médico em suspeita | "Fraude cadastral" | `active = false` | Sim (com IP, autor e justificativa) |
+| TC-USR-02 | Paciente com solicitação | "Solicitação pelo titular" | `active = false` | Sim (com IP, autor e justificativa) |
+
+---
+
+### Cenário 3: Tentativa de Auto-Inativação do Administrador (Caminho Triste / Trava de Segurança)
+* **Dado que** o administrador logado tenta inativar sua própria conta através do painel
+* **Quando** confirma a ação de desativação
+* **Então** o backend rejeita a operação com status HTTP 400 Bad Request e a mensagem: *"Não é permitido inativar a própria conta de administrador."* E o status da conta do administrador permanece ativo.
+
+| Caso de Teste | ID Solicitante | ID Alvo | Resposta HTTP | Mensagem de Erro |
+|---|---|---|---|---|
+| TC-USR-03 | `admin_01` | `admin_01` (mesmo usuário) | 400 Bad Request | *"Não é permitido inativar a própria conta de administrador."* |
+
+---
+
+### Cenário 4: Consulta e Filtragem da Trilha de Auditoria Global (Caminho Feliz / NGS1 e LGPD)
+* **Dado que** o auditor acessa a tela `/admin/auditoria`
+* **Quando** visualiza o painel
+* **Então** o sistema exibe os 4 cards de métricas (Total de Logs, Registros nas últimas 24h, Inspeções de Documentos e Decisões de Credenciamento) E lista os eventos cronologicamente do mais recente ao mais antigo com IP, operador, ação e modal de inspeção técnica.
+
+---
+
+### Cenário 5: Tentativa de Acesso a Endpoints de Auditoria por Usuários não Administradores (Caminho Triste / RBAC)
+* **Dado que** um usuário logado como `ROLE_PACIENTE` ou `ROLE_MEDICO` tenta acessar `/api/admin/audit-logs` ou `/api/admin/users`
+* **Quando** a requisição HTTP é enviada ao backend
+* **Então** o Spring Security bloqueia a requisição retornando HTTP 403 Forbidden.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

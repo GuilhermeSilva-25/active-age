@@ -17,6 +17,8 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AdminLayout } from './layouts/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminCredenciamento } from './pages/admin/AdminCredenciamento';
+import { AdminUsuarios } from './pages/admin/AdminUsuarios';
+import { AdminAuditoria } from './pages/admin/AdminAuditoria';
 import { DossieCredenciamento } from './pages/medico/DossieCredenciamento';
 
 function App() {
@@ -54,8 +56,8 @@ function App() {
                         <Route path="/admin" element={<AdminDashboard />} />
                         <Route path="/admin/credenciamento" element={<AdminCredenciamento />} />
                         <Route path="/admin/medicos" element={<AdminCredenciamento />} />
-                        <Route path="/admin/usuarios" element={<AdminDashboard />} />
-                        <Route path="/admin/auditoria" element={<AdminDashboard />} />
+                        <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+                        <Route path="/admin/auditoria" element={<AdminAuditoria />} />
                     </Route>
                 </Route>
             </Routes>

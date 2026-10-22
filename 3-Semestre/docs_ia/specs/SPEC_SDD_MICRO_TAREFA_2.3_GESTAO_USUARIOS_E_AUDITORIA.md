@@ -1,7 +1,7 @@
 # ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MICRO TAREFA 2.3
 ## Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`)
 ### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Submetida para Aprovação do PO (Guilherme) ⏳  
+**Status:** Concluída e Homologada ✅  
 **Data:** 22 de Outubro de 2026  
 **Casos de Uso Cobertos:** UC01, UC02, UC04, UC05 (Moderação de Perfis e Auditoria de Conformidade)  
 **Requisitos Atendidos:** RF001, RF003, RNF001, RNF002, RNF003, RNF005, RNF006, RNF007, RN007  
@@ -162,10 +162,10 @@ public class AuditLogStatsResponse {
 
 ### 6. Critérios de Aceite da Spec (DoD)
 
-- [ ] Administrador consegue listar todos os usuários com filtros por perfil (`ROLE_PACIENTE`, `ROLE_MEDICO`, `ROLE_ADMIN`) e status (`active`).
-- [ ] Administrador consegue inativar a conta de um paciente ou médico, impedindo seu login no sistema.
-- [ ] O sistema bloqueia a tentativa de um administrador inativar a si mesmo.
-- [ ] Toda inativação ou reativação de usuário gera compulsoriamente um registro em `audit_logs`.
-- [ ] A tela de auditoria lista cronologicamente os eventos de `audit_logs` com IP, operador, ação e timestamp.
-- [ ] O filtro por tipo de ação na auditoria isola corretamente eventos como `VIEW_DOCUMENT` e `REVIEW_DOSSIER`.
-- [ ] Nenhuma rota do módulo de administração pode ser acessada por usuários anônimos, pacientes ou médicos.
+- [x] Administrador consegue listar todos os usuários com filtros por perfil (`ROLE_PACIENTE`, `ROLE_MEDICO`, `ROLE_ADMIN`) e status (`active`).
+- [x] Administrador consegue inativar a conta de um paciente ou médico, impedindo seu login no sistema.
+- [x] O sistema bloqueia a tentativa de um administrador inativar a si mesmo.
+- [x] Toda inativação ou reativação de usuário gera compulsoriamente um registro em `audit_logs`.
+- [x] A tela de auditoria lista cronologicamente os eventos de `audit_logs` com IP, operador, ação e timestamp.
+- [x] O filtro por tipo de ação na auditoria isola corretamente eventos como `VIEW_DOCUMENT` e `REVIEW_DOSSIER`.
+- [x] Nenhuma rota do módulo de administração pode ser acessada por usuários anônimos, pacientes ou médicos.
