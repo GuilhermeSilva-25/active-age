@@ -35,6 +35,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
 3. `3-Semestre/docs_ia/ROTEIRO_DE_TESTES_BDD_ACTIVE_AGE.md`: Roteiro de testes executivo no modelo oficial da Fatec (Prof. Edson Saraiva) cobrindo caminhos felizes e tristes.
 4. `3-Semestre/docs_ia/RELATORIO_ANALISE_INTEGRAL_PROJETO_INTEGRADOR.md`: Relatório completo alinhado ao PPC oficial da Fatec Diadema (2024/1).
 5. `3-Semestre/docs_ia/GUIA_DESENVOLVIMENTO_MULTIMAQUINAS.md`: Guia de configuração de ambiente e sincronização para trabalhar em múltiplos computadores.
+6. `3-Semestre/docs_ia/BACKLOG_FUNCIONALIDADES_FUTURAS.md`: Backlog arquitetural e de longo prazo, incluindo o desenho do microsserviço assíncrono de mensageria para recuperação de senha e alertas.
 
 ---
 

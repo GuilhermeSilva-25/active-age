@@ -31,3 +31,4 @@ O desenvolvimento a partir do 3º Semestre adota a metodologia **Spec-Driven Dev
 - 🚀 [Plano de Release & Roadmap de Sprints](./3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md)
 - 🧪 [Roteiro de Testes BDD (Modelo Fatec)](./3-Semestre/docs_ia/ROTEIRO_DE_TESTES_BDD_ACTIVE_AGE.md)
 - 📚 [Contexto Operacional e Governança SDD](./3-Semestre/docs_ia/CONTEXTO_OPERACIONAL_E_GOVERNANCA_SDD.md)
+- 🗺️ [Backlog de Funcionalidades Futuras & Arquitetura](./3-Semestre/docs_ia/BACKLOG_FUNCIONALIDADES_FUTURAS.md)
