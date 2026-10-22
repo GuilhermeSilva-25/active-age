@@ -33,14 +33,24 @@ Esta decisão é **altamente recomendada** e representa o estado da arte em arqu
 ### 2.3. Desenho da Solução: Arquitetura Orientada a Eventos
 
 ```mermaid
-flowchart LR
-    A["Paciente / Médico<br/>(Tela Esqueceu a Senha)"] -->|1. POST /api/auth/forgot-password| B["ActiveAge Backend Core<br/>(Spring Boot 3)"]
-    B -->|2. Valida e Gera Token SHA-256<br/>(TTL: 15 min)| C[("MongoDB Atlas<br/>Collection: password_resets")]
-    B -->|3. Dispara Evento Assíncrono<br/>Queue: notification.email.reset| D["Message Broker<br/>(RabbitMQ / Redis / SQS)"]
-    D -->|4. Consome Mensagem| E["Notification Microservice<br/>(Worker dedicado)"]
-    E -->|5. Renderiza Template Acessível| F["Gateway de Mensageria<br/>(SendGrid / SES / WhatsApp)"]
-    F -->|6. Entrega Link com Token Seguro| G["Caixa de Entrada do Usuário"]
+flowchart TD
+    A["1. Usuário solicita recuperação de senha no Frontend"] --> B["2. Backend Core valida e gera token seguro de 15 min"]
+    B --> C[("MongoDB Atlas: Coleção password_resets")]
+    B --> D["3. Publica evento assíncrono na fila de mensageria"]
+    D --> E["4. Microsserviço de Notificação consome o evento"]
+    E --> F["5. Renderiza template HTML acessível e aciona gateway"]
+    F --> G["6. Usuário recebe e-mail seguro com link de redefinição"]
 ```
+
+#### Fluxo Passo a Passo da Mensageria:
+| Etapa | Origem | Ação Realizada | Destino |
+| :---: | :--- | :--- | :--- |
+| **1** | Frontend React | Usuário informa o e-mail na tela de recuperação | `POST /api/auth/forgot-password` |
+| **2** | Backend Core | Gera token criptográfico (SHA-256) com TTL de 15 min | MongoDB Atlas (`password_resets`) |
+| **3** | Backend Core | Publica mensagem assíncrona liberando a thread HTTP | Fila / Broker (RabbitMQ / Redis) |
+| **4** | Broker de Mensageria | Entrega o evento ao worker em segundo plano | Microsserviço de Notificação |
+| **5** | Microsserviço | Renderiza template com botões táteis e aciona provedor | Gateway (SendGrid / AWS SES) |
+| **6** | Gateway de E-mail | Entrega o link seguro de redefinição de senha | Caixa de entrada do paciente/médico |
 
 #### Responsabilidade Estrita de Cada Camada:
 1. **API Principal (`backend-core`):**
