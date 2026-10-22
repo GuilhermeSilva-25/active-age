@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { applyCpfMask, applyPhoneMask, applyCrmMask, applyUfMask } from '../../utils/masks';
 import { ProgressBar } from '../../components/auth/ProgressBar';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
@@ -145,7 +145,7 @@ export function CadastroMedico() {
                                 {...register('email')}
                             />
                             {errors.email && (
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.email.message}</p>
+                                <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.email.message}</span></p>
                             )}
                         </div>
                         <div>
@@ -167,7 +167,7 @@ export function CadastroMedico() {
                                 </button>
                             </div>
                             {errors.password && (
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.password.message}</p>
+                                <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.password.message}</span></p>
                             )}
                         </div>
                         <div>
@@ -189,7 +189,7 @@ export function CadastroMedico() {
                                 </button>
                             </div>
                             {errors.confirmPassword && (
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.confirmPassword.message}</p>
+                                <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.confirmPassword.message}</span></p>
                             )}
                         </div>
                     </div>
@@ -208,7 +208,7 @@ export function CadastroMedico() {
                                 {...register('fullName')}
                             />
                             {errors.fullName && (
-                                <p className="text-red-500 text-sm mt-1 font-bold">{errors.fullName.message}</p>
+                                <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.fullName.message}</span></p>
                             )}
                         </div>
 
@@ -226,7 +226,7 @@ export function CadastroMedico() {
                                     }}
                                 />
                                 {errors.cpf && (
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.cpf.message}</p>
+                                    <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.cpf.message}</span></p>
                                 )}
                             </div>
                             <div>
@@ -242,7 +242,7 @@ export function CadastroMedico() {
                                     }}
                                 />
                                 {errors.phone && (
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.phone.message}</p>
+                                    <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.phone.message}</span></p>
                                 )}
                             </div>
                         </div>
@@ -261,7 +261,7 @@ export function CadastroMedico() {
                                     }}
                                 />
                                 {errors.crm && (
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.crm.message}</p>
+                                    <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.crm.message}</span></p>
                                 )}
                             </div>
                             <div>
@@ -277,7 +277,7 @@ export function CadastroMedico() {
                                     }}
                                 />
                                 {errors.ufCrm && (
-                                    <p className="text-red-500 text-sm mt-1 font-bold">{errors.ufCrm.message}</p>
+                                    <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.ufCrm.message}</span></p>
                                 )}
                             </div>
                         </div>
@@ -306,7 +306,7 @@ export function CadastroMedico() {
                             </span>
                         </label>
                         {errors.termsAccepted && (
-                            <p className="text-red-500 text-sm mt-1 font-bold">{errors.termsAccepted.message}</p>
+                            <p className="text-red-600 text-sm mt-1.5 font-bold flex items-center gap-1.5 animate-in fade-in"><AlertCircle className="w-4 h-4 shrink-0 text-red-600" /><span>{errors.termsAccepted.message}</span></p>
                         )}
 
                         {errors.root && (

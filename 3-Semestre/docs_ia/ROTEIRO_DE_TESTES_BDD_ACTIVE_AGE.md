@@ -155,7 +155,7 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 ### Cenário 2: Tentativa de Login com Senha Incorreta
 * **Dado que** o usuário informa um e-mail cadastrado mas uma senha que não corresponde ao hash
 * **Quando** clica em *"Entrar na plataforma"*
-* **Então** o sistema recusa o acesso E não emite cookie de sessão E exibe a mensagem de erro *"E-mail ou senha incorretos."*.
+* **Então** o sistema recusa o acesso E não emite cookie de sessão E exibe a mensagem de erro *"E-mail ou senha incorretos."* acompanhada pelo ícone visual de alerta (`AlertCircle`) E retorna status HTTP 400 Bad Request via `GlobalExceptionHandler`.
 
 | Caso de Teste | E-mail Digitado | Senha Digitada | Status HTTP Esperado | Mensagem de Interface |
 |---|---|---|---|---|

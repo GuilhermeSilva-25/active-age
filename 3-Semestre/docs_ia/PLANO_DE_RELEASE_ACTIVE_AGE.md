@@ -37,6 +37,8 @@ O **Plano de Release** formaliza o planejamento e as entregas incrementais do si
 | **REL-10** | **Sistema de Modais Acessíveis (IHC / WCAG)** | Componente reutilizável `FeedbackModal.tsx` substituindo alerts nativos bloqueantes. Suporte a variantes (sucesso, erro, alerta, info), ícones Lucide descritivos, backdrop blur e botões com alvos táteis ampliados (48px+) para geriatria. | Concluído ✅ |
 | **REL-11** | **Validação Antecipada de E-mail (Etapa 1)** | Endpoint `GET /api/auth/check-email` e verificação assíncrona com feedback imediato no avanço da Etapa 1 dos cadastros, impedindo transição se o e-mail já existir. | Concluído ✅ |
 | **REL-12** | **Controle de Visibilidade de Senha (IHC / WCAG)** | Alternância dinâmica (`Eye` / `EyeOff`) nos campos de senha (Login e Cadastros), permitindo ao público idoso auditar o que digitou. | Concluído ✅ |
+| **REL-13** | **Tratador Global de Exceções (GlobalExceptionHandler)** | Classe `@RestControllerAdvice` mapeando `IllegalArgumentException` para HTTP 400 Bad Request e padronizando mensagens amigáveis em JSON, eliminando erros 500 indevidos. | Concluído ✅ |
+| **REL-14** | **Acessibilidade de Erros & Conexão no ProgressBar (IHC / WCAG)** | Linha conectora de etapas corrigida no `ProgressBar.tsx` e inclusão de ícone `AlertCircle` em 100% das mensagens de validação. | Concluído ✅ |
 
 #### 2.2. Critérios de Aceite Validados (Testes BDD)
 - [x] Cadastro de paciente com e-mail duplicado bloqueado com mensagem amigável.
@@ -48,6 +50,9 @@ O **Plano de Release** formaliza o planejamento e as entregas incrementais do si
 - [x] Logout apaga a credencial e restabelece a Navbar no estado público.
 - [x] Comunicação de sucesso/erro via modal acessível (`FeedbackModal`) com foco gerenciado e alvos táteis ampliados para geriatria (WCAG 2.1 AA).
 - [x] Alternância de visualização de senhas nos campos de login e cadastro.
+- [x] Linha conectora do ProgressBar visível com avanço dinâmico entre etapas.
+- [x] Mensagens de erro de formulário acompanhadas por ícone visual `AlertCircle` (WCAG 2.1).
+- [x] Falha de login tratada pelo `GlobalExceptionHandler` retornando HTTP 400 amigável em vez de 500.
 
 ---
 

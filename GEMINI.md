@@ -39,7 +39,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
 ---
 
 ## 4. Stack Tecnológica Oficial (3º Semestre)
-- **Backend:** Java 21 LTS + Spring Boot 3.4.x + Spring Data MongoDB + Spring Security + Jakarta Validation + Bucket4j + Lombok.
+- **Backend:** Java 21 LTS + Spring Boot 3.4.x + Spring Data MongoDB + Spring Security + Jakarta Validation + Bucket4j + GlobalExceptionHandler + Lombok.
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4 + React Router Dom v7 + Lucide React + Zod.
 - **Banco de Dados:** MongoDB Atlas (Replica Set na nuvem, multi-tenant com soft delete).
 - **Segurança:** Senhas em BCrypt, autenticação via JWT armazenado em cookies `HttpOnly; Secure; SameSite=Strict`, proteção contra força bruta com Rate Limiting.
@@ -64,6 +64,8 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Frontend integrado com formulário real, feedback de erro/sucesso e Navbar reativa.
   - Sistema de modais acessíveis com `FeedbackModal.tsx` em substituição ao `window.alert()`.
   - Checagem assíncrona de e-mail prévio na Etapa 1 e alternância de visibilidade de senhas (olhinho).
+  - Tratador Global de Exceções (`GlobalExceptionHandler`) mapeando erros de credenciais para HTTP 400 Bad Request.
+  - Linha conectora de etapas no `ProgressBar` e ícone `AlertCircle` em todas as mensagens de erro (IHC/WCAG).
   - Deploy no Render e Vercel funcionando em produção.
 - **Release v0.2.0 (Sprint 2) — [PRÓXIMA ETAPA A INICIAR]:**
   - Micro Tarefa 1.2: Componente `ProtectedRoute.tsx` no React para proteção de rotas privadas.

@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Por favor, insira um e-mail válido."),
@@ -35,10 +35,19 @@ export function Login() {
       if (response.ok) {
         navigate("/");
       } else {
-        const errorMsg = await response.text();
+        const errorText = await response.text();
+        let message = "E-mail ou senha incorretos.";
+        try {
+          const parsed = JSON.parse(errorText);
+          message = parsed.message || message;
+        } catch {
+          if (errorText && !errorText.startsWith("{")) {
+            message = errorText;
+          }
+        }
         setError("root", {
           type: "server",
-          message: errorMsg || "E-mail ou senha incorretos.",
+          message,
         });
       }
     } catch (error) {
@@ -87,8 +96,9 @@ export function Login() {
           </div>
           {/* Mensagem de Erro Dinâmica */}
           {errors.email && (
-            <p className="mt-1 text-sm text-red-600 font-bold">
-              {errors.email.message}
+            <p className="mt-1.5 text-sm text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+              <span>{errors.email.message}</span>
             </p>
           )}
         </div>
@@ -138,16 +148,18 @@ export function Login() {
             </button>
           </div>
           {errors.password && (
-            <p className="mt-1 text-sm text-red-600 font-bold">
-              {errors.password.message}
+            <p className="mt-1.5 text-sm text-red-600 font-bold flex items-center gap-1.5 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+              <span>{errors.password.message}</span>
             </p>
           )}
         </div>
 
         {/* Erro Geral retornado pelo Backend */}
         {errors.root && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg font-bold border border-red-200 text-sm text-center">
-            {errors.root.message}
+          <div className="bg-red-50 text-red-700 p-4 rounded-xl font-bold border border-red-200 text-sm flex items-center justify-center gap-2.5 animate-in fade-in">
+            <AlertCircle className="w-5 h-5 shrink-0 text-red-600" />
+            <span>{errors.root.message}</span>
           </div>
         )}
 

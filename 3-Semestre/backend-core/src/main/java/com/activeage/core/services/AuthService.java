@@ -118,10 +118,10 @@ public class AuthService {
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Credenciais inválidas."));
+                .orElseThrow(() -> new IllegalArgumentException("E-mail ou senha incorretos."));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Credenciais inválidas.");
+            throw new IllegalArgumentException("E-mail ou senha incorretos.");
         }
 
         return jwtUtil.generateToken(user.getEmail(), user.getRole().name());

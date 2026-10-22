@@ -23,20 +23,31 @@ export function ProgressBar({ currentStep, theme, ariaLabel }: ProgressBarProps)
   };
 
   const activeColors = themeConfig[theme];
-  
-  const lineWidth = currentStep === 1 ? 'w-0' : currentStep === 2 ? 'w-1/2' : 'w-full';
 
   return (
     <div 
-      className="flex items-center justify-between mb-8 relative"
+      className="relative flex items-center justify-between mb-8"
       role="progressbar"
       aria-valuemin={1}
       aria-valuemax={3}
       aria-valuenow={currentStep}
       aria-label={ariaLabel}
     >
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-brand-pot/30 -z-10" aria-hidden="true"></div>
-      <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-1 transition-all duration-500 -z-10 ${activeColors.line} ${lineWidth}`} aria-hidden="true"></div>
+      {/* Linha de Conexão de Fundo (Trilho Base) */}
+      <div 
+        className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-1 bg-[#D9CAB8] z-0 rounded-full" 
+        aria-hidden="true"
+      />
+
+      {/* Linha de Conexão Ativa Conectando as Etapas Concluídas */}
+      {currentStep > 1 && (
+        <div 
+          className={`absolute left-4 top-1/2 -translate-y-1/2 h-1 transition-all duration-500 z-0 rounded-full ${activeColors.line} ${
+            currentStep === 2 ? 'right-1/2' : 'right-4'
+          }`}
+          aria-hidden="true"
+        />
+      )}
       
       {[1, 2, 3].map((item) => {
         const isCompleted = currentStep > item;
@@ -46,8 +57,10 @@ export function ProgressBar({ currentStep, theme, ariaLabel }: ProgressBarProps)
         return (
           <div 
             key={item} 
-            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 transition-colors ${
-              isActive ? `${activeColors.bg} ${activeColors.border} ${activeColors.text}` : 'bg-white border-brand-pot text-brown-light'
+            className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center font-bold border-2 transition-all shadow-xs ${
+              isActive 
+                ? `${activeColors.bg} ${activeColors.border} ${activeColors.text}` 
+                : 'bg-white border-[#D9CAB8] text-brown-light'
             }`}
             aria-current={isCurrent ? 'step' : undefined}
           >
@@ -57,7 +70,7 @@ export function ProgressBar({ currentStep, theme, ariaLabel }: ProgressBarProps)
             </span>
             {/* Elemento visual ignorado pelos leitores para evitar redundância */}
             <span aria-hidden="true">
-              {isCompleted ? <CheckCircle2 size={16} /> : item}
+              {isCompleted ? <CheckCircle2 size={18} /> : item}
             </span>
           </div>
         );
@@ -65,4 +78,3 @@ export function ProgressBar({ currentStep, theme, ariaLabel }: ProgressBarProps)
     </div>
   );
 }
-
