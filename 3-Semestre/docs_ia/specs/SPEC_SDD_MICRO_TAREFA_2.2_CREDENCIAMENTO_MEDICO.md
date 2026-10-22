@@ -1,7 +1,7 @@
 # ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MICRO TAREFA 2.2
 ## Módulo de Credenciamento Médico Integral (Dossiê Ético-Profissional & Auditoria Administrativa)
 ### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Submetida para Aprovação do PO (Guilherme) ⏳  
+**Status:** Aprovada pelo PO e Implementada com Sucesso ✅  
 **Data:** 22 de Outubro de 2026  
 **Casos de Uso:** UC03 (Upload do Dossiê Médico), UC04 (Fila e Auditoria de Credenciamento pelo Admin), UC05 (Homologação com Trilha de Auditoria)  
 **Regras de Negócio Associadas:** RN004, RN006, RN007, RN008  
@@ -242,10 +242,10 @@ Para garantir a máxima testabilidade e cumprimento estrito do SDD:
 
 ### 8. Critérios de Aceite da Spec (DoD)
 
-- [ ] Médico consegue enviar arquivos dos 4 pilares e receber confirmação instantânea.
-- [ ] Arquivos são armazenados fora do escopo web público; tentativas de acesso direto retornam 403 ou 404.
-- [ ] Administrador consegue auditar cada documento individualmente em visualizador seguro.
-- [ ] Toda visualização de documento pelo Admin gera registro compulsório em `audit_logs` com IP e carimbo de data/hora.
-- [ ] Reprovação exige justificativa detalhada e notifica o médico para reenviar o item inconsistente.
-- [ ] Aprovação homologa o médico, ativa 15 dias de teste grátis e libera o consultório virtual.
-- [ ] Médico não homologado (`PENDING_DOCS` ou `UNDER_REVIEW`) é impedido de abrir agenda ou atender teleconsultas.
+- [x] Médico consegue enviar arquivos dos 4 pilares e receber confirmação instantânea.
+- [x] Arquivos são armazenados fora do escopo web público; tentativas de acesso direto retornam 403 ou 404.
+- [x] Administrador consegue auditar cada documento individualmente em visualizador seguro.
+- [x] Toda visualização de documento pelo Admin gera registro compulsório em `audit_logs` com IP e carimbo de data/hora.
+- [x] Reprovação exige justificativa detalhada e notifica o médico para reenviar o item inconsistente.
+- [x] Aprovação homologa o médico, ativa 15 dias de teste grátis e libera o consultório virtual.
+- [x] Médico não homologado (`PENDING_DOCS` ou `UNDER_REVIEW`) é impedido de abrir agenda ou atender teleconsultas.

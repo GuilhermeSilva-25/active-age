@@ -1,5 +1,6 @@
 package com.activeage.core.services;
 
+import com.activeage.core.domain.enums.DoctorDossierStatus;
 import com.activeage.core.domain.enums.Role;
 import com.activeage.core.domain.models.User;
 import com.activeage.core.dtos.requests.DoctorRegisterRequest;
@@ -98,6 +99,7 @@ public class AuthService {
         user.setUfCrm(request.getUfCrm().toUpperCase());
         user.setTermsAccepted(request.isTermsAccepted());
         user.setRole(Role.ROLE_MEDICO);
+        user.setDossierStatus(DoctorDossierStatus.PENDING_DOCS);
         user.setCreatedAt(LocalDateTime.now());
         user.setActive(true);
 

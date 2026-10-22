@@ -1,5 +1,6 @@
 package com.activeage.core.domain.models;
 
+import com.activeage.core.domain.enums.DoctorDossierStatus;
 import com.activeage.core.domain.enums.Role;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -7,12 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Representa a entidade central de Autenticação da plataforma Active Age.
- * Esta classe é mapeada para a coleção "users" no MongoDB e armazena
- * estritamente os dados necessários para login e controle de acesso,
- * respeitando o princípio de minimização de dados da LGPD.
+ * Representa a entidade central de Usuários e Autenticação da plataforma Active Age.
+ * Mapeada para a coleção "users" no MongoDB Atlas.
  */
 @Data
 @NoArgsConstructor
@@ -53,14 +54,12 @@ public class User {
     private String email;
 
     /**
-     * Senha do usuário.
-     * Deve obrigatoriamente ser criptografada via BCrypt antes da persistência.
-     * Nunca deve ser exposta ou trafegada em texto plano.
+     * Senha do usuário criptografada via BCrypt.
      */
     private String password;
 
     /**
-     * Cargo/Permissão do usuário no sistema (Ex: Paciente ou Médico).
+     * Cargo/Permissão do usuário no sistema (ROLE_PACIENTE, ROLE_MEDICO, ROLE_ADMIN).
      * Essencial para o Controle de Permissões Baseado em Cargo (RBAC).
      */
     private Role role;
@@ -83,13 +82,52 @@ public class User {
 
     /**
      * Data e hora exata em que o usuário foi registrado na plataforma.
-     * Utilizado para registros básicos de auditoria (Logs).
      */
     private LocalDateTime createdAt;
 
     /**
-     * Status da conta do usuário.
-     * Contas inativas (false) são bloqueadas na camada de Autenticação.
+     * Status da conta do usuário. Contas inativas são bloqueadas.
      */
     private boolean active;
+
+    // ==========================================
+    // CAMPOS DE CREDENCIAMENTO MÉDICO (RF002 / RN008)
+    // ==========================================
+
+    /**
+     * Status do ciclo de vida do credenciamento do médico.
+     * PENDING_DOCS, UNDER_REVIEW, DOCS_REJECTED, APPROVED, SUSPENDED.
+     */
+    private DoctorDossierStatus dossierStatus;
+
+    /**
+     * Mapa com os metadados dos documentos do Dossiê enviados pelo médico.
+     * Chave: Tipo de Documento em String (ex: CRM_CARD, DIPLOMA, etc.).
+     */
+    private Map<String, DoctorDocumentInfo> documents = new HashMap<>();
+
+    /**
+     * Dados bancários e fiscais do médico para configuração de Split Direto.
+     */
+    private DoctorFinancialInfo financialInfo;
+
+    /**
+     * Motivo ou justificativa técnica em caso de reprovação do Dossiê na auditoria.
+     */
+    private String rejectionReason;
+
+    /**
+     * Data em que o médico formalizou a submissão do dossiê completo para auditoria.
+     */
+    private LocalDateTime submittedAt;
+
+    /**
+     * Data em que o dossiê foi aprovado pelo Administrador / Auditor de Conformidade.
+     */
+    private LocalDateTime approvedAt;
+
+    /**
+     * Data limite do período promocional de 15 dias de teste grátis no consultório virtual.
+     */
+    private LocalDateTime trialExpiresAt;
 }

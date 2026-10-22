@@ -37,11 +37,11 @@ export const AdminLayout: React.FC = () => {
       description: 'Métricas e resumo do sistema',
     },
     {
-      to: '/admin/medicos',
+      to: '/admin/credenciamento',
       end: false,
       label: 'Credenciamento',
       icon: <UserCheck className="w-5 h-5 shrink-0" />,
-      description: 'Validação e aprovação de CRM',
+      description: 'Auditoria de Dossiê CFM (Res. 2.314/2022)',
     },
     {
       to: '/admin/usuarios',

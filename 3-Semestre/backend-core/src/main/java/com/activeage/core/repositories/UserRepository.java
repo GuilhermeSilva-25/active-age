@@ -1,33 +1,43 @@
 package com.activeage.core.repositories;
 
+import com.activeage.core.domain.enums.DoctorDossierStatus;
+import com.activeage.core.domain.enums.Role;
 import com.activeage.core.domain.models.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Interface responsável pelas operações de banco de dados (CRUD)
- * para a entidade User. O Spring Data MongoDB fornece as implementações
- * automaticamente em tempo de execução.
+ * para a entidade User no MongoDB Atlas.
  */
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
 
     /**
      * Busca um usuário pelo seu e-mail.
-     * Utilizado internamente pelo Spring Security no processo de autenticação (Login).
-     *
-     * @param email E-mail a ser pesquisado no banco de dados.
-     * @return Um Optional contendo o usuário, se encontrado.
      */
     Optional<User> findByEmail(String email);
 
     /**
      * Verifica se já existe um usuário cadastrado com um determinado e-mail.
-     * Utilizado para validação de regras de negócio no momento do cadastro.
-     *
-     * @param email E-mail a ser verificado.
-     * @return true se o e-mail já existir na plataforma, false caso contrário.
      */
     boolean existsByEmail(String email);
+
+    /**
+     * Retorna todos os usuários por perfil (ex: ROLE_MEDICO).
+     */
+    List<User> findByRole(Role role);
+
+    /**
+     * Retorna médicos filtrados por status do Dossiê de Credenciamento.
+     */
+    List<User> findByRoleAndDossierStatus(Role role, DoctorDossierStatus dossierStatus);
+
+    /**
+     * Conta médicos por status do Dossiê (para métricas e badges de pendência).
+     */
+    long countByRoleAndDossierStatus(Role role, DoctorDossierStatus dossierStatus);
 }

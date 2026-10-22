@@ -1,51 +1,61 @@
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import {PublicLayout} from './layouts/PublicLayout';
-import {Home} from './pages/Home';
-import {QuemSomos} from './pages/QuemSomos';
-import {Servicos} from './pages/Servicos';
-import {TermosUso} from './pages/TermosUso';
-import {Privacidade} from './pages/Privacidade';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { PublicLayout } from './layouts/PublicLayout';
+import { Home } from './pages/Home';
+import { QuemSomos } from './pages/QuemSomos';
+import { Servicos } from './pages/Servicos';
+import { TermosUso } from './pages/TermosUso';
+import { Privacidade } from './pages/Privacidade';
 
-import {AuthLayout} from './layouts/AuthLayout';
-import {Login} from './pages/auth/Login';
-import {CadastroEscolha} from './pages/auth/CadastroEscolha';
-import {CadastroPaciente} from './pages/auth/CadastroPaciente';
-import {CadastroMedico} from './pages/auth/CadastroMedico';
-import {RecuperarSenha} from './pages/auth/RecuperarSenha';
+import { AuthLayout } from './layouts/AuthLayout';
+import { Login } from './pages/auth/Login';
+import { CadastroEscolha } from './pages/auth/CadastroEscolha';
+import { CadastroPaciente } from './pages/auth/CadastroPaciente';
+import { CadastroMedico } from './pages/auth/CadastroMedico';
+import { RecuperarSenha } from './pages/auth/RecuperarSenha';
 
-import {ProtectedRoute} from './components/auth/ProtectedRoute';
-import {AdminLayout} from './layouts/AdminLayout';
-import {AdminDashboard} from './pages/admin/AdminDashboard';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { AdminLayout } from './layouts/AdminLayout';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminCredenciamento } from './pages/admin/AdminCredenciamento';
+import { DossieCredenciamento } from './pages/medico/DossieCredenciamento';
 
 function App() {
     return (
         <Router>
             <Routes>
                 {/* === Grupo 1: Site Institucional (Usa o PublicLayout com Navbar e Footer) === */}
-                <Route element={<PublicLayout/>}>
-                    <Route path="/" element={<Home/>}/>
-                    <Route path="/quem-somos" element={<QuemSomos/>}/>
-                    <Route path="/servicos" element={<Servicos/>}/>
-                    <Route path="/termos" element={<TermosUso/>}/>
-                    <Route path="/privacidade" element={<Privacidade/>}/>
+                <Route element={<PublicLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/quem-somos" element={<QuemSomos />} />
+                    <Route path="/servicos" element={<Servicos />} />
+                    <Route path="/termos" element={<TermosUso />} />
+                    <Route path="/privacidade" element={<Privacidade />} />
                 </Route>
 
                 {/* === Grupo 2: Autenticação (Usa o AuthLayout com tela dividida) === */}
-                <Route element={<AuthLayout/>}>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/cadastro" element={<CadastroEscolha/>}/>
-                    <Route path="/cadastro-paciente" element={<CadastroPaciente/>}/>
-                    <Route path="/cadastro-medico" element={<CadastroMedico/>}/>
-                    <Route path="/recuperar-senha" element={<RecuperarSenha/>}/>
+                <Route element={<AuthLayout />}>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/cadastro" element={<CadastroEscolha />} />
+                    <Route path="/cadastro-paciente" element={<CadastroPaciente />} />
+                    <Route path="/cadastro-medico" element={<CadastroMedico />} />
+                    <Route path="/recuperar-senha" element={<RecuperarSenha />} />
                 </Route>
 
-                {/* === Grupo 3: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}
-                <Route element={<ProtectedRoute requiredRole="ROLE_ADMIN"/>}>
-                    <Route element={<AdminLayout/>}>
-                        <Route path="/admin" element={<AdminDashboard/>}/>
-                        <Route path="/admin/medicos" element={<AdminDashboard/>}/>
-                        <Route path="/admin/usuarios" element={<AdminDashboard/>}/>
-                        <Route path="/admin/auditoria" element={<AdminDashboard/>}/>
+                {/* === Grupo 3: Área Médica (Blindada por RBAC: ROLE_MEDICO) === */}
+                <Route element={<ProtectedRoute requiredRole="ROLE_MEDICO" />}>
+                    <Route element={<PublicLayout />}>
+                        <Route path="/medico/credenciamento" element={<DossieCredenciamento />} />
+                    </Route>
+                </Route>
+
+                {/* === Grupo 4: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}
+                <Route element={<ProtectedRoute requiredRole="ROLE_ADMIN" />}>
+                    <Route element={<AdminLayout />}>
+                        <Route path="/admin" element={<AdminDashboard />} />
+                        <Route path="/admin/credenciamento" element={<AdminCredenciamento />} />
+                        <Route path="/admin/medicos" element={<AdminCredenciamento />} />
+                        <Route path="/admin/usuarios" element={<AdminDashboard />} />
+                        <Route path="/admin/auditoria" element={<AdminDashboard />} />
                     </Route>
                 </Route>
             </Routes>
