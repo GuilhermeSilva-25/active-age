@@ -18,12 +18,12 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-01** | **Release v0.1.0: Fundação, Identidade e Autenticação Segura** | UC01, UC02 | **Concluída / Live ✅** | [SPEC_SDD_RELEASE_0.1.0_AUTENTICACAO_E_IDENTIDADE.md](./SPEC_SDD_RELEASE_0.1.0_AUTENTICACAO_E_IDENTIDADE.md) |
 | **SPEC-02** | **Micro Tarefa 2.1: Blindagem RBAC, Layout Administrativo e Seed Admin** | UC01, UC02, UC04 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.1_BLINDAGEM_RBAC_E_LAYOUT_ADMIN.md](./SPEC_SDD_MICRO_TAREFA_2.1_BLINDAGEM_RBAC_E_LAYOUT_ADMIN.md) |
 | **SPEC-03** | **Micro Tarefa 2.2: Módulo de Credenciamento Médico Integral (Dossiê 4 Pilares e Auditoria Admin)** | UC03, UC04, UC05 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.2_CREDENCIAMENTO_MEDICO.md](./SPEC_SDD_MICRO_TAREFA_2.2_CREDENCIAMENTO_MEDICO.md) |
+| **SPEC-04** | **Micro Tarefa 2.3: Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`)** | UC01, UC02, UC04, UC05 | **Submetida / Em Aprovação ⏳** | [SPEC_SDD_MICRO_TAREFA_2.3_GESTAO_USUARIOS_E_AUDITORIA.md](./SPEC_SDD_MICRO_TAREFA_2.3_GESTAO_USUARIOS_E_AUDITORIA.md) |
 
 ---
 
 ### 3. Próximas Especificações no Roadmap (Sprint 2 em diante)
 
-* **SPEC-04 (Micro Tarefa 2.3):** Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`).
 * **SPEC-05 (Micro Tarefa 2.4):** Dashboards Segregados de Paciente e Médico (`DashboardPaciente.tsx` e `DashboardMedico.tsx`).
 * **SPEC-06 (Sprint 3 / Release v0.3.0):** Vitrine de Horários Livres e Agendamento Concorrente sem Double-Booking (UC08, UC09, UC10).
 * **SPEC-07 (Sprint 4 / Release v0.4.0):** Prontuário Ético Eletrônico Imutável e Assinatura Digital ICP-Brasil (UC11, UC13, UC14, UC15, UC16).
