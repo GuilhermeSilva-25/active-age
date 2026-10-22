@@ -16,14 +16,15 @@
 ## 2. Metodologia Inegociável: Spec-Driven Development (SDD)
 1. **Regra de Ouro (Zero Código Sem Spec):** NUNCA escreva, edite ou refatore código de funcionalidade sem antes redigir uma Especificação Técnica detalhada (Spec) e obter a **aprovação explícita** do Guilherme.
 2. **Micro Tarefas Testáveis:** O desenvolvimento é estritamente dividido em micro tarefas que geram valor verificável a cada passo.
-3. **Padrão de Commits:** Utilize *Conventional Commits* estritamente em **português**:
+3. **Padrão de UI & Acessibilidade (IHC / WCAG):** É estritamente proibido o uso de `window.alert()`, `confirm()` ou `prompt()`. Toda interação e feedback com o usuário DEVE utilizar o componente acessível [`FeedbackModal.tsx`](./3-Semestre/frontend-react/src/components/common/FeedbackModal.tsx), projetado com botões táteis ampliados para o público idoso.
+4. **Padrão de Commits:** Utilize *Conventional Commits* estritamente em **português**:
    - `feat(...)`: nova funcionalidade
    - `fix(...)`: correção de bug
    - `docs(...)`: documentação
    - `test(...)`: testes unitários/integrados/BDD
    - `refactor(...)`: refatoração sem alteração de comportamento
    - `ci(...)` / `chore(...)`: infraestrutura e dependências
-4. **Persistência de Conhecimento:** Toda documentação, relatório, spec ou plano gerado DEVE ser salvo na pasta oficial `3-Semestre/docs_ia/` e commitado no Git.
+5. **Persistência de Conhecimento:** Toda documentação, relatório, spec ou plano gerado DEVE ser salvo na pasta oficial `3-Semestre/docs_ia/` e commitado no Git.
 
 ---
 
@@ -61,6 +62,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Criptografia BCrypt no `AuthService`.
   - Endpoints de autenticação: `POST /api/auth/register-doctor`, `GET /api/auth/me`, `POST /api/auth/logout`.
   - Frontend integrado com formulário real, feedback de erro/sucesso e Navbar reativa.
+  - Sistema de modais acessíveis com `FeedbackModal.tsx` em substituição ao `window.alert()`.
   - Deploy no Render e Vercel funcionando em produção.
 - **Release v0.2.0 (Sprint 2) — [PRÓXIMA ETAPA A INICIAR]:**
   - Micro Tarefa 1.2: Componente `ProtectedRoute.tsx` no React para proteção de rotas privadas.
