@@ -26,6 +26,20 @@ export function AdminAuditoria() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLog, setSelectedLog] = useState<AuditLogResponse | null>(null);
 
+    const formatRoleName = (role?: string) => {
+        if (!role) return 'Não informado';
+        switch (role) {
+            case 'ROLE_ADMIN':
+                return 'Administrador';
+            case 'ROLE_MEDICO':
+                return 'Médico';
+            case 'ROLE_PACIENTE':
+                return 'Paciente';
+            default:
+                return role.replace('ROLE_', '');
+        }
+    };
+
     const loadData = async () => {
         setLoading(true);
         try {
@@ -134,7 +148,7 @@ export function AdminAuditoria() {
                 <div>
                     <h1 className="text-xl sm:text-2xl font-bold text-brown-dark flex items-center gap-2.5 sm:gap-3">
                         <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600 shrink-0" />
-                        <span>Trilha de Auditoria Imutável (audit_logs)</span>
+                        <span>Trilha de Auditoria Imutável</span>
                     </h1>
                     <p className="text-xs sm:text-sm text-brown mt-1">
                         Rastreabilidade perene de acessos a prontuários e documentos clínicos (SBIS NGS1 / LGPD Art. 37).
@@ -163,7 +177,7 @@ export function AdminAuditoria() {
                     <div className="text-xl sm:text-2xl md:text-3xl font-extrabold text-brown-dark">
                         {stats ? stats.totalLogs : '...'}
                     </div>
-                    <p className="text-[10px] sm:text-[11px] text-brown mt-0.5 truncate">Registros perpétuos no MongoDB</p>
+                    <p className="text-[10px] sm:text-[11px] text-brown mt-0.5 truncate">Registros perpétuos de conformidade</p>
                 </div>
 
                 <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-brand-pot/30 shadow-xs">
@@ -289,8 +303,8 @@ export function AdminAuditoria() {
                                         </td>
                                         <td className="py-3.5 px-4 sm:px-6">
                                             <div className="font-bold">{log.userEmail}</div>
-                                            <span className="text-[10px] text-brown bg-brand-pot/10 px-1.5 py-0.5 rounded font-mono">
-                                                {log.userRole}
+                                            <span className="text-[10px] text-brown bg-brand-pot/10 px-1.5 py-0.5 rounded font-medium">
+                                                {formatRoleName(log.userRole)}
                                             </span>
                                         </td>
                                         <td className="py-3.5 px-4 sm:px-6 whitespace-nowrap">
@@ -367,7 +381,7 @@ export function AdminAuditoria() {
                             <div>
                                 <span className="font-bold text-brown block">Operador Responsável:</span>
                                 <span className="text-brown-dark font-medium">
-                                    {selectedLog.userEmail} ({selectedLog.userRole})
+                                    {selectedLog.userEmail} ({formatRoleName(selectedLog.userRole)})
                                 </span>
                             </div>
                             {selectedLog.targetUserId && (

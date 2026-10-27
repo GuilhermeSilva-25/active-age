@@ -111,8 +111,8 @@ export function AdminDossierModal({ doctorId, isOpen, onClose, onReviewSuccess }
             if (res.ok) {
                 const actionTitle = reviewMode === 'APPROVE' ? 'Credenciamento Homologado!' : 'Dossiê Reprovado!';
                 const actionMsg = reviewMode === 'APPROVE'
-                    ? 'O médico foi aprovado e seu consultório virtual foi liberado com 15 dias de teste grátis. A operação foi registrada em audit_logs.'
-                    : 'A solicitação de ajustes foi registrada e o médico foi notificado no painel. A operação foi registrada em audit_logs.';
+                    ? 'O médico foi aprovado e seu consultório virtual foi liberado com 15 dias de teste grátis. A operação foi registrada na trilha de auditoria e conformidade.'
+                    : 'A solicitação de ajustes foi registrada e o médico foi notificado no painel. A operação foi registrada na trilha de auditoria e conformidade.';
 
                 setFeedback({
                     isOpen: true,

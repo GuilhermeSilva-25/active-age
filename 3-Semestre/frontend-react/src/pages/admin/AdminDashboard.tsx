@@ -49,7 +49,7 @@ export const AdminDashboard: React.FC = () => {
             Fila Ativa
           </div>
           <p className="text-xs text-brown-light font-medium mb-4">
-            Médicos aguardando verificação de CRM/RQE (UC03 / UC04)
+            Médicos aguardando verificação de CRM e especialidade
           </p>
           <Link
             to="/admin/medicos"
@@ -70,7 +70,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-3xl font-extrabold text-brown-dark mb-1">
-            RBAC Ativo
+            Acesso Controlado
           </div>
           <p className="text-xs text-brown-light font-medium mb-4">
             Segregação de perfis Paciente, Médico e Administrador
@@ -94,13 +94,13 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
           <div className="text-3xl font-extrabold text-brown-dark mb-1">
-            Bucket4j
+            Proteção Ativa
           </div>
           <p className="text-xs text-brown-light font-medium mb-4">
-            Rate limiting contra força bruta (5 tentativas / 15 min)
+            Bloqueio inteligente contra tentativas indevidas de login
           </p>
           <span className="text-xs font-bold text-emerald-600 inline-flex items-center gap-1">
-            Proteção perimetral ativa
+            Monitoramento ativo
           </span>
         </div>
 
@@ -135,7 +135,7 @@ export const AdminDashboard: React.FC = () => {
           Infraestrutura em Produção
         </h2>
         <p className="text-sm text-brown-light mb-6">
-          Conexões em tempo real validadas com os provedores da Release v0.1.0 e Sprint 2.
+          Monitoramento em tempo real dos serviços essenciais da plataforma.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -144,9 +144,9 @@ export const AdminDashboard: React.FC = () => {
               <Server className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs text-gray-400 block font-bold">BACKEND CORE</span>
-              <span className="text-sm font-extrabold text-brown-dark">Render (Docker)</span>
-              <span className="text-xs text-emerald-600 font-bold block mt-0.5">HTTP 200 OK</span>
+              <span className="text-xs text-gray-400 block font-bold">SERVIÇO PRINCIPAL</span>
+              <span className="text-sm font-extrabold text-brown-dark">Servidor da Aplicação</span>
+              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Operacional</span>
             </div>
           </div>
 
@@ -155,9 +155,9 @@ export const AdminDashboard: React.FC = () => {
               <Database className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs text-gray-400 block font-bold">BANCO DE DADOS</span>
-              <span className="text-sm font-extrabold text-brown-dark">MongoDB Atlas</span>
-              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Replica Set Conectado</span>
+              <span className="text-xs text-gray-400 block font-bold">DADOS SEGUROS</span>
+              <span className="text-sm font-extrabold text-brown-dark">Armazenamento em Nuvem</span>
+              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Conexão Criptografada Ativa</span>
             </div>
           </div>
 
@@ -166,9 +166,9 @@ export const AdminDashboard: React.FC = () => {
               <Globe className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs text-gray-400 block font-bold">FRONTEND SPA</span>
-              <span className="text-sm font-extrabold text-brown-dark">Vercel Edge</span>
-              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Proxy Rewrite Ativo</span>
+              <span className="text-xs text-gray-400 block font-bold">PORTAL WEB</span>
+              <span className="text-sm font-extrabold text-brown-dark">Interface de Atendimento</span>
+              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Disponível Globalmente</span>
             </div>
           </div>
         </div>

@@ -54,7 +54,7 @@ export function Privacidade() {
             <br/>
             • <strong>Dados Públicos do Médico:</strong> Nome completo, número do CRM, UF, RQE, biografia e horários disponíveis na vitrine são públicos para os pacientes da plataforma.
             <br/>
-            • <strong>Dossiê Confidencial do Médico:</strong> Documentos pessoais (diplomas, CRM, certidões, comprovantes de endereço e dados bancários) <strong>não são públicos</strong> em hipótese alguma. Ficam restritos aos Auditores de Conformidade da Active Age (perfil <code>ROLE_ADMIN</code>) e ao próprio médico titular.
+            • <strong>Dossiê Confidencial do Médico:</strong> Documentos pessoais (diplomas, CRM, certidões, comprovantes de endereço e dados bancários) <strong>não são públicos</strong> em hipótese alguma. Ficam restritos aos Auditores de Conformidade da Active Age (perfil de Administrador) e ao próprio médico titular.
             <br/><br/>
             <strong>A Active Age nunca comercializará ou transferirá dados pessoais, cadastrais ou de saúde para terceiros para fins de marketing ou publicidade.</strong>
           </p>
@@ -65,8 +65,8 @@ export function Privacidade() {
           </p>
           <ul className="mb-6 space-y-2 list-disc list-inside text-brown">
             <li><strong>Armazenamento Seguro e Isolado:</strong> Os documentos do Dossiê do Médico e prontuários de saúde são armazenados em repositório privado, com bloqueio absoluto de acesso público direto via URL estática.</li>
-            <li><strong>Controle de Acesso Perimetral (RBAC):</strong> Qualquer requisição a arquivos ou dados médicos exige autenticação por token JWT ativo e privilégio administrativo ou titularidade do documento.</li>
-            <li><strong>Trilha de Auditoria Imutável (Audit Trail):</strong> Cada visualização, download ou alteração de status documental gera um registro permanente no sistema (<code>audit_logs</code>), gravando a identidade do usuário, endereço IP e carimbo de data/hora (timestamp).</li>
+            <li><strong>Controle de Acesso Perimetral:</strong> Qualquer requisição a arquivos ou dados médicos exige autenticação em sessão segura ativa e privilégio correspondente ou titularidade do documento.</li>
+            <li><strong>Trilha de Auditoria Imutável (Audit Trail):</strong> Cada visualização, download ou alteração de status documental gera um registro permanente na trilha de auditoria e conformidade, gravando a identidade do usuário, endereço IP e carimbo de data/hora (timestamp).</li>
             <li><strong>Criptografia em Trânsito e em Repouso:</strong> Todas as conexões utilizam protocolo HTTPS com TLS moderno. Senhas utilizam BCrypt com salt dinâmico, e os dados bancários contam com proteção restrita.</li>
           </ul>
 

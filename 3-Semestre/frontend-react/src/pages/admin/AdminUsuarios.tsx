@@ -110,8 +110,8 @@ export function AdminUsuarios() {
                     type: newStatus ? 'success' : 'warning',
                     title: newStatus ? 'Conta Reativada!' : 'Conta Inativada!',
                     message: newStatus
-                        ? `A conta de ${userToToggle.fullName} foi reativada com sucesso. A operação foi registrada em audit_logs.`
-                        : `A conta de ${userToToggle.fullName} foi inativada. O usuário foi impedido de efetuar login. A operação foi registrada em audit_logs.`,
+                        ? `A conta de ${userToToggle.fullName} foi reativada com sucesso. A operação foi registrada na trilha de auditoria e conformidade.`
+                        : `A conta de ${userToToggle.fullName} foi inativada. O usuário foi impedido de efetuar login. A operação foi registrada na trilha de auditoria e conformidade.`,
                 });
             } else {
                 const errData = await res.json().catch(() => ({}));
@@ -171,7 +171,7 @@ export function AdminUsuarios() {
                         <span>Gestão de Usuários & Moderação</span>
                     </h1>
                     <p className="text-xs sm:text-sm text-brown mt-1">
-                        Controle perimetral de contas, segregação de papéis RBAC e moderação de acesso à plataforma.
+                        Controle perimetral de contas, segregação de perfis de acesso e moderação da plataforma.
                     </p>
                 </div>
 
@@ -258,7 +258,7 @@ export function AdminUsuarios() {
                             <thead>
                                 <tr className="border-b border-brand-pot/30 bg-brand-pot/10 text-[11px] font-bold text-brown uppercase tracking-wider">
                                     <th className="py-3.5 px-4 sm:px-6">Usuário</th>
-                                    <th className="py-3.5 px-4 sm:px-6">Perfil RBAC</th>
+                                    <th className="py-3.5 px-4 sm:px-6">Perfil de Acesso</th>
                                     <th className="py-3.5 px-4 sm:px-6">Identificação</th>
                                     <th className="py-3.5 px-4 sm:px-6">Status da Conta</th>
                                     <th className="py-3.5 px-4 sm:px-6">Data de Cadastro</th>

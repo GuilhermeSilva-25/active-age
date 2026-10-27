@@ -80,7 +80,7 @@ export function TermosUso() {
 
           <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">5. Segurança e Sigilo dos Documentos do Médico</h2>
           <p className="mb-6 leading-relaxed">
-            A Active Age compromete-se a resguardar a total confidencialidade do Dossiê de Credenciamento do médico. Todos os documentos comprobatórios enviados são armazenados em repositório criptografado, inacessíveis publicamente e auditados sob registro de acessos (<code>audit_logs</code>), conforme detalhado em nossa <a href="/privacidade" className="text-brand-orange font-bold hover:underline">Política de Privacidade (LGPD)</a>.
+            A Active Age compromete-se a resguardar a total confidencialidade do Dossiê de Credenciamento do médico. Todos os documentos comprobatórios enviados são armazenados em repositório criptografado, inacessíveis publicamente e auditados sob registro em trilha de conformidade, conforme detalhado em nossa <a href="/privacidade" className="text-brand-orange font-bold hover:underline">Política de Privacidade (LGPD)</a>.
           </p>
 
           <h2 className="text-2xl font-bold text-brand-orange mt-8 mb-4">6. Conduta Proibida</h2>

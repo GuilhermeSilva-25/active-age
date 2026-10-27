@@ -344,10 +344,10 @@ export function DashboardMedico() {
                         <div
                             onClick={() => {
                                 if (!isApproved) {
-                                    handleFeatureNotice('Agenda Bloqueada', 'Sua agenda estará disponível para abertura de slots assim que o dossiê for homologado.');
+                                    handleFeatureNotice('Agenda Bloqueada', 'Sua agenda estará disponível para abertura de horários assim que o dossiê for homologado.');
                                     return;
                                 }
-                                handleFeatureNotice('Gestão de Agenda (Sprint 3)', 'O módulo de criação e gerenciamento de slots de horários livres será entregue na Release v0.3.0!');
+                                handleFeatureNotice('Gestão de Agenda', 'O módulo de criação e gerenciamento de horários de atendimento estará disponível em breve!');
                             }}
                             role="button"
                             tabIndex={0}
@@ -376,7 +376,7 @@ export function DashboardMedico() {
                                 </p>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-brand-orange">
-                                <span>Release v0.3.0</span>
+                                <span>Em breve</span>
                                 <span>Acessar Agenda →</span>
                             </div>
                         </div>
@@ -388,7 +388,7 @@ export function DashboardMedico() {
                                     handleFeatureNotice('Sala Bloqueada', 'A teleconsulta exige homologação formal do CRM antes de iniciar qualquer chamada.');
                                     return;
                                 }
-                                handleFeatureNotice('Sala de Teleconsulta (Sprint 5)', 'A sala de videoconferência nativa com link exclusivo criptografado será ativada na Release v0.5.0!');
+                                handleFeatureNotice('Sala de Teleconsulta', 'A sala de videoconferência com link exclusivo e criptografado estará disponível em breve!');
                             }}
                             role="button"
                             tabIndex={0}
@@ -417,7 +417,7 @@ export function DashboardMedico() {
                                 </p>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-blue-600">
-                                <span>Release v0.5.0</span>
+                                <span>Em breve</span>
                                 <span>Abrir Sala →</span>
                             </div>
                         </div>
@@ -429,7 +429,7 @@ export function DashboardMedico() {
                                     handleFeatureNotice('Módulo Bloqueado', 'A emissão de documentos médicos exige validação de regularidade junto ao conselho de medicina.');
                                     return;
                                 }
-                                handleFeatureNotice('Prontuário & Prescrição Digital (Sprint 4)', 'O prontuário eletrônico imutável e a emissão de receitas com assinatura ICP-Brasil serão entregues na Release v0.4.0!');
+                                handleFeatureNotice('Prontuário & Prescrição Digital', 'O prontuário eletrônico e a emissão de receitas com assinatura digital ICP-Brasil estarão disponíveis em breve!');
                             }}
                             role="button"
                             tabIndex={0}
@@ -458,7 +458,7 @@ export function DashboardMedico() {
                                 </p>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-emerald-700">
-                                <span>Release v0.4.0</span>
+                                <span>Em breve</span>
                                 <span>Acessar Prontuários →</span>
                             </div>
                         </div>

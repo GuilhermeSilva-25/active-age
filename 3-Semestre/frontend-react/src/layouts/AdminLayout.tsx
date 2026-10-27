@@ -48,7 +48,7 @@ export const AdminLayout: React.FC = () => {
       end: false,
       label: 'Gestão de Usuários',
       icon: <Users className="w-5 h-5 shrink-0" />,
-      description: 'Moderação de contas e RBAC',
+      description: 'Moderação de contas e perfis',
     },
     {
       to: '/admin/auditoria',
@@ -71,7 +71,7 @@ export const AdminLayout: React.FC = () => {
               Painel de Gestão
             </span>
             <span className="text-xs bg-amber-100 text-amber-800 font-extrabold px-2 py-0.5 rounded-full inline-flex items-center gap-1 mt-0.5">
-              <ShieldCheck className="w-3.5 h-3.5" /> ROLE_ADMIN
+              <ShieldCheck className="w-3.5 h-3.5" /> Administrador
             </span>
           </div>
         </div>

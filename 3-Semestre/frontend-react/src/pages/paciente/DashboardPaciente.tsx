@@ -179,7 +179,7 @@ export function DashboardPaciente() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                         {/* Card 1: Agendar Teleconsulta */}
                         <div
-                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A Vitrine de Médicos Geriatras e a escolha de horários livres sem sobreposição serão ativadas na próxima Release v0.3.0!')}
+                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A vitrine com busca de médicos especialistas e horários de atendimento estará disponível em breve!')}
                             role="button"
                             tabIndex={0}
                             className="group p-4 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl bg-white border-2 border-brand-orange/30 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
@@ -199,7 +199,7 @@ export function DashboardPaciente() {
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between">
                                 <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-orange">
-                                    Disponível na v0.3.0
+                                    Em breve
                                 </span>
                                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-brand-orange group-hover:translate-x-1 transition-transform">
                                     Marcar Consulta →
@@ -239,7 +239,7 @@ export function DashboardPaciente() {
 
                         {/* Card 3: Meu Cofre de Saúde & Documentos */}
                         <div
-                            onClick={() => handleFeatureNotice('Cofre de Documentos de Saúde', 'O módulo com download seguro de Receitas Digitais, Pedidos de Exames e Atestados com assinatura ICP-Brasil será entregue na Release v0.4.0!')}
+                            onClick={() => handleFeatureNotice('Cofre de Documentos de Saúde', 'O acesso aos seus documentos de saúde com assinatura digital ICP-Brasil estará disponível em breve!')}
                             role="button"
                             tabIndex={0}
                             className="group p-4 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl bg-white border-2 border-brand-pot/60 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
@@ -312,7 +312,7 @@ export function DashboardPaciente() {
                         </div>
                         <button
                             type="button"
-                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A vitrine com busca inteligente de médicos geriatras estará ativa na Release v0.3.0!')}
+                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A busca e agendamento de consultas com médicos geriatras estarão disponíveis em breve!')}
                             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
                         >
                             <CalendarPlus className="w-4 h-4" />
@@ -333,7 +333,7 @@ export function DashboardPaciente() {
                         </p>
                         <button
                             type="button"
-                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A vitrine com busca inteligente de médicos geriatras estará ativa na Release v0.3.0!')}
+                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A busca e agendamento de consultas com médicos geriatras estarão disponíveis em breve!')}
                             className="w-full sm:w-auto px-6 py-3 rounded-xl border border-brand-orange text-brand-orange hover:bg-orange-50 font-bold text-sm transition-all inline-flex items-center justify-center gap-2"
                         >
                             <CalendarPlus className="w-4 h-4" />
