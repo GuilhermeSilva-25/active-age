@@ -95,7 +95,7 @@ export function DashboardMedico() {
     const isApproved = profile?.dossierStatus === 'APPROVED';
 
     return (
-        <div className="min-h-screen bg-gray-50 text-brown-dark font-sans pb-16">
+        <div className="min-h-screen bg-gray-50 text-brown-dark font-sans flex flex-col justify-between">
             {/* Header Profissional do Médico */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -157,7 +157,7 @@ export function DashboardMedico() {
                 </div>
             </header>
 
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-16 sm:mb-20 space-y-8 flex-grow w-full">
                 {/* Banner Regulatório de Status do CFM (Resolução CFM nº 2.314/2022) */}
                 {profile?.dossierStatus === 'PENDING_DOCS' && (
                     <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">

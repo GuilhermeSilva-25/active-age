@@ -97,7 +97,7 @@ export function DashboardPaciente() {
     const firstName = profile?.fullName ? profile.fullName.split(' ')[0] : 'Paciente';
 
     return (
-        <div className="min-h-screen bg-[#FDFBF7] text-brown-dark font-sans pb-16">
+        <div className="min-h-screen bg-[#FDFBF7] text-brown-dark font-sans flex flex-col justify-between">
             {/* Barra Superior Exclusiva do Portal do Paciente */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -152,7 +152,7 @@ export function DashboardPaciente() {
                 </div>
             </header>
 
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-16 sm:mb-20 space-y-8 flex-grow w-full">
                 {/* Saudação com Data e Mensagem Humanizada */}
                 <div className="bg-gradient-to-r from-orange-50 via-white to-amber-50 rounded-3xl p-6 sm:p-8 border border-orange-200/60 shadow-sm relative overflow-hidden">
                     <div className="relative z-10 max-w-2xl">
