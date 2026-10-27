@@ -98,8 +98,8 @@ export function DashboardMedico() {
         <div className="min-h-screen bg-gray-50 text-brown-dark font-sans flex flex-col justify-between">
             {/* Header Profissional do Médico */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3 sm:gap-6">
+                <div className="max-w-6xl mx-auto px-3.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-2 sm:gap-6">
                         <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
                             <img src={logoImg} alt="Active Age" className="h-10 sm:h-14 md:h-16 w-auto object-contain" />
                         </Link>
@@ -128,7 +128,7 @@ export function DashboardMedico() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="flex items-center gap-1.5 sm:gap-3">
                         {/* Chip Compacto do Médico (Mobile) */}
                         <div className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-brand-orange/10 border border-brand-orange/20 text-brand-orange">
                             <Stethoscope className="w-4 h-4 shrink-0" />
@@ -139,15 +139,16 @@ export function DashboardMedico() {
 
                         <Link
                             to="/medico/credenciamento"
-                            className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs"
+                            className="p-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs inline-flex items-center gap-1.5 shrink-0"
+                            title="Acessar Dossiê de Credenciamento"
                         >
-                            <FileCheck2 className="w-4 h-4 text-brand-orange" />
-                            Dossiê de Credenciamento
+                            <FileCheck2 className="w-4 h-4 text-brand-orange shrink-0" />
+                            <span className="hidden sm:inline">Dossiê</span>
                         </Link>
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="inline-flex items-center gap-1.5 p-2.5 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
+                            className="inline-flex items-center gap-1.5 p-2 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
                             title="Encerrar sessão médica segura"
                         >
                             <LogOut className="w-4 h-4 shrink-0" />
@@ -157,29 +158,29 @@ export function DashboardMedico() {
                 </div>
             </header>
 
-            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-16 sm:mb-20 space-y-8 flex-grow w-full">
+            <main className="max-w-6xl mx-auto px-3.5 sm:px-6 lg:px-8 mt-5 sm:mt-8 mb-16 sm:mb-20 space-y-6 sm:space-y-8 flex-grow w-full">
                 {/* Banner Regulatório de Status do CFM (Resolução CFM nº 2.314/2022) */}
                 {profile?.dossierStatus === 'PENDING_DOCS' && (
-                    <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
-                        <div className="flex items-start gap-4">
-                            <div className="p-3 bg-amber-100 text-amber-800 rounded-xl shrink-0 mt-0.5">
-                                <AlertTriangle className="w-6 h-6" />
+                    <div className="bg-amber-50 border-2 border-amber-300 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                            <div className="p-2.5 sm:p-3 bg-amber-100 text-amber-800 rounded-xl shrink-0 mt-0.5">
+                                <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
                             </div>
                             <div>
-                                <span className="text-xs font-black uppercase tracking-wider text-amber-800 block">
+                                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-amber-800 block">
                                     Ação Obrigatória • Resolução CFM nº 2.314/2022
                                 </span>
-                                <h3 className="text-lg font-black text-amber-950 mt-0.5">
+                                <h3 className="text-base sm:text-lg font-black text-amber-950 mt-0.5">
                                     Envio do Dossiê Profissional Pendente
                                 </h3>
-                                <p className="text-amber-900 text-sm mt-1 max-w-2xl leading-relaxed">
+                                <p className="text-amber-900 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
                                     Para ativar sua agenda de teleconsultas e liberar o consultório virtual, você precisa submeter seus comprovantes profissionais (CRM, Diploma, Certificado ICP-Brasil e Dados Bancários para Split Direto).
                                 </p>
                             </div>
                         </div>
                         <Link
                             to="/medico/credenciamento"
-                            className="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm transition-all shadow-sm shrink-0 inline-flex items-center gap-2 justify-center"
+                            className="w-full sm:w-auto px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm transition-all shadow-sm shrink-0 inline-flex items-center gap-2 justify-center"
                         >
                             Completar Meu Dossiê <ArrowRight className="w-4 h-4" />
                         </Link>
@@ -187,18 +188,18 @@ export function DashboardMedico() {
                 )}
 
                 {profile?.dossierStatus === 'UNDER_REVIEW' && (
-                    <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-6 shadow-sm flex items-start gap-4 animate-in fade-in">
-                        <div className="p-3 bg-blue-100 text-blue-800 rounded-xl shrink-0 mt-0.5">
-                            <Clock className="w-6 h-6 animate-pulse" />
+                    <div className="bg-blue-50 border-2 border-blue-300 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm flex items-start gap-3 sm:gap-4 animate-in fade-in">
+                        <div className="p-2.5 sm:p-3 bg-blue-100 text-blue-800 rounded-xl shrink-0 mt-0.5">
+                            <Clock className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
                         </div>
                         <div>
-                            <span className="text-xs font-black uppercase tracking-wider text-blue-800 block">
+                            <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-blue-800 block">
                                 Dossiê Submetido com Sucesso
                             </span>
-                            <h3 className="text-lg font-black text-blue-950 mt-0.5">
+                            <h3 className="text-base sm:text-lg font-black text-blue-950 mt-0.5">
                                 Documentação em Análise pela Equipe de Auditoria
                             </h3>
-                            <p className="text-blue-900 text-sm mt-1 max-w-2xl leading-relaxed">
+                            <p className="text-blue-900 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
                                 Seus documentos estão sendo conferidos junto ao Conselho Regional de Medicina. O prazo habitual de homologação é de até 24 a 48 horas úteis. Assim que validado, seu consultório virtual e vitrine de agendamentos serão destravados.
                             </p>
                         </div>
@@ -206,26 +207,26 @@ export function DashboardMedico() {
                 )}
 
                 {profile?.dossierStatus === 'DOCS_REJECTED' && (
-                    <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
-                        <div className="flex items-start gap-4">
-                            <div className="p-3 bg-red-100 text-red-800 rounded-xl shrink-0 mt-0.5">
-                                <XCircle className="w-6 h-6" />
+                    <div className="bg-red-50 border-2 border-red-300 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                            <div className="p-2.5 sm:p-3 bg-red-100 text-red-800 rounded-xl shrink-0 mt-0.5">
+                                <XCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                             </div>
                             <div>
-                                <span className="text-xs font-black uppercase tracking-wider text-red-800 block">
+                                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-red-800 block">
                                     Correção Solicitada pelo Auditor
                                 </span>
-                                <h3 className="text-lg font-black text-red-950 mt-0.5">
+                                <h3 className="text-base sm:text-lg font-black text-red-950 mt-0.5">
                                     Necessário Ajustar Documentos do Dossiê
                                 </h3>
-                                <p className="text-red-900 text-sm mt-1 max-w-2xl leading-relaxed">
+                                <p className="text-red-900 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
                                     <strong>Justificativa do Auditor:</strong> {profile.rejectionReason || 'Algum documento enviado não está legível ou necessita de reenvio.'}
                                 </p>
                             </div>
                         </div>
                         <Link
                             to="/medico/credenciamento"
-                            className="px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition-all shadow-sm shrink-0 inline-flex items-center gap-2 justify-center"
+                            className="w-full sm:w-auto px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition-all shadow-sm shrink-0 inline-flex items-center gap-2 justify-center"
                         >
                             Reenviar Documentos <ArrowRight className="w-4 h-4" />
                         </Link>
@@ -233,112 +234,112 @@ export function DashboardMedico() {
                 )}
 
                 {isApproved && (
-                    <div className="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-5 shadow-xs flex items-center justify-between gap-4">
+                    <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-emerald-100 text-emerald-800 rounded-lg shrink-0">
                                 <ShieldCheck className="w-5 h-5" />
                             </div>
                             <div>
-                                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 block">
+                                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800 block">
                                     Credenciamento Homologado • Res. CFM nº 2.314/2022
                                 </span>
-                                <p className="text-emerald-950 text-sm font-medium">
+                                <p className="text-emerald-950 text-xs sm:text-sm font-medium">
                                     Habilitado para prática de telemedicina ética com certificação ICP-Brasil e Split Direto.
                                 </p>
                             </div>
                         </div>
-                        <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold">
+                        <span className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold shrink-0">
                             <CheckCircle2 className="w-3.5 h-3.5" /> Médico Verificado
                         </span>
                     </div>
                 )}
 
                 {/* Grid de Métricas do Consultório Virtual */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                     {/* Card 1: Consultas de Hoje */}
-                    <div className="bg-white p-5 rounded-2xl border border-brand-pot/40 shadow-xs flex items-center justify-between">
+                    <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                         <div>
-                            <span className="text-xs font-bold text-brown-light uppercase tracking-wider block">
+                            <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
                                 Atendimentos Hoje
                             </span>
-                            <span className="text-2xl sm:text-3xl font-black text-brown-dark mt-1 block">
+                            <span className="text-xl sm:text-2xl md:text-3xl font-black text-brown-dark mt-0.5 sm:mt-1 block">
                                 0
                             </span>
-                            <span className="text-[11px] text-brown-light font-medium mt-0.5 block">
-                                {isApproved ? 'Pronto para novos pacientes' : 'Aguardando homologação'}
+                            <span className="text-[10px] sm:text-[11px] text-brown-light font-medium mt-0.5 block truncate">
+                                {isApproved ? 'Pronto para pacientes' : 'Aguardando validação'}
                             </span>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center">
-                            <Calendar className="w-6 h-6" />
+                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center shrink-0 self-end sm:self-center">
+                            <Calendar className="w-4 h-4 sm:w-6 sm:h-6" />
                         </div>
                     </div>
 
                     {/* Card 2: Total de Pacientes */}
-                    <div className="bg-white p-5 rounded-2xl border border-brand-pot/40 shadow-xs flex items-center justify-between">
+                    <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                         <div>
-                            <span className="text-xs font-bold text-brown-light uppercase tracking-wider block">
-                                Pacientes Assistidos
+                            <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
+                                Pacientes
                             </span>
-                            <span className="text-2xl sm:text-3xl font-black text-brown-dark mt-1 block">
+                            <span className="text-xl sm:text-2xl md:text-3xl font-black text-brown-dark mt-0.5 sm:mt-1 block">
                                 0
                             </span>
-                            <span className="text-[11px] text-brown-light font-medium mt-0.5 block">
-                                Prontuários ativos no cofre
+                            <span className="text-[10px] sm:text-[11px] text-brown-light font-medium mt-0.5 block truncate">
+                                Prontuários ativos
                             </span>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <Users className="w-6 h-6" />
+                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 self-end sm:self-center">
+                            <Users className="w-4 h-4 sm:w-6 sm:h-6" />
                         </div>
                     </div>
 
                     {/* Card 3: Assinatura SaaS / Degustação Gratuita */}
-                    <div className="bg-white p-5 rounded-2xl border border-brand-pot/40 shadow-xs flex items-center justify-between">
+                    <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                         <div>
-                            <span className="text-xs font-bold text-brown-light uppercase tracking-wider block">
+                            <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
                                 Assinatura SaaS
                             </span>
-                            <span className="text-base sm:text-lg font-black text-emerald-700 mt-1 block">
-                                Degustação 15 Dias
+                            <span className="text-sm sm:text-base md:text-lg font-black text-emerald-700 mt-0.5 sm:mt-1 block">
+                                Degustação 15D
                             </span>
-                            <span className="text-[11px] text-emerald-800 font-bold mt-0.5 block">
-                                100% dos honorários ao médico
+                            <span className="text-[10px] sm:text-[11px] text-emerald-800 font-bold mt-0.5 block truncate">
+                                100% honorários médico
                             </span>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                            <CreditCard className="w-6 h-6" />
+                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 self-end sm:self-center">
+                            <CreditCard className="w-4 h-4 sm:w-6 sm:h-6" />
                         </div>
                     </div>
 
                     {/* Card 4: Avaliação Média */}
-                    <div className="bg-white p-5 rounded-2xl border border-brand-pot/40 shadow-xs flex items-center justify-between">
+                    <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                         <div>
-                            <span className="text-xs font-bold text-brown-light uppercase tracking-wider block">
-                                Avaliação Média
+                            <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
+                                Avaliação
                             </span>
-                            <div className="flex items-center gap-1.5 mt-1">
-                                <span className="text-2xl sm:text-3xl font-black text-brown-dark">
+                            <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
+                                <span className="text-xl sm:text-2xl md:text-3xl font-black text-brown-dark">
                                     5.0
                                 </span>
-                                <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                                <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-500" />
                             </div>
-                            <span className="text-[11px] text-brown-light font-medium mt-0.5 block">
-                                Res. CFM 2.336/2023 (Sem autopromoção)
+                            <span className="text-[10px] sm:text-[11px] text-brown-light font-medium mt-0.5 block truncate">
+                                CFM 2.336/2023
                             </span>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                            <Star className="w-6 h-6" />
+                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 self-end sm:self-center">
+                            <Star className="w-4 h-4 sm:w-6 sm:h-6" />
                         </div>
                     </div>
                 </div>
 
                 {/* Ações Clínicas Rápidas do Consultório */}
                 <div>
-                    <h3 className="text-lg sm:text-xl font-black text-brown-dark mb-4 flex items-center gap-2">
+                    <h3 className="text-base sm:text-xl font-black text-brown-dark mb-3 sm:mb-4 flex items-center gap-2">
                         <Stethoscope className="w-5 h-5 text-brand-orange" />
                         Ferramentas do Consultório Virtual
                     </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
                         {/* Ação 1: Agenda & Horários */}
                         <div
                             onClick={() => {
@@ -350,31 +351,31 @@ export function DashboardMedico() {
                             }}
                             role="button"
                             tabIndex={0}
-                            className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                            className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
                                 isApproved
                                     ? 'bg-white border-brand-pot/60 hover:border-brand-orange shadow-xs hover:shadow-md'
                                     : 'bg-gray-100 border-gray-200 opacity-75'
                             }`}
                         >
                             <div>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="w-12 h-12 rounded-xl bg-orange-50 text-brand-orange flex items-center justify-center">
-                                        <Calendar className="w-6 h-6" />
+                                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-50 text-brand-orange flex items-center justify-center">
+                                        <Calendar className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
                                     {!isApproved && (
-                                        <span className="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 text-[11px] font-bold flex items-center gap-1">
+                                        <span className="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 text-[10px] sm:text-[11px] font-bold flex items-center gap-1">
                                             <Lock className="w-3 h-3" /> Bloqueado
                                         </span>
                                     )}
                                 </div>
-                                <h4 className="text-lg font-black text-brown-dark">
+                                <h4 className="text-base sm:text-lg font-black text-brown-dark">
                                     Configurar Minha Agenda
                                 </h4>
-                                <p className="text-brown-light text-sm mt-1 leading-snug">
+                                <p className="text-brown-light text-xs sm:text-sm mt-1 leading-snug">
                                     Defina seus horários de atendimento semanal, tempo de consulta e intervalos livres.
                                 </p>
                             </div>
-                            <div className="mt-6 pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-brand-orange">
+                            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-brand-orange">
                                 <span>Release v0.3.0</span>
                                 <span>Acessar Agenda →</span>
                             </div>
@@ -391,31 +392,31 @@ export function DashboardMedico() {
                             }}
                             role="button"
                             tabIndex={0}
-                            className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                            className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
                                 isApproved
                                     ? 'bg-white border-brand-pot/60 hover:border-brand-orange shadow-xs hover:shadow-md'
                                     : 'bg-gray-100 border-gray-200 opacity-75'
                             }`}
                         >
                             <div>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                                        <Video className="w-6 h-6" />
+                                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                                        <Video className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
                                     {!isApproved && (
-                                        <span className="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 text-[11px] font-bold flex items-center gap-1">
+                                        <span className="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 text-[10px] sm:text-[11px] font-bold flex items-center gap-1">
                                             <Lock className="w-3 h-3" /> Bloqueado
                                         </span>
                                     )}
                                 </div>
-                                <h4 className="text-lg font-black text-brown-dark">
+                                <h4 className="text-base sm:text-lg font-black text-brown-dark">
                                     Sala de Teleconsulta
                                 </h4>
-                                <p className="text-brown-light text-sm mt-1 leading-snug">
+                                <p className="text-brown-light text-xs sm:text-sm mt-1 leading-snug">
                                     Conexão direta de áudio e vídeo com o paciente, tela compartilhada e monitoramento geriátrico.
                                 </p>
                             </div>
-                            <div className="mt-6 pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-blue-600">
+                            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-blue-600">
                                 <span>Release v0.5.0</span>
                                 <span>Abrir Sala →</span>
                             </div>
@@ -432,31 +433,31 @@ export function DashboardMedico() {
                             }}
                             role="button"
                             tabIndex={0}
-                            className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                            className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
                                 isApproved
                                     ? 'bg-white border-brand-pot/60 hover:border-brand-orange shadow-xs hover:shadow-md'
                                     : 'bg-gray-100 border-gray-200 opacity-75'
                             }`}
                         >
                             <div>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                                        <FileCheck2 className="w-6 h-6" />
+                                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                                        <FileCheck2 className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
                                     {!isApproved && (
-                                        <span className="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 text-[11px] font-bold flex items-center gap-1">
+                                        <span className="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 text-[10px] sm:text-[11px] font-bold flex items-center gap-1">
                                             <Lock className="w-3 h-3" /> Bloqueado
                                         </span>
                                     )}
                                 </div>
-                                <h4 className="text-lg font-black text-brown-dark">
+                                <h4 className="text-base sm:text-lg font-black text-brown-dark">
                                     Prontuário & ICP-Brasil
                                 </h4>
-                                <p className="text-brown-light text-sm mt-1 leading-snug">
+                                <p className="text-brown-light text-xs sm:text-sm mt-1 leading-snug">
                                     Registro de evolução clínica, emissão de receitas, pedidos de exames e atestados com assinatura digital A1/A3.
                                 </p>
                             </div>
-                            <div className="mt-6 pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-emerald-700">
+                            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-emerald-700">
                                 <span>Release v0.4.0</span>
                                 <span>Acessar Prontuários →</span>
                             </div>
@@ -465,29 +466,29 @@ export function DashboardMedico() {
                 </div>
 
                 {/* Seção: Pacientes Agendados no Dia (Empty State) */}
-                <div className="bg-white rounded-3xl border border-brand-pot/40 p-6 sm:p-8 shadow-xs">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-brand-pot/30 gap-4">
+                <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/40 p-4 sm:p-6 md:p-8 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-brand-pot/30 gap-2 sm:gap-4">
                         <div>
-                            <h3 className="text-lg sm:text-xl font-black text-brown-dark">
+                            <h3 className="text-base sm:text-xl font-black text-brown-dark">
                                 Pacientes Agendados Hoje
                             </h3>
-                            <p className="text-brown-light text-sm mt-0.5">
+                            <p className="text-brown-light text-xs sm:text-sm mt-0.5">
                                 Fila de teleconsultas com pagamento confirmado
                             </p>
                         </div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-brown-light">
+                        <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brown-light">
                             0 consultas para hoje
                         </span>
                     </div>
 
-                    <div className="py-12 text-center max-w-md mx-auto">
-                        <div className="w-16 h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-4">
-                            <Clock className="w-8 h-8" />
+                    <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-3 sm:mb-4">
+                            <Clock className="w-6 h-6 sm:w-8 sm:h-8" />
                         </div>
-                        <h4 className="text-base font-bold text-brown-dark mb-1">
+                        <h4 className="text-sm sm:text-base font-bold text-brown-dark mb-1">
                             Nenhum paciente agendado para o dia
                         </h4>
-                        <p className="text-brown-light text-sm leading-relaxed mb-6">
+                        <p className="text-brown-light text-xs sm:text-sm leading-relaxed">
                             Assim que sua agenda for disponibilizada e os pacientes confirmarem a reserva, as informações completas aparecerão aqui.
                         </p>
                     </div>

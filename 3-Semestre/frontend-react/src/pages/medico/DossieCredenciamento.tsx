@@ -254,7 +254,7 @@ export function DossieCredenciamento() {
         const pillarDocs = DOSSIER_DOCUMENT_DEFINITIONS.filter(d => d.pillar === pillarNumber);
 
         return (
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {pillarDocs.map((def: DocumentDefinition) => {
                     const uploadedInfo = dossier.documents[def.type];
                     const isUploading = uploadingType === def.type;
@@ -262,7 +262,7 @@ export function DossieCredenciamento() {
                     return (
                         <div
                             key={def.type}
-                            className={`p-6 rounded-2xl border transition-all ${
+                            className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border transition-all ${
                                 uploadedInfo
                                     ? 'bg-white border-green-200 shadow-sm'
                                     : def.mandatory
@@ -270,16 +270,16 @@ export function DossieCredenciamento() {
                                     : 'bg-brand-pot/5 border-dashed border-brand-pot/40'
                             }`}
                         >
-                            <div className="flex justify-between items-start gap-3 mb-3">
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <h4 className="font-bold text-brown-dark text-base">{def.title}</h4>
+                            <div className="flex justify-between items-start gap-2 sm:gap-3 mb-3">
+                                <div className="min-w-0">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <h4 className="font-bold text-brown-dark text-sm sm:text-base">{def.title}</h4>
                                         {def.mandatory ? (
-                                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                                            <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
                                                 Obrigatório
                                             </span>
                                         ) : (
-                                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                                            <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
                                                 Opcional
                                             </span>
                                         )}
@@ -288,30 +288,30 @@ export function DossieCredenciamento() {
                                 </div>
 
                                 {uploadedInfo ? (
-                                    <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full shrink-0">
+                                    <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-green-700 bg-green-100 px-2 sm:px-2.5 py-1 rounded-full shrink-0">
                                         <CheckCircle2 className="w-3.5 h-3.5" /> Enviado
                                     </span>
                                 ) : (
-                                    <span className="flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full shrink-0">
+                                    <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-amber-700 bg-amber-100 px-2 sm:px-2.5 py-1 rounded-full shrink-0">
                                         <Clock className="w-3.5 h-3.5" /> Pendente
                                     </span>
                                 )}
                             </div>
 
-                            <p className="text-[11px] text-brown/80 mb-4">
+                            <p className="text-[11px] text-brown/80 mb-3 sm:mb-4">
                                 Formatos: <span className="font-medium text-brown-dark">{def.allowedFormats}</span>
                             </p>
 
                             {uploadedInfo && (
-                                <div className="mb-4 p-3 bg-brand-pot/10 rounded-xl flex items-center justify-between text-xs text-brown-dark">
-                                    <span className="truncate max-w-[200px] font-medium" title={uploadedInfo.originalFileName}>
+                                <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-brand-pot/10 rounded-xl flex items-center justify-between text-xs text-brown-dark gap-2">
+                                    <span className="truncate flex-1 min-w-0 font-medium" title={uploadedInfo.originalFileName}>
                                         📄 {uploadedInfo.originalFileName}
                                     </span>
                                     <a
                                         href={`/api/doctor/documents/${def.type}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-brand-mint font-bold hover:underline flex items-center gap-1 shrink-0 ml-2"
+                                        className="text-brand-mint font-bold hover:underline flex items-center gap-1 shrink-0"
                                     >
                                         <Eye className="w-3.5 h-3.5" /> Ver
                                     </a>
@@ -333,7 +333,7 @@ export function DossieCredenciamento() {
                                         }}
                                     />
                                     <div
-                                        className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
+                                        className={`w-full py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
                                             isUploading
                                                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                                 : uploadedInfo
@@ -365,8 +365,8 @@ export function DossieCredenciamento() {
         <div className="min-h-screen bg-gray-50 text-brown-dark flex flex-col font-sans">
             {/* Header Profissional do Dossiê */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3 sm:gap-6">
+                <div className="max-w-6xl mx-auto px-3.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-2 sm:gap-6">
                         <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
                             <img src={logoImg} alt="Active Age" className="h-10 sm:h-14 md:h-16 w-auto object-contain" />
                         </Link>
@@ -389,9 +389,15 @@ export function DossieCredenciamento() {
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-3">
+                        {/* Chip Compacto no Mobile */}
+                        <div className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-brand-mint/20 text-brown-dark">
+                            <ShieldCheck className="w-4 h-4 shrink-0 text-brand-mint" />
+                            <span className="text-xs font-bold">Dossiê</span>
+                        </div>
+
                         <Link
                             to="/medico/dashboard"
-                            className="inline-flex items-center gap-1.5 p-2.5 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
+                            className="inline-flex items-center gap-1.5 p-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
                             title="Voltar ao consultório médico"
                         >
                             <ArrowLeft className="w-4 h-4 text-brand-orange shrink-0" />
@@ -400,7 +406,7 @@ export function DossieCredenciamento() {
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="inline-flex items-center gap-1.5 p-2.5 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
+                            className="inline-flex items-center gap-1.5 p-2 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
                             title="Encerrar sessão segura"
                         >
                             <LogOut className="w-4 h-4 shrink-0" />
@@ -410,21 +416,21 @@ export function DossieCredenciamento() {
                 </div>
             </header>
 
-            <main className="flex-grow bg-brand-pot/5 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-5xl mx-auto space-y-8">
+            <main className="flex-grow bg-brand-pot/5 py-6 sm:py-10 px-3.5 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
                 
                 {/* Header do Dossiê */}
-                <div className="bg-white rounded-3xl p-8 border border-brand-pot/40 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-brand-pot/40 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                            <span className="p-2.5 rounded-2xl bg-brand-mint/20 text-brown-dark">
-                                <ShieldCheck className="w-7 h-7" />
+                            <span className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-brand-mint/20 text-brown-dark shrink-0">
+                                <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
                             </span>
                             <div>
-                                <h1 className="text-2xl md:text-3xl font-bold text-brown-dark">
-                                    Dossiê de Credenciamento Médico
+                                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-brown-dark">
+                                    Dossiê de Credenciamento
                                 </h1>
-                                <p className="text-sm text-brown">
+                                <p className="text-xs sm:text-sm text-brown">
                                     Dr(a). {dossier.fullName} • CRM {dossier.crm}/{dossier.ufCrm}
                                 </p>
                             </div>
@@ -434,24 +440,24 @@ export function DossieCredenciamento() {
                         </p>
                     </div>
 
-                    <div className="shrink-0 flex flex-col items-start md:items-end gap-2">
+                    <div className="shrink-0 flex flex-col items-start md:items-end gap-2 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-brand-pot/20">
                         {dossier.dossierStatus === 'PENDING_DOCS' && (
-                            <span className="px-4 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-2">
+                            <span className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-2">
                                 <Clock className="w-4 h-4" /> Pré-Cadastro (Pendente de Docs)
                             </span>
                         )}
                         {dossier.dossierStatus === 'UNDER_REVIEW' && (
-                            <span className="px-4 py-2 rounded-xl text-sm font-bold bg-blue-100 text-blue-800 border border-blue-200 flex items-center gap-2 animate-pulse">
+                            <span className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-100 text-blue-800 border border-blue-200 flex items-center gap-2 animate-pulse">
                                 <Clock className="w-4 h-4" /> Em Análise de Compliance
                             </span>
                         )}
                         {dossier.dossierStatus === 'DOCS_REJECTED' && (
-                            <span className="px-4 py-2 rounded-xl text-sm font-bold bg-red-100 text-red-800 border border-red-200 flex items-center gap-2">
+                            <span className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-red-100 text-red-800 border border-red-200 flex items-center gap-2">
                                 <XCircle className="w-4 h-4" /> Dossiê Requer Ajustes
                             </span>
                         )}
                         {dossier.dossierStatus === 'APPROVED' && (
-                            <span className="px-4 py-2 rounded-xl text-sm font-bold bg-green-100 text-green-800 border border-green-200 flex items-center gap-2">
+                            <span className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-green-100 text-green-800 border border-green-200 flex items-center gap-2">
                                 <CheckCircle2 className="w-4 h-4" /> Credenciamento Homologado
                             </span>
                         )}
@@ -459,7 +465,7 @@ export function DossieCredenciamento() {
                         <div className="text-xs text-brown">
                             Progresso Obrigatório: <strong>{dossier.mandatoryUploadedCount} de {dossier.totalMandatoryCount} itens</strong>
                         </div>
-                        <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="w-full md:w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-brand-mint transition-all duration-500"
                                 style={{
@@ -472,11 +478,11 @@ export function DossieCredenciamento() {
 
                 {/* Banner de Reprovação (se houver) */}
                 {dossier.dossierStatus === 'DOCS_REJECTED' && dossier.rejectionReason && (
-                    <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 text-red-800 flex items-start gap-4">
-                        <AlertCircle className="w-6 h-6 shrink-0 mt-0.5 text-red-600" />
+                    <div className="bg-red-50 border-2 border-red-300 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-red-800 flex items-start gap-3 sm:gap-4">
+                        <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 mt-0.5 text-red-600" />
                         <div>
-                            <h3 className="font-bold text-lg mb-1">Parecer da Auditoria de Conformidade:</h3>
-                            <p className="text-sm leading-relaxed">{dossier.rejectionReason}</p>
+                            <h3 className="font-bold text-base sm:text-lg mb-1">Parecer da Auditoria de Conformidade:</h3>
+                            <p className="text-xs sm:text-sm leading-relaxed">{dossier.rejectionReason}</p>
                             <p className="text-xs text-red-600 mt-2 font-medium">
                                 Por favor, substitua os documentos inconsistentes abaixo e clique novamente em "Submeter Dossiê para Auditoria".
                             </p>
@@ -486,11 +492,11 @@ export function DossieCredenciamento() {
 
                 {/* Banner de Homologação (se aprovado) */}
                 {dossier.dossierStatus === 'APPROVED' && (
-                    <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-6 text-green-800 flex items-start gap-4">
-                        <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5 text-green-600" />
+                    <div className="bg-green-50 border-2 border-green-300 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-green-800 flex items-start gap-3 sm:gap-4">
+                        <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 mt-0.5 text-green-600" />
                         <div>
-                            <h3 className="font-bold text-lg mb-1">Parabéns! Seu Credenciamento foi Homologado com Sucesso.</h3>
-                            <p className="text-sm leading-relaxed">
+                            <h3 className="font-bold text-base sm:text-lg mb-1">Parabéns! Seu Credenciamento foi Homologado com Sucesso.</h3>
+                            <p className="text-xs sm:text-sm leading-relaxed">
                                 Suas credenciais foram conferidas perante o CRM e as normas do CFM. Seu consultório virtual está totalmente liberado com <strong>15 dias de teste grátis</strong> ativados.
                             </p>
                         </div>
@@ -498,64 +504,64 @@ export function DossieCredenciamento() {
                 )}
 
                 {/* Abas dos 4 Pilares */}
-                <div className="bg-white rounded-3xl border border-brand-pot/40 shadow-sm overflow-hidden">
-                    <div className="flex border-b border-brand-pot/30 overflow-x-auto scrollbar-none">
+                <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/40 shadow-sm overflow-hidden">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-1 p-1.5 sm:p-2 bg-brand-pot/10 border-b border-brand-pot/30">
                         <button
                             type="button"
                             onClick={() => setActiveTab(1)}
-                            className={`flex items-center gap-2 px-6 py-4 font-bold text-sm border-b-2 whitespace-nowrap transition-colors ${
+                            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm text-center transition-all ${
                                 activeTab === 1
-                                    ? 'border-brand-mint text-brown-dark bg-brand-mint/10'
-                                    : 'border-transparent text-brown hover:text-brown-dark'
+                                    ? 'bg-white text-brown-dark shadow-xs border border-brand-pot/30'
+                                    : 'text-brown hover:text-brown-dark hover:bg-white/60'
                             }`}
                         >
-                            <Award className="w-4 h-4" />
-                            Pilar 1: Habilitação & ID
+                            <Award className="w-4 h-4 shrink-0 text-brand-orange" />
+                            <span className="truncate">Pilar 1: Habilitação</span>
                         </button>
                         <button
                             type="button"
                             onClick={() => setActiveTab(2)}
-                            className={`flex items-center gap-2 px-6 py-4 font-bold text-sm border-b-2 whitespace-nowrap transition-colors ${
+                            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm text-center transition-all ${
                                 activeTab === 2
-                                    ? 'border-brand-mint text-brown-dark bg-brand-mint/10'
-                                    : 'border-transparent text-brown hover:text-brown-dark'
+                                    ? 'bg-white text-brown-dark shadow-xs border border-brand-pot/30'
+                                    : 'text-brown hover:text-brown-dark hover:bg-white/60'
                             }`}
                         >
-                            <ShieldCheck className="w-4 h-4" />
-                            Pilar 2: Regularidade Ética
+                            <ShieldCheck className="w-4 h-4 shrink-0 text-brand-mint" />
+                            <span className="truncate">Pilar 2: Regularidade</span>
                         </button>
                         <button
                             type="button"
                             onClick={() => setActiveTab(3)}
-                            className={`flex items-center gap-2 px-6 py-4 font-bold text-sm border-b-2 whitespace-nowrap transition-colors ${
+                            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm text-center transition-all ${
                                 activeTab === 3
-                                    ? 'border-brand-mint text-brown-dark bg-brand-mint/10'
-                                    : 'border-transparent text-brown hover:text-brown-dark'
+                                    ? 'bg-white text-brown-dark shadow-xs border border-brand-pot/30'
+                                    : 'text-brown hover:text-brown-dark hover:bg-white/60'
                             }`}
                         >
-                            <Building2 className="w-4 h-4" />
-                            Pilar 3: Telemedicina (ICP-Brasil)
+                            <Building2 className="w-4 h-4 shrink-0 text-blue-600" />
+                            <span className="truncate">Pilar 3: Telemedicina</span>
                         </button>
                         <button
                             type="button"
                             onClick={() => setActiveTab(4)}
-                            className={`flex items-center gap-2 px-6 py-4 font-bold text-sm border-b-2 whitespace-nowrap transition-colors ${
+                            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm text-center transition-all ${
                                 activeTab === 4
-                                    ? 'border-brand-mint text-brown-dark bg-brand-mint/10'
-                                    : 'border-transparent text-brown hover:text-brown-dark'
+                                    ? 'bg-white text-brown-dark shadow-xs border border-brand-pot/30'
+                                    : 'text-brown hover:text-brown-dark hover:bg-white/60'
                             }`}
                         >
-                            <CreditCard className="w-4 h-4" />
-                            Pilar 4: Dados Financeiros & Split
+                            <CreditCard className="w-4 h-4 shrink-0 text-emerald-600" />
+                            <span className="truncate">Pilar 4: Financeiro & Split</span>
                         </button>
                     </div>
 
-                    <div className="p-8">
+                    <div className="p-4 sm:p-6 md:p-8">
                         {activeTab === 1 && (
                             <div className="space-y-6">
                                 <div>
-                                    <h3 className="text-lg font-bold text-brown-dark">1. Habilitação Profissional e Identificação Civil</h3>
-                                    <p className="text-sm text-brown">Comprovação da titulação médica e identificação oficial perante os órgãos de classe.</p>
+                                    <h3 className="text-base sm:text-lg font-bold text-brown-dark">1. Habilitação Profissional e Identificação Civil</h3>
+                                    <p className="text-xs sm:text-sm text-brown">Comprovação da titulação médica e identificação oficial perante os órgãos de classe.</p>
                                 </div>
                                 {renderPillarDocs(1)}
                             </div>
@@ -564,8 +570,8 @@ export function DossieCredenciamento() {
                         {activeTab === 2 && (
                             <div className="space-y-6">
                                 <div>
-                                    <h3 className="text-lg font-bold text-brown-dark">2. Regularidade Ético-Profissional (CRM)</h3>
-                                    <p className="text-sm text-brown">Atestado emitido pelo Conselho Regional de Medicina de que sua inscrição está ativa e sem interdições.</p>
+                                    <h3 className="text-base sm:text-lg font-bold text-brown-dark">2. Regularidade Ético-Profissional (CRM)</h3>
+                                    <p className="text-xs sm:text-sm text-brown">Atestado emitido pelo Conselho Regional de Medicina de que sua inscrição está ativa e sem interdições.</p>
                                 </div>
                                 {renderPillarDocs(2)}
                             </div>
@@ -574,18 +580,18 @@ export function DossieCredenciamento() {
                         {activeTab === 3 && (
                             <div className="space-y-6">
                                 <div>
-                                    <h3 className="text-lg font-bold text-brown-dark">3. Requisitos Técnicos para Telemedicina (Resolução CFM nº 2.314/2022)</h3>
-                                    <p className="text-sm text-brown">Exigência legal de Certificado Digital ICP-Brasil (A1/A3) e ciência de prática de telemedicina no CRM.</p>
+                                    <h3 className="text-base sm:text-lg font-bold text-brown-dark">3. Requisitos Técnicos para Telemedicina (Resolução CFM nº 2.314/2022)</h3>
+                                    <p className="text-xs sm:text-sm text-brown">Exigência legal de Certificado Digital ICP-Brasil (A1/A3) e ciência de prática de telemedicina no CRM.</p>
                                 </div>
                                 {renderPillarDocs(3)}
                             </div>
                         )}
 
                         {activeTab === 4 && (
-                            <div className="space-y-8">
+                            <div className="space-y-6 sm:space-y-8">
                                 <div>
-                                    <h3 className="text-lg font-bold text-brown-dark">4. Dados Cadastrais e Financeiros (Split Direto)</h3>
-                                    <p className="text-sm text-brown">
+                                    <h3 className="text-base sm:text-lg font-bold text-brown-dark">4. Dados Cadastrais e Financeiros (Split Direto)</h3>
+                                    <p className="text-xs sm:text-sm text-brown">
                                         Em cumprimento à vedação de dicotomia do CFM, seus honorários liquidam diretamente nesta conta via Split de Pagamento do gateway, sem trânsito pela conta do Active Age.
                                     </p>
                                 </div>
@@ -594,13 +600,13 @@ export function DossieCredenciamento() {
                                 {renderPillarDocs(4)}
 
                                 {/* Formulário Bancário */}
-                                <form onSubmit={handleSaveFinancial} className="p-6 bg-brand-pot/5 rounded-2xl border border-brand-pot/40 space-y-6">
-                                    <h4 className="font-bold text-brown-dark text-base flex items-center gap-2 border-b border-brand-pot/30 pb-3">
-                                        <CreditCard className="w-5 h-5 text-brand-mint" />
-                                        Conta de Liquidação e Chave PIX (Titularidade Médica ou PJ)
+                                <form onSubmit={handleSaveFinancial} className="p-4 sm:p-6 bg-brand-pot/5 rounded-xl sm:rounded-2xl border border-brand-pot/40 space-y-4 sm:space-y-6">
+                                    <h4 className="font-bold text-brown-dark text-sm sm:text-base flex items-center gap-2 border-b border-brand-pot/30 pb-3">
+                                        <CreditCard className="w-5 h-5 text-brand-mint shrink-0" />
+                                        <span>Conta de Liquidação e Chave PIX (Split Direto)</span>
                                     </h4>
 
-                                    <div className="grid md:grid-cols-3 gap-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                                         <div>
                                             <label className="block text-xs font-bold text-brown-dark mb-1">Banco *</label>
                                             <input
@@ -636,7 +642,7 @@ export function DossieCredenciamento() {
                                         </div>
                                     </div>
 
-                                    <div className="grid md:grid-cols-3 gap-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                                         <div>
                                             <label className="block text-xs font-bold text-brown-dark mb-1">Tipo de Conta *</label>
                                             <select
@@ -675,7 +681,7 @@ export function DossieCredenciamento() {
                                         </div>
                                     </div>
 
-                                    <div className="grid md:grid-cols-2 gap-6 pt-2 border-t border-brand-pot/30">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-2 border-t border-brand-pot/30">
                                         <div>
                                             <label className="block text-xs font-bold text-brown-dark mb-1">CNPJ da PJ Médica (Opcional)</label>
                                             <input
@@ -702,7 +708,7 @@ export function DossieCredenciamento() {
                                         <button
                                             type="submit"
                                             disabled={savingFinancial}
-                                            className="px-6 py-3 bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold text-sm rounded-xl transition-all flex items-center gap-2 shadow-sm disabled:opacity-70"
+                                            className="w-full sm:w-auto justify-center px-6 py-3 bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold text-sm rounded-xl transition-all flex items-center gap-2 shadow-sm disabled:opacity-70"
                                         >
                                             {savingFinancial ? (
                                                 <>
@@ -721,10 +727,10 @@ export function DossieCredenciamento() {
 
                 {/* Barra Inferior de Submissão */}
                 {dossier.dossierStatus !== 'APPROVED' && dossier.dossierStatus !== 'UNDER_REVIEW' && (
-                    <div className="bg-white rounded-3xl p-6 border border-brand-pot/40 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-brand-pot/40 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                         <div>
-                            <h4 className="font-bold text-brown-dark text-base">Pronto para submeter seu Dossiê?</h4>
-                            <p className="text-xs text-brown">
+                            <h4 className="font-bold text-brown-dark text-sm sm:text-base">Pronto para submeter seu Dossiê?</h4>
+                            <p className="text-xs text-brown mt-0.5">
                                 Certifique-se de ter anexado os 7 documentos obrigatórios e preenchido os dados bancários.
                             </p>
                         </div>
@@ -733,7 +739,7 @@ export function DossieCredenciamento() {
                             type="button"
                             onClick={handleSubmitDossier}
                             disabled={!dossier.canSubmit || submitting}
-                            className={`px-8 py-4 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${
+                            className={`w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shrink-0 ${
                                 dossier.canSubmit && !submitting
                                     ? 'bg-brand-mint hover:bg-brand-mint/80 text-brown-dark shadow-md hover:scale-[1.02]'
                                     : 'bg-gray-200 text-gray-500 cursor-not-allowed opacity-70'
