@@ -368,7 +368,7 @@ export function DossieCredenciamento() {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-4 sm:gap-6">
                         <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
-                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-12 w-auto object-contain" />
+                            <img src={logoImg} alt="Active Age" className="h-14 sm:h-16 w-auto object-contain" />
                         </Link>
                         <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
                         <div className="flex items-center gap-3">

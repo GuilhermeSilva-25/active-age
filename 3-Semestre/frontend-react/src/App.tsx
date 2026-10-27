@@ -22,10 +22,12 @@ import { AdminAuditoria } from './pages/admin/AdminAuditoria';
 import { DossieCredenciamento } from './pages/medico/DossieCredenciamento';
 import { DashboardMedico } from './pages/medico/DashboardMedico';
 import { DashboardPaciente } from './pages/paciente/DashboardPaciente';
+import { ScrollToTop } from './components/common/ScrollToTop';
 
 function App() {
     return (
         <Router>
+            <ScrollToTop />
             <Routes>
                 {/* === Grupo 1: Site Institucional (Usa o PublicLayout com Navbar e Footer) === */}
                 <Route element={<PublicLayout />}>

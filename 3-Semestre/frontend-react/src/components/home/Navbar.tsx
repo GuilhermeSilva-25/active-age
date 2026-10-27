@@ -85,13 +85,13 @@ export function Navbar() {
                 <>
                   <Link
                     to={getDashboardPath(currentUser.role, currentUser.dossierStatus)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-orange text-white text-xs font-bold hover:bg-brand-orange/90 transition-all shadow-xs"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
                     title="Acessar painel do usuário"
                   >
-                    <LayoutDashboard size={15} />
+                    <LayoutDashboard size={18} />
                     Meu Painel
                   </Link>
-                  <div className="flex items-center gap-2 text-brown-dark font-medium px-3 py-1.5 rounded-lg bg-brand-pot/20">
+                  <div className="flex items-center gap-2 text-brown-dark font-medium px-3.5 py-2 rounded-xl bg-brand-pot/20">
                     <UserIcon size={18} className="text-brand-orange" />
                     <span className="text-sm">
                       Olá, <strong>{firstName}</strong> ({getRoleLabel(currentUser.role)})
