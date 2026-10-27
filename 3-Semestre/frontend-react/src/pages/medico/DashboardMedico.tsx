@@ -18,6 +18,8 @@ import {
     Lock
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
+import { Footer } from '../../components/home/Footer';
+import logoImg from '../../assets/logo-active-age.png';
 
 interface DoctorProfile {
     id: string;
@@ -97,23 +99,29 @@ export function DashboardMedico() {
             {/* Header Profissional do Médico */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-brand-orange/10 border border-brand-orange/20 flex items-center justify-center text-brand-orange shadow-inner">
-                            <Stethoscope className="w-7 h-7" />
-                        </div>
-                        <div>
-                            <span className="text-xs font-bold uppercase tracking-wider text-brand-orange block">
-                                Consultório Virtual • Active Age
-                            </span>
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <h1 className="text-lg sm:text-xl font-black text-brown-dark">
-                                    Dr(a). {loading ? '...' : (profile?.fullName || 'Médico')}
-                                </h1>
-                                {profile?.crm && (
-                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-pot/20 text-brown-dark border border-brand-pot/40">
-                                        CRM {profile.crm}-{profile.ufCrm || 'SP'}
-                                    </span>
-                                )}
+                    <div className="flex items-center gap-4 sm:gap-6">
+                        <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
+                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-12 w-auto object-contain" />
+                        </Link>
+                        <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-xl bg-brand-orange/10 border border-brand-orange/20 flex items-center justify-center text-brand-orange shadow-inner shrink-0">
+                                <Stethoscope className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-brand-orange block">
+                                    Consultório Virtual • Active Age
+                                </span>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <h1 className="text-base sm:text-lg font-black text-brown-dark">
+                                        Dr(a). {loading ? '...' : (profile?.fullName || 'Médico')}
+                                    </h1>
+                                    {profile?.crm && (
+                                        <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-brand-pot/20 text-brown-dark border border-brand-pot/40">
+                                            CRM {profile.crm}-{profile.ufCrm || 'SP'}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -484,6 +492,8 @@ export function DashboardMedico() {
                 message={feedback.message}
                 onConfirm={() => setFeedback({ ...feedback, isOpen: false })}
             />
+
+            <Footer />
         </div>
     );
 }

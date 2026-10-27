@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
     CalendarPlus,
     Calendar,
@@ -14,6 +14,8 @@ import {
     CheckCircle2
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
+import { Footer } from '../../components/home/Footer';
+import logoImg from '../../assets/logo-active-age.png';
 
 interface PatientProfile {
     id: string;
@@ -96,20 +98,26 @@ export function DashboardPaciente() {
 
     return (
         <div className="min-h-screen bg-[#FDFBF7] text-brown-dark font-sans pb-16">
-            {/* Barra Superior de Boas-Vindas */}
+            {/* Barra Superior Exclusiva do Portal do Paciente */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-brand-orange/10 border-2 border-brand-orange/30 flex items-center justify-center text-brand-orange shadow-inner">
-                            <User className="w-7 h-7" />
-                        </div>
-                        <div>
-                            <span className="text-xs font-bold uppercase tracking-wider text-brand-orange block">
-                                Portal do Paciente & Cuidador
-                            </span>
-                            <h1 className="text-xl sm:text-2xl font-black text-brown-dark">
-                                Olá, {loading ? '...' : firstName}!
-                            </h1>
+                    <div className="flex items-center gap-4 sm:gap-6">
+                        <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
+                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-12 w-auto object-contain" />
+                        </Link>
+                        <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-full bg-brand-orange/10 border-2 border-brand-orange/30 flex items-center justify-center text-brand-orange shadow-inner shrink-0">
+                                <User className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-brand-orange block">
+                                    Portal do Paciente & Cuidador
+                                </span>
+                                <h1 className="text-lg sm:text-xl font-black text-brown-dark">
+                                    Olá, {loading ? '...' : firstName}!
+                                </h1>
+                            </div>
                         </div>
                     </div>
 
@@ -353,6 +361,8 @@ export function DashboardPaciente() {
                 message={feedback.message}
                 onConfirm={() => setFeedback({ ...feedback, isOpen: false })}
             />
+
+            <Footer />
         </div>
     );
 }

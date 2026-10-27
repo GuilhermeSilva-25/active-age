@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     UploadCloud,
     CheckCircle2,
@@ -12,9 +13,13 @@ import {
     Award,
     Loader2,
     Eye,
-    ChevronRight
+    ChevronRight,
+    ArrowLeft,
+    LogOut
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
+import { Footer } from '../../components/home/Footer';
+import logoImg from '../../assets/logo-active-age.png';
 import {
     type DoctorDossierStatusResponse,
     type DocumentType,
@@ -23,11 +28,22 @@ import {
 } from '../../types/dossier';
 
 export function DossieCredenciamento() {
+    const navigate = useNavigate();
     const [dossier, setDossier] = useState<DoctorDossierStatusResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [uploadingType, setUploadingType] = useState<DocumentType | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState<number>(1);
+
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (err) {
+            console.error('Erro ao efetuar logout:', err);
+        } finally {
+            navigate('/login');
+        }
+    };
 
     // Form de Dados Bancários
     const [bankForm, setBankForm] = useState({
@@ -346,7 +362,53 @@ export function DossieCredenciamento() {
     };
 
     return (
-        <main className="flex-grow bg-brand-pot/5 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gray-50 text-brown-dark flex flex-col font-sans">
+            {/* Header Profissional do Dossiê */}
+            <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-4 sm:gap-6">
+                        <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
+                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-12 w-auto object-contain" />
+                        </Link>
+                        <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-xl bg-brand-mint/20 flex items-center justify-center text-brown-dark shadow-inner shrink-0">
+                                <ShieldCheck className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-brand-orange block">
+                                    Credenciamento Médico • CFM
+                                </span>
+                                <h1 className="text-base sm:text-lg font-black text-brown-dark">
+                                    Dossiê de Habilitação Ética
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <Link
+                            to="/medico/dashboard"
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs"
+                        >
+                            <ArrowLeft className="w-4 h-4 text-brand-orange" />
+                            <span className="hidden sm:inline">Voltar ao Consultório</span>
+                            <span className="sm:hidden">Voltar</span>
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs"
+                            title="Encerrar sessão segura"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            <span className="hidden sm:inline">Encerrar Sessão</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main className="flex-grow bg-brand-pot/5 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto space-y-8">
                 
                 {/* Header do Dossiê */}
@@ -697,6 +759,9 @@ export function DossieCredenciamento() {
                 message={feedback.message}
                 onConfirm={() => setFeedback({ ...feedback, isOpen: false })}
             />
-        </main>
+            </main>
+            
+            <Footer />
+        </div>
     );
 }

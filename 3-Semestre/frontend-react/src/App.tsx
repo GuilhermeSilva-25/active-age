@@ -47,17 +47,13 @@ function App() {
 
                 {/* === Grupo 3: Área do Paciente (Blindada por RBAC: ROLE_PACIENTE) === */}
                 <Route element={<ProtectedRoute requiredRole="ROLE_PACIENTE" />}>
-                    <Route element={<PublicLayout />}>
-                        <Route path="/paciente/dashboard" element={<DashboardPaciente />} />
-                    </Route>
+                    <Route path="/paciente/dashboard" element={<DashboardPaciente />} />
                 </Route>
 
                 {/* === Grupo 4: Área Médica (Blindada por RBAC: ROLE_MEDICO) === */}
                 <Route element={<ProtectedRoute requiredRole="ROLE_MEDICO" />}>
-                    <Route element={<PublicLayout />}>
-                        <Route path="/medico/dashboard" element={<DashboardMedico />} />
-                        <Route path="/medico/credenciamento" element={<DossieCredenciamento />} />
-                    </Route>
+                    <Route path="/medico/dashboard" element={<DashboardMedico />} />
+                    <Route path="/medico/credenciamento" element={<DossieCredenciamento />} />
                 </Route>
 
                 {/* === Grupo 5: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}

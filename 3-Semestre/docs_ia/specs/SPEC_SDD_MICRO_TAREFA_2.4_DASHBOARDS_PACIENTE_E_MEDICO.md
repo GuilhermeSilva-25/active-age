@@ -111,12 +111,13 @@ Localizado em `src/pages/medico/DashboardMedico.tsx`:
   - **Prontuários e Documentos Digitais (Sprint 4):** Acesso rápido aos prontuários imutáveis e emissor de prescrições com certificado ICP-Brasil.
 * **Agenda do Dia / Pacientes Agendados:** Tabela/Lista dos próximos pacientes com status de pagamento confirmado.
 
-#### 4.3. Fluxo de Roteamento Pós-Login (`Login.tsx` & `App.tsx`)
+#### 4.3. Fluxo de Roteamento Pós-Login & Arquitetura de Cabeçalho Único (`Login.tsx` & `App.tsx`)
 1. No `Login.tsx`, após receber status `200 OK` do backend, efetua chamada assíncrona para `/api/auth/me`:
    - Se `role === 'ROLE_ADMIN'` ➔ `navigate('/admin')`
    - Se `role === 'ROLE_MEDICO'` ➔ se `dossierStatus === 'APPROVED'`, navega para `/medico/dashboard`; caso contrário, direciona com aviso para `/medico/credenciamento` ou exibe o dashboard com o banner de pendência ativado;
    - Se `role === 'ROLE_PACIENTE'` ➔ `navigate('/paciente/dashboard')`
-2. Na `Navbar.tsx`, o botão com o nome do usuário autenticado torna-se um link clicável que direciona exatamente para o respectivo dashboard.
+2. **Harmonização de Layouts & Eliminação de Redundância (IHC):** As rotas de Paciente e Médico não utilizam o `PublicLayout` institucional (que renderizava links desnecessários como 'Benefícios' e 'Como Funciona' e duplicava a saudação e o botão de logout). Cada portal possui seu **cabeçalho exclusivo e profissional** com logotipo integrado, separador sutil, identificação do usuário e ações contextuais de saída e ajuda.
+3. Na `Navbar.tsx`, o botão com o nome do usuário autenticado torna-se um link clicável que direciona exatamente para o respectivo dashboard quando o usuário estiver navegando pelas páginas públicas institucionais.
 
 ---
 
