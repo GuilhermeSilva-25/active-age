@@ -26,6 +26,13 @@ import {
     type DocumentDefinition,
     DOSSIER_DOCUMENT_DEFINITIONS
 } from '../../types/dossier';
+import {
+    BRAZILIAN_BANKS,
+    maskAgency,
+    maskAccountNumber,
+    maskPixKey,
+    maskCnpj
+} from '../../utils/bankMasks';
 
 export function DossieCredenciamento() {
     const navigate = useNavigate();
@@ -34,6 +41,7 @@ export function DossieCredenciamento() {
     const [uploadingType, setUploadingType] = useState<DocumentType | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState<number>(1);
+    const [isCustomBank, setIsCustomBank] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -78,8 +86,14 @@ export function DossieCredenciamento() {
                 const data: DoctorDossierStatusResponse = await res.json();
                 setDossier(data);
                 if (data.financialInfo) {
+                    const savedBank = data.financialInfo.bankName || '';
+                    const matchedBank = BRAZILIAN_BANKS.find(
+                        (b) => b.label === savedBank || b.name === savedBank || b.code === savedBank
+                    );
+                    setIsCustomBank(!!savedBank && !matchedBank);
+
                     setBankForm({
-                        bankName: data.financialInfo.bankName || '',
+                        bankName: savedBank,
                         agency: data.financialInfo.agency || '',
                         accountNumber: data.financialInfo.accountNumber || '',
                         accountType: data.financialInfo.accountType || 'CORRENTE',
@@ -619,24 +633,54 @@ export function DossieCredenciamento() {
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                                         <div>
-                                            <label className="block text-xs font-bold text-brown-dark mb-1">Banco *</label>
-                                            <input
-                                                type="text"
-                                                placeholder="Ex: Itaú (341)"
+                                            <label className="block text-xs font-bold text-brown-dark mb-1">
+                                                Banco Oficial (Código COMPE) *
+                                            </label>
+                                            <select
+                                                value={isCustomBank ? 'OUTRO' : bankForm.bankName}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (val === 'OUTRO') {
+                                                        setIsCustomBank(true);
+                                                        setBankForm({ ...bankForm, bankName: '' });
+                                                    } else {
+                                                        setIsCustomBank(false);
+                                                        setBankForm({ ...bankForm, bankName: val });
+                                                    }
+                                                }}
                                                 required
-                                                value={bankForm.bankName}
-                                                onChange={(e) => setBankForm({ ...bankForm, bankName: e.target.value })}
-                                                className="w-full px-4 py-2.5 rounded-xl border border-brand-pot/80 focus:border-brand-mint outline-none text-sm"
-                                            />
+                                                className="w-full px-4 py-2.5 rounded-xl border border-brand-pot/80 focus:border-brand-mint outline-none text-sm bg-white"
+                                            >
+                                                <option value="" disabled>Selecione seu banco...</option>
+                                                {BRAZILIAN_BANKS.map((b) => (
+                                                    <option key={b.code} value={b.code === 'OUTRO' ? 'OUTRO' : b.label}>
+                                                        {b.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            {isCustomBank && (
+                                                <div className="mt-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Digite o nome ou código do banco..."
+                                                        required
+                                                        value={bankForm.bankName}
+                                                        onChange={(e) => setBankForm({ ...bankForm, bankName: e.target.value })}
+                                                        className="w-full px-3 py-2 rounded-lg border border-brand-pot/80 focus:border-brand-mint outline-none text-xs"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold text-brown-dark mb-1">Agência (com dígito) *</label>
                                             <input
                                                 type="text"
-                                                placeholder="Ex: 1234"
+                                                placeholder="Ex: 1234 ou 1234-5"
                                                 required
+                                                maxLength={7}
                                                 value={bankForm.agency}
-                                                onChange={(e) => setBankForm({ ...bankForm, agency: e.target.value })}
+                                                onChange={(e) => setBankForm({ ...bankForm, agency: maskAgency(e.target.value) })}
                                                 className="w-full px-4 py-2.5 rounded-xl border border-brand-pot/80 focus:border-brand-mint outline-none text-sm"
                                             />
                                         </div>
@@ -644,10 +688,11 @@ export function DossieCredenciamento() {
                                             <label className="block text-xs font-bold text-brown-dark mb-1">Número da Conta *</label>
                                             <input
                                                 type="text"
-                                                placeholder="Ex: 56789-0"
+                                                placeholder="Ex: 56789-0 ou 12345-X"
                                                 required
+                                                maxLength={13}
                                                 value={bankForm.accountNumber}
-                                                onChange={(e) => setBankForm({ ...bankForm, accountNumber: e.target.value })}
+                                                onChange={(e) => setBankForm({ ...bankForm, accountNumber: maskAccountNumber(e.target.value) })}
                                                 className="w-full px-4 py-2.5 rounded-xl border border-brand-pot/80 focus:border-brand-mint outline-none text-sm"
                                             />
                                         </div>
@@ -669,7 +714,14 @@ export function DossieCredenciamento() {
                                             <label className="block text-xs font-bold text-brown-dark mb-1">Tipo de Chave PIX *</label>
                                             <select
                                                 value={bankForm.pixKeyType}
-                                                onChange={(e) => setBankForm({ ...bankForm, pixKeyType: e.target.value })}
+                                                onChange={(e) => {
+                                                    const nextType = e.target.value;
+                                                    setBankForm({
+                                                        ...bankForm,
+                                                        pixKeyType: nextType,
+                                                        pixKey: maskPixKey(bankForm.pixKey, nextType),
+                                                    });
+                                                }}
                                                 className="w-full px-4 py-2.5 rounded-xl border border-brand-pot/80 focus:border-brand-mint outline-none text-sm bg-white"
                                             >
                                                 <option value="CPF">CPF</option>
@@ -683,10 +735,20 @@ export function DossieCredenciamento() {
                                             <label className="block text-xs font-bold text-brown-dark mb-1">Chave PIX *</label>
                                             <input
                                                 type="text"
-                                                placeholder="Insira sua chave PIX"
+                                                placeholder={
+                                                    bankForm.pixKeyType === 'CPF'
+                                                        ? '000.000.000-00'
+                                                        : bankForm.pixKeyType === 'CNPJ'
+                                                        ? '00.000.000/0001-00'
+                                                        : bankForm.pixKeyType === 'TELEFONE'
+                                                        ? '(00) 00000-0000'
+                                                        : bankForm.pixKeyType === 'EMAIL'
+                                                        ? 'medico@exemplo.com.br'
+                                                        : 'Insira sua chave aleatória'
+                                                }
                                                 required
                                                 value={bankForm.pixKey}
-                                                onChange={(e) => setBankForm({ ...bankForm, pixKey: e.target.value })}
+                                                onChange={(e) => setBankForm({ ...bankForm, pixKey: maskPixKey(e.target.value, bankForm.pixKeyType) })}
                                                 className="w-full px-4 py-2.5 rounded-xl border border-brand-pot/80 focus:border-brand-mint outline-none text-sm"
                                             />
                                         </div>
@@ -697,9 +759,10 @@ export function DossieCredenciamento() {
                                             <label className="block text-xs font-bold text-brown-dark mb-1">CNPJ da PJ Médica (Opcional)</label>
                                             <input
                                                 type="text"
-                                                placeholder="Ex: 00.000.000/0001-00"
+                                                placeholder="00.000.000/0001-00"
+                                                maxLength={18}
                                                 value={bankForm.cnpj}
-                                                onChange={(e) => setBankForm({ ...bankForm, cnpj: e.target.value })}
+                                                onChange={(e) => setBankForm({ ...bankForm, cnpj: maskCnpj(e.target.value) })}
                                                 className="w-full px-4 py-2.5 rounded-xl border border-brand-pot/80 focus:border-brand-mint outline-none text-sm"
                                             />
                                         </div>

@@ -6,8 +6,10 @@ package com.activeage.core.domain.enums;
  */
 public enum DocumentType {
     // --- PILAR 1: Habilitação Profissional e Identificação ---
-    CRM_CARD("Carteira do CRM (Frente e Verso)", 1, true),
-    DIPLOMA("Diploma de Graduação em Medicina (MEC)", 1, true),
+    CRM_CARD("Carteira do CRM - Frente (ou PDF Único)", 1, true),
+    CRM_CARD_VERSO("Carteira do CRM - Verso (Opcional se PDF Único)", 1, false),
+    DIPLOMA("Diploma de Graduação em Medicina - Frente (ou PDF Único)", 1, true),
+    DIPLOMA_VERSO("Diploma de Graduação em Medicina - Verso (Opcional se PDF Único)", 1, false),
     RQE("Registro de Qualificação de Especialista (RQE)", 1, false),
     ID_DOCUMENT("Documento Oficial de Identidade (RG/CNH/Passaporte)", 1, true),
 

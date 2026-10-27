@@ -7,7 +7,9 @@ export type DoctorDossierStatus =
 
 export type DocumentType =
     | 'CRM_CARD'
+    | 'CRM_CARD_VERSO'
     | 'DIPLOMA'
+    | 'DIPLOMA_VERSO'
     | 'RQE'
     | 'ID_DOCUMENT'
     | 'ETHICAL_CERTIFICATE'
@@ -87,18 +89,34 @@ export const DOSSIER_DOCUMENT_DEFINITIONS: DocumentDefinition[] = [
     // Pilar 1
     {
         type: 'CRM_CARD',
-        title: 'Carteira do CRM (Frente e Verso)',
+        title: 'Carteira do CRM - Frente (ou PDF Único)',
         pillar: 1,
         mandatory: true,
-        description: 'Cópia legível da identidade médica profissional com número e UF nítidos.',
+        description: 'Cópia da identidade médica profissional com número e UF nítidos. Se tiver frente e verso em PDF único, anexe aqui.',
+        allowedFormats: 'PDF, JPG ou PNG (máx. 10MB)',
+    },
+    {
+        type: 'CRM_CARD_VERSO',
+        title: 'Carteira do CRM - Verso (Opcional se PDF Único)',
+        pillar: 1,
+        mandatory: false,
+        description: 'Envie o verso da carteira caso possua fotos avulsas da frente e do verso. Se o arquivo da frente já contiver o verso em PDF único, este campo é dispensável.',
         allowedFormats: 'PDF, JPG ou PNG (máx. 10MB)',
     },
     {
         type: 'DIPLOMA',
-        title: 'Diploma de Medicina (MEC)',
+        title: 'Diploma de Medicina - Frente (ou PDF Único)',
         pillar: 1,
         mandatory: true,
-        description: 'Frente e verso do diploma de graduação reconhecido pelo Ministério da Educação.',
+        description: 'Frente do diploma de graduação reconhecido pelo MEC. Se tiver frente e verso em PDF único, anexe aqui.',
+        allowedFormats: 'PDF, JPG ou PNG (máx. 10MB)',
+    },
+    {
+        type: 'DIPLOMA_VERSO',
+        title: 'Diploma de Medicina - Verso (Opcional se PDF Único)',
+        pillar: 1,
+        mandatory: false,
+        description: 'Envie o verso do diploma caso possua fotos avulsas da frente e do verso. Se o arquivo da frente já contiver o verso em PDF único, este campo é dispensável.',
         allowedFormats: 'PDF, JPG ou PNG (máx. 10MB)',
     },
     {
