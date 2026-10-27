@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuthUser } from '../../hooks/useAuthUser';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +33,13 @@ type DoctorFormInputs = z.infer<typeof doctorSchema>;
 
 export function CadastroMedico() {
     const navigate = useNavigate();
+    const { isAuthenticated, dashboardPath } = useAuthUser();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate(dashboardPath);
+        }
+    }, [isAuthenticated, dashboardPath, navigate]);
     const [step, setStep] = useState(1);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [showPassword, setShowPassword] = useState(false);

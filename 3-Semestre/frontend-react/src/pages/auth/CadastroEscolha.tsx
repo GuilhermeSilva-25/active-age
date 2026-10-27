@@ -1,7 +1,18 @@
-import {Link} from 'react-router-dom';
-import {HeartPulse, ShieldCheck, ArrowRight} from 'lucide-react';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { HeartPulse, ShieldCheck, ArrowRight } from 'lucide-react';
+import { useAuthUser } from '../../hooks/useAuthUser';
 
 export function CadastroEscolha() {
+    const navigate = useNavigate();
+    const { isAuthenticated, dashboardPath } = useAuthUser();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate(dashboardPath);
+        }
+    }, [isAuthenticated, dashboardPath, navigate]);
+
     return (
         <div className="w-full animate-fade-in">
             <div className="text-center md:text-left mb-8">

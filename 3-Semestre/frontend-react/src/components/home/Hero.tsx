@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
-import { HeartPulse, Stethoscope } from 'lucide-react';
+import { HeartPulse, Stethoscope, LayoutDashboard } from 'lucide-react';
 import heroImg from '../../assets/hero-image.png';
+import { useAuthUser } from '../../hooks/useAuthUser';
 
 export function Hero() {
+  const { user, isAuthenticated, dashboardPath } = useAuthUser();
+  const firstName = user?.fullName ? user.fullName.split(' ')[0] : '';
+
   return (
     <div className="relative bg-gradient-to-br from-brand-pot via-white to-brand-pot/30 overflow-hidden">
-      {/* Esfera Principal no Canto Inferior Esquerdo */}
       {/* Esferas de Gradiente */}
       <div className="absolute top-0 right-0 w-[500px] md:w-[600px] h-[500px] md:h-[600px] bg-gradient-to-bl from-brand-mint/30 to-brand-blue/20 rounded-full blur-3xl opacity-70 translate-x-1/4 -translate-y-1/4"></div>
       <div className="absolute bottom-0 left-0 w-[600px] md:w-[800px] h-[600px] md:h-[800px] bg-gradient-to-tr from-brand-mint/40 via-brand-blue/20 to-brand-orange/10 rounded-full blur-3xl opacity-90 -translate-x-1/4 translate-y-1/4"></div>
@@ -26,17 +29,46 @@ export function Hero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 relative z-10 w-full sm:w-auto justify-center md:justify-start">
-              <Link to="/cadastro-paciente" className="btn-primary w-full sm:w-auto text-lg">
-                <HeartPulse size={24} />
-                Encontrar um Médico
-              </Link>
-              <Link to="/cadastro-medico" className="btn-secondary w-full sm:w-auto text-lg">
-                <Stethoscope size={24} />
-                Sou Médico
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to={dashboardPath} className="btn-primary w-full sm:w-auto text-lg">
+                    <LayoutDashboard size={24} />
+                    {user?.role === 'ROLE_MEDICO'
+                      ? 'Acessar Meu Consultório'
+                      : user?.role === 'ROLE_ADMIN'
+                      ? 'Painel Administrativo'
+                      : 'Acessar Meu Painel'}
+                  </Link>
+                  {user?.role === 'ROLE_MEDICO' && (
+                    <Link to="/medico/credenciamento" className="btn-secondary w-full sm:w-auto text-lg">
+                      <Stethoscope size={24} />
+                      Dossiê Médico
+                    </Link>
+                  )}
+                  {user?.role === 'ROLE_PACIENTE' && (
+                    <Link to="/paciente/dashboard" className="btn-secondary w-full sm:w-auto text-lg">
+                      <HeartPulse size={24} />
+                      Minhas Consultas
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Link to="/cadastro-paciente" className="btn-primary w-full sm:w-auto text-lg">
+                    <HeartPulse size={24} />
+                    Encontrar um Médico
+                  </Link>
+                  <Link to="/cadastro-medico" className="btn-secondary w-full sm:w-auto text-lg">
+                    <Stethoscope size={24} />
+                    Sou Médico
+                  </Link>
+                </>
+              )}
             </div>
             <p className="mt-6 md:mt-4 text-sm text-brown-light relative z-10 font-medium">
-              * Cadastro gratuito. Pacientes pagam apenas pelas consultas e médicos ganham 15 dias de teste grátis.
+              {isAuthenticated
+                ? `* Olá, ${firstName}! Você já está conectado. Acesse suas ferramentas pelo botão acima.`
+                : '* Cadastro gratuito. Pacientes pagam apenas pelas consultas e médicos ganham 15 dias de teste grátis.'}
             </p>
           </div>
 

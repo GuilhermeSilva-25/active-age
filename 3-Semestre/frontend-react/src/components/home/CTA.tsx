@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { HeartPulse, Stethoscope } from 'lucide-react';
+import { HeartPulse, Stethoscope, LayoutDashboard } from 'lucide-react';
+import { useAuthUser } from '../../hooks/useAuthUser';
 
 export function CTA() {
+  const { user, isAuthenticated, dashboardPath } = useAuthUser();
+
   return (
     <section className="py-20 relative overflow-hidden bg-brand-pot/30 border-t border-brand-pot/50">
       
@@ -18,17 +21,43 @@ export function CTA() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
-          <Link to="/cadastro-paciente" className="btn-primary w-full sm:w-auto text-lg">
-            <HeartPulse size={24} />
-            Encontrar um Médico
-          </Link>
-          <Link to="/cadastro-medico" className="btn-secondary w-full sm:w-auto text-lg">
-            <Stethoscope size={24} />
-            Sou Médico
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to={dashboardPath} className="btn-primary w-full sm:w-auto text-lg">
+                <LayoutDashboard size={24} />
+                {user?.role === 'ROLE_MEDICO'
+                  ? 'Acessar Meu Consultório'
+                  : user?.role === 'ROLE_ADMIN'
+                  ? 'Painel Administrativo'
+                  : 'Acessar Meu Painel'}
+              </Link>
+              {user?.role === 'ROLE_PACIENTE' && (
+                <Link to="/paciente/dashboard" className="btn-secondary w-full sm:w-auto text-lg">
+                  <HeartPulse size={24} />
+                  Minhas Consultas
+                </Link>
+              )}
+              {user?.role === 'ROLE_MEDICO' && (
+                <Link to="/medico/credenciamento" className="btn-secondary w-full sm:w-auto text-lg">
+                  <Stethoscope size={24} />
+                  Dossiê de Credenciamento
+                </Link>
+              )}
+            </>
+          ) : (
+            <>
+              <Link to="/cadastro-paciente" className="btn-primary w-full sm:w-auto text-lg">
+                <HeartPulse size={24} />
+                Encontrar um Médico
+              </Link>
+              <Link to="/cadastro-medico" className="btn-secondary w-full sm:w-auto text-lg">
+                <Stethoscope size={24} />
+                Sou Médico
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </section>
   );
 }
-

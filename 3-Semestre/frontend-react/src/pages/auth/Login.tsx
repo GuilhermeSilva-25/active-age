@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuthUser } from "../../hooks/useAuthUser";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +15,13 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 
 export function Login() {
   const navigate = useNavigate();
+  const { isAuthenticated, dashboardPath } = useAuthUser();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(dashboardPath);
+    }
+  }, [isAuthenticated, dashboardPath, navigate]);
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
