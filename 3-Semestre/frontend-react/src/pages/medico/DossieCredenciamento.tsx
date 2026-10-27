@@ -366,12 +366,14 @@ export function DossieCredenciamento() {
             {/* Header Profissional do Dossiê */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-4 sm:gap-6">
+                    <div className="flex items-center gap-3 sm:gap-6">
                         <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
-                            <img src={logoImg} alt="Active Age" className="h-14 sm:h-16 w-auto object-contain" />
+                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-14 md:h-16 w-auto object-contain" />
                         </Link>
                         <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
-                        <div className="flex items-center gap-3">
+                        
+                        {/* Identificação Completa (Desktop / Tablet) */}
+                        <div className="hidden sm:flex items-center gap-3">
                             <div className="w-11 h-11 rounded-xl bg-brand-mint/20 flex items-center justify-center text-brown-dark shadow-inner shrink-0">
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
@@ -386,22 +388,22 @@ export function DossieCredenciamento() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
                         <Link
                             to="/medico/dashboard"
-                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs"
+                            className="inline-flex items-center gap-1.5 p-2.5 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
+                            title="Voltar ao consultório médico"
                         >
-                            <ArrowLeft className="w-4 h-4 text-brand-orange" />
+                            <ArrowLeft className="w-4 h-4 text-brand-orange shrink-0" />
                             <span className="hidden sm:inline">Voltar ao Consultório</span>
-                            <span className="sm:hidden">Voltar</span>
                         </Link>
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs"
+                            className="inline-flex items-center gap-1.5 p-2.5 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
                             title="Encerrar sessão segura"
                         >
-                            <LogOut className="w-4 h-4" />
+                            <LogOut className="w-4 h-4 shrink-0" />
                             <span className="hidden sm:inline">Encerrar Sessão</span>
                         </button>
                     </div>

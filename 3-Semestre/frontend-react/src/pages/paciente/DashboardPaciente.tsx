@@ -101,12 +101,14 @@ export function DashboardPaciente() {
             {/* Barra Superior Exclusiva do Portal do Paciente */}
             <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-4 sm:gap-6">
+                    <div className="flex items-center gap-3 sm:gap-6">
                         <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
-                            <img src={logoImg} alt="Active Age" className="h-14 sm:h-16 w-auto object-contain" />
+                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-14 md:h-16 w-auto object-contain" />
                         </Link>
                         <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
-                        <div className="flex items-center gap-3">
+                        
+                        {/* Identificação Completa (Desktop / Tablet) */}
+                        <div className="hidden sm:flex items-center gap-3">
                             <div className="w-11 h-11 rounded-full bg-brand-orange/10 border-2 border-brand-orange/30 flex items-center justify-center text-brand-orange shadow-inner shrink-0">
                                 <User className="w-6 h-6" />
                             </div>
@@ -121,7 +123,13 @@ export function DashboardPaciente() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        {/* Chip Compacto do Paciente (Mobile) */}
+                        <div className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-brand-orange/10 border border-brand-orange/20 text-brand-orange">
+                            <User className="w-4 h-4 shrink-0" />
+                            <span className="text-xs font-bold truncate max-w-[90px]">{loading ? '...' : firstName}</span>
+                        </div>
+
                         <button
                             type="button"
                             onClick={() => handleFeatureNotice('Canais de Suporte & Cuidador', 'Nosso atendimento telefônico e via WhatsApp geriátrico está disponível de segunda a sexta, das 8h às 19h.')}
@@ -134,10 +142,10 @@ export function DashboardPaciente() {
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-bold transition-all shadow-xs"
+                            className="inline-flex items-center gap-1.5 p-2.5 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
                             title="Encerrar sessão com segurança"
                         >
-                            <LogOut className="w-4 h-4" />
+                            <LogOut className="w-4 h-4 shrink-0" />
                             <span className="hidden sm:inline">Sair com Segurança</span>
                         </button>
                     </div>
