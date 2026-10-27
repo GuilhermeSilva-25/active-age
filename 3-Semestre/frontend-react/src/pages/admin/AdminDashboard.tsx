@@ -13,19 +13,19 @@ import {
 
 export const AdminDashboard: React.FC = () => {
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8 animate-fade-in">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in">
       {/* === CABEÇALHO DA PÁGINA === */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-brand-pot/40">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-brand-pot/40">
         <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-brown-dark tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brown-dark tracking-tight">
             Visão Geral do Sistema
           </h1>
-          <p className="text-base text-brown-light mt-1">
+          <p className="text-xs sm:text-base text-brown-light mt-1">
             Controle de governança, credenciamento médico e auditoria da plataforma Active Age.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start md:self-auto">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             Serviços Operacionais (Live)

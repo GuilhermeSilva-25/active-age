@@ -161,16 +161,16 @@ export function AdminUsuarios() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             
             {/* Header da Página */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-brown-dark flex items-center gap-3">
-                        <Users className="w-8 h-8 text-brand-orange" />
-                        Gestão de Usuários & Moderação
+                    <h1 className="text-xl sm:text-2xl font-bold text-brown-dark flex items-center gap-2.5 sm:gap-3">
+                        <Users className="w-7 h-7 sm:w-8 sm:h-8 text-brand-orange shrink-0" />
+                        <span>Gestão de Usuários & Moderação</span>
                     </h1>
-                    <p className="text-sm text-brown mt-1">
+                    <p className="text-xs sm:text-sm text-brown mt-1">
                         Controle perimetral de contas, segregação de papéis RBAC e moderação de acesso à plataforma.
                     </p>
                 </div>
@@ -178,19 +178,19 @@ export function AdminUsuarios() {
                 <button
                     type="button"
                     onClick={loadUsers}
-                    className="self-start md:self-auto px-4 py-2.5 bg-white border border-brand-pot/40 rounded-xl text-xs font-bold text-brown hover:text-brown-dark hover:bg-brand-pot/10 transition-colors flex items-center gap-2 shadow-sm"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-brand-pot/40 rounded-xl text-xs font-bold text-brown hover:text-brown-dark hover:bg-brand-pot/10 transition-colors shadow-xs"
                 >
                     <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                    Atualizar Lista
+                    <span>Atualizar Lista</span>
                 </button>
             </div>
 
             {/* Painel de Filtros e Busca */}
-            <div className="bg-white rounded-3xl p-6 border border-brand-pot/30 shadow-sm space-y-4">
-                <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-brand-pot/30 shadow-sm space-y-3 sm:space-y-4">
+                <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
                     
                     {/* Tabs por Papel (Role) */}
-                    <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 scrollbar-none">
+                    <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 scrollbar-none">
                         {[
                             { label: 'Todos os Perfis', value: 'ALL' },
                             { label: 'Pacientes', value: 'ROLE_PACIENTE' },
@@ -201,9 +201,9 @@ export function AdminUsuarios() {
                                 key={tab.value}
                                 type="button"
                                 onClick={() => setRoleFilter(tab.value)}
-                                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                                     roleFilter === tab.value
-                                        ? 'bg-brand-orange text-white shadow-sm'
+                                        ? 'bg-brand-orange text-white shadow-xs'
                                         : 'bg-brand-pot/10 text-brown hover:bg-brand-pot/20 hover:text-brown-dark'
                                 }`}
                             >
@@ -213,7 +213,7 @@ export function AdminUsuarios() {
                     </div>
 
                     {/* Filtro de Status e Busca */}
-                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full lg:w-auto">
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
@@ -240,43 +240,43 @@ export function AdminUsuarios() {
             </div>
 
             {/* Tabela de Usuários */}
-            <div className="bg-white rounded-3xl border border-brand-pot/30 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/30 shadow-sm overflow-hidden">
                 {loading ? (
-                    <div className="p-16 flex items-center justify-center gap-3 text-brown font-bold text-sm">
+                    <div className="p-12 sm:p-16 flex items-center justify-center gap-3 text-brown font-bold text-sm">
                         <Loader2 className="w-6 h-6 animate-spin text-brand-orange" />
                         Carregando usuários...
                     </div>
                 ) : filteredUsers.length === 0 ? (
-                    <div className="p-16 text-center text-brown space-y-2">
+                    <div className="p-12 sm:p-16 text-center text-brown space-y-2">
                         <Users className="w-12 h-12 text-brand-pot/50 mx-auto" />
                         <p className="font-bold text-base text-brown-dark">Nenhum usuário localizado.</p>
                         <p className="text-xs text-brown">Tente ajustar seus termos de pesquisa ou filtros.</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full min-w-[750px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-brand-pot/30 bg-brand-pot/10 text-[11px] font-bold text-brown uppercase tracking-wider">
-                                    <th className="py-4 px-6">Usuário</th>
-                                    <th className="py-4 px-6">Perfil RBAC</th>
-                                    <th className="py-4 px-6">Identificação</th>
-                                    <th className="py-4 px-6">Status da Conta</th>
-                                    <th className="py-4 px-6">Data de Cadastro</th>
-                                    <th className="py-4 px-6 text-right">Moderação</th>
+                                    <th className="py-3.5 px-4 sm:px-6">Usuário</th>
+                                    <th className="py-3.5 px-4 sm:px-6">Perfil RBAC</th>
+                                    <th className="py-3.5 px-4 sm:px-6">Identificação</th>
+                                    <th className="py-3.5 px-4 sm:px-6">Status da Conta</th>
+                                    <th className="py-3.5 px-4 sm:px-6">Data de Cadastro</th>
+                                    <th className="py-3.5 px-4 sm:px-6 text-right">Moderação</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-brand-pot/20 text-xs text-brown-dark">
                                 {filteredUsers.map(user => (
                                     <tr key={user.id} className="hover:bg-brand-pot/5 transition-colors">
-                                        <td className="py-4 px-6">
+                                        <td className="py-3.5 px-4 sm:px-6">
                                             <div className="font-bold text-sm text-brown-dark">{user.fullName}</div>
                                             <div className="text-brown text-[11px]">{user.email}</div>
                                             {user.phone && <div className="text-brown/70 text-[10px]">{user.phone}</div>}
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-3.5 px-4 sm:px-6">
                                             {getRoleBadge(user.role)}
                                         </td>
-                                        <td className="py-4 px-6 font-medium">
+                                        <td className="py-3.5 px-4 sm:px-6 font-medium">
                                             {user.role === 'ROLE_MEDICO' ? (
                                                 <span className="text-brown-dark font-bold">
                                                     CRM: {user.crm || 'N/A'}/{user.ufCrm || ''}
@@ -287,7 +287,7 @@ export function AdminUsuarios() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-3.5 px-4 sm:px-6">
                                             {user.active ? (
                                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
                                                     <CheckCircle2 className="w-3.5 h-3.5" /> Ativo
@@ -298,17 +298,17 @@ export function AdminUsuarios() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="py-4 px-6 text-brown">
+                                        <td className="py-3.5 px-4 sm:px-6 text-brown">
                                             {user.createdAt ? new Date(user.createdAt).toLocaleDateString('pt-BR') : 'N/A'}
                                         </td>
-                                        <td className="py-4 px-6 text-right">
+                                        <td className="py-3.5 px-4 sm:px-6 text-right">
                                             <button
                                                 type="button"
                                                 onClick={() => handlePromptToggleStatus(user)}
-                                                className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ml-auto ${
+                                                className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ml-auto whitespace-nowrap ${
                                                     user.active
                                                         ? 'border border-red-200 text-red-700 hover:bg-red-50'
-                                                        : 'bg-green-600 hover:bg-green-700 text-white shadow-sm'
+                                                        : 'bg-green-600 hover:bg-green-700 text-white shadow-xs'
                                                 }`}
                                             >
                                                 {user.active ? (

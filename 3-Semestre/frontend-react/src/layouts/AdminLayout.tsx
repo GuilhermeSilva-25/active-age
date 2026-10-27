@@ -136,26 +136,26 @@ export const AdminLayout: React.FC = () => {
 
       {/* === HEADER MOBILE === */}
       <header className="md:hidden bg-white border-b border-brand-pot/40 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-        <div className="flex items-center gap-2">
-          <img src={logoImg} alt="Active Age" className="h-8 w-auto" />
-          <span className="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
-            Admin
+        <div className="flex items-center gap-2.5">
+          <img src={logoImg} alt="Active Age" className="h-9 w-auto object-contain" />
+          <span className="text-[11px] bg-amber-100 text-amber-800 font-extrabold px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+            <ShieldCheck className="w-3 h-3 text-amber-700" /> Admin
           </span>
         </div>
 
         <button
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded-lg text-brown-dark hover:bg-gray-100 focus:outline-none"
+          className="p-2 rounded-xl text-brown-dark hover:bg-gray-100 focus:outline-none transition-colors border border-brand-pot/30"
           aria-label="Abrir menu"
         >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMobileMenuOpen ? <X className="w-5 h-5 text-brand-orange" /> : <Menu className="w-5 h-5" />}
         </button>
       </header>
 
       {/* === MENU RETRÁTIL MOBILE === */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-brand-pot/40 px-4 py-4 space-y-2 z-30 animate-in fade-in">
+        <div className="md:hidden bg-white border-b border-brand-pot/40 px-4 py-4 space-y-2 z-30 animate-in fade-in shadow-md">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -163,10 +163,10 @@ export const AdminLayout: React.FC = () => {
               end={item.end}
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm ${
+                `flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
                   isActive
-                    ? 'bg-brand-orange text-white'
-                    : 'text-brown-dark hover:bg-gray-100'
+                    ? 'bg-brand-orange text-white shadow-xs'
+                    : 'text-brown-dark hover:bg-orange-50 hover:text-brand-orange'
                 }`
               }
             >
@@ -174,11 +174,18 @@ export const AdminLayout: React.FC = () => {
               <span>{item.label}</span>
             </NavLink>
           ))}
-          <div className="pt-2 border-t border-gray-100">
+          <div className="pt-2 border-t border-gray-100 space-y-2">
+            <a
+              href="/"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-brown-light hover:text-brand-orange hover:bg-gray-100 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>Ver Plataforma Pública</span>
+            </a>
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span>Sair do Painel</span>
@@ -187,9 +194,11 @@ export const AdminLayout: React.FC = () => {
         </div>
       )}
 
-      {/* === ÁREA PRINCIPAL DE CONTEÚDO === */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <Outlet />
+      {/* === ÁREA PRINCIPAL DE CONTEÚDO (COM PADDING PADRONIZADO) === */}
+      <main className="flex-1 min-w-0 overflow-y-auto bg-gray-50/60 p-4 sm:p-6 md:p-8 lg:p-10">
+        <div className="max-w-7xl mx-auto w-full">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
