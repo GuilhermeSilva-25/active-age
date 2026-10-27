@@ -262,7 +262,7 @@ export function DossieCredenciamento() {
                     return (
                         <div
                             key={def.type}
-                            className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border transition-all ${
+                            className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border transition-all flex flex-col justify-between ${
                                 uploadedInfo
                                     ? 'bg-white border-green-200 shadow-sm'
                                     : def.mandatory
@@ -270,90 +270,101 @@ export function DossieCredenciamento() {
                                     : 'bg-brand-pot/5 border-dashed border-brand-pot/40'
                             }`}
                         >
-                            <div className="flex justify-between items-start gap-2 sm:gap-3 mb-3">
-                                <div className="min-w-0">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <h4 className="font-bold text-brown-dark text-sm sm:text-base">{def.title}</h4>
-                                        {def.mandatory ? (
-                                            <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
-                                                Obrigatório
-                                            </span>
-                                        ) : (
-                                            <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                                                Opcional
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="text-xs text-brown mt-1">{def.description}</p>
+                            <div>
+                                {/* Linha 1: Barra Superior Padronizada de Tags */}
+                                <div className="flex items-center justify-between gap-2 mb-3">
+                                    {def.mandatory ? (
+                                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200/60 shrink-0">
+                                            Obrigatório
+                                        </span>
+                                    ) : (
+                                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200 shrink-0">
+                                            Opcional
+                                        </span>
+                                    )}
+
+                                    {uploadedInfo ? (
+                                        <span className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-green-700 bg-green-100 border border-green-200 px-2.5 py-0.5 rounded-full shrink-0">
+                                            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> Enviado
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-amber-800 bg-amber-100 border border-amber-200 px-2.5 py-0.5 rounded-full shrink-0">
+                                            <Clock className="w-3.5 h-3.5 text-amber-600" /> Pendente
+                                        </span>
+                                    )}
                                 </div>
 
-                                {uploadedInfo ? (
-                                    <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-green-700 bg-green-100 px-2 sm:px-2.5 py-1 rounded-full shrink-0">
-                                        <CheckCircle2 className="w-3.5 h-3.5" /> Enviado
-                                    </span>
-                                ) : (
-                                    <span className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-amber-700 bg-amber-100 px-2 sm:px-2.5 py-1 rounded-full shrink-0">
-                                        <Clock className="w-3.5 h-3.5" /> Pendente
-                                    </span>
-                                )}
+                                {/* Linha 2: Título do Documento com 100% de largura disponível */}
+                                <h4 className="font-bold text-brown-dark text-sm sm:text-base mb-1.5 leading-snug">
+                                    {def.title}
+                                </h4>
+
+                                {/* Linha 3: Descrição */}
+                                <p className="text-xs text-brown leading-relaxed mb-3">
+                                    {def.description}
+                                </p>
+
+                                {/* Linha 4: Formatos Aceitos */}
+                                <p className="text-[11px] text-brown/80 mb-4">
+                                    Formatos: <span className="font-medium text-brown-dark">{def.allowedFormats}</span>
+                                </p>
                             </div>
 
-                            <p className="text-[11px] text-brown/80 mb-3 sm:mb-4">
-                                Formatos: <span className="font-medium text-brown-dark">{def.allowedFormats}</span>
-                            </p>
-
-                            {uploadedInfo && (
-                                <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-brand-pot/10 rounded-xl flex items-center justify-between text-xs text-brown-dark gap-2">
-                                    <span className="truncate flex-1 min-w-0 font-medium" title={uploadedInfo.originalFileName}>
-                                        📄 {uploadedInfo.originalFileName}
-                                    </span>
-                                    <a
-                                        href={`/api/doctor/documents/${def.type}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-brand-mint font-bold hover:underline flex items-center gap-1 shrink-0"
-                                    >
-                                        <Eye className="w-3.5 h-3.5" /> Ver
-                                    </a>
-                                </div>
-                            )}
-
-                            {/* Botão de Upload */}
-                            {dossier.dossierStatus !== 'APPROVED' && (
-                                <label className="cursor-pointer block">
-                                    <input
-                                        type="file"
-                                        className="sr-only"
-                                        disabled={isUploading}
-                                        accept={def.type === 'ETHICAL_CERTIFICATE' ? '.pdf' : '.pdf,image/png,image/jpeg,image/jpg'}
-                                        onChange={(e) => {
-                                            if (e.target.files && e.target.files[0]) {
-                                                handleFileUpload(def.type, e.target.files[0]);
-                                            }
-                                        }}
-                                    />
-                                    <div
-                                        className={`w-full py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
-                                            isUploading
-                                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                                                : uploadedInfo
-                                                ? 'bg-brand-pot/10 hover:bg-brand-pot/20 text-brown-dark border-brand-pot/30'
-                                                : 'bg-brand-mint hover:bg-brand-mint/80 text-brown-dark border-transparent shadow-sm'
-                                        }`}
-                                    >
-                                        {isUploading ? (
-                                            <>
-                                                <Loader2 className="w-4 h-4 animate-spin" /> Enviando...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <UploadCloud className="w-4 h-4" />
-                                                {uploadedInfo ? 'Substituir Arquivo' : 'Selecionar Documento'}
-                                            </>
-                                        )}
+                            {/* Área Inferior: Arquivo Anexado + Botão de Upload */}
+                            <div>
+                                {uploadedInfo && (
+                                    <div className="mb-3 p-2.5 bg-brand-pot/10 rounded-xl flex items-center justify-between text-xs text-brown-dark gap-2">
+                                        <span className="truncate flex-1 min-w-0 font-medium" title={uploadedInfo.originalFileName}>
+                                            📄 {uploadedInfo.originalFileName}
+                                        </span>
+                                        <a
+                                            href={`/api/doctor/documents/${def.type}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-brand-mint font-bold hover:underline flex items-center gap-1 shrink-0"
+                                        >
+                                            <Eye className="w-3.5 h-3.5" /> Ver
+                                        </a>
                                     </div>
-                                </label>
-                            )}
+                                )}
+
+                                {/* Botão de Upload */}
+                                {dossier.dossierStatus !== 'APPROVED' && (
+                                    <label className="cursor-pointer block">
+                                        <input
+                                            type="file"
+                                            className="sr-only"
+                                            disabled={isUploading}
+                                            accept={def.type === 'ETHICAL_CERTIFICATE' ? '.pdf' : '.pdf,image/png,image/jpeg,image/jpg'}
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    handleFileUpload(def.type, e.target.files[0]);
+                                                }
+                                            }}
+                                        />
+                                        <div
+                                            className={`w-full py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all ${
+                                                isUploading
+                                                    ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                                    : uploadedInfo
+                                                    ? 'bg-brand-pot/10 hover:bg-brand-pot/20 text-brown-dark border-brand-pot/30'
+                                                    : 'bg-brand-mint hover:bg-brand-mint/80 text-brown-dark border-transparent shadow-sm'
+                                            }`}
+                                        >
+                                            {isUploading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 animate-spin" /> Enviando...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <UploadCloud className="w-4 h-4" />
+                                                    {uploadedInfo ? 'Substituir Arquivo' : 'Selecionar Documento'}
+                                                </>
+                                            )}
+                                        </div>
+                                    </label>
+                                )}
+                            </div>
                         </div>
                     );
                 })}
