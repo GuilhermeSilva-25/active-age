@@ -352,7 +352,7 @@ export function AdminDossierModal({ doctorId, isOpen, onClose, onReviewSuccess }
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={handleExecuteReview}
+                                                onClick={() => handleExecuteReview()}
                                                 disabled={submittingReview}
                                                 className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-70"
                                             >
