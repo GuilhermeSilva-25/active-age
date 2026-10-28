@@ -8,6 +8,7 @@ export interface AuthUser {
     crm?: string;
     ufCrm?: string;
     dossierStatus?: 'PENDING_DOCS' | 'UNDER_REVIEW' | 'DOCS_REJECTED' | 'APPROVED';
+    active?: boolean;
 }
 
 /**
@@ -54,7 +55,7 @@ export function useAuthUser() {
     return {
         user,
         loading,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && user.active !== false,
         dashboardPath: getDashboardPath(),
     };
 }

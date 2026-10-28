@@ -84,10 +84,11 @@ export function AdminDossierModal({ doctorId, isOpen, onClose, onReviewSuccess }
         }
     }, [isOpen, doctorId]);
 
-    const handleExecuteReview = async () => {
-        if (!doctorId || reviewMode === 'IDLE') return;
+    const handleExecuteReview = async (forcedAction?: 'APPROVE' | 'REJECT') => {
+        const actionToExecute = forcedAction || reviewMode;
+        if (!doctorId || actionToExecute === 'IDLE') return;
 
-        if (reviewMode === 'REJECT' && (!rejectionReason || rejectionReason.trim().length < 10)) {
+        if (actionToExecute === 'REJECT' && (!rejectionReason || rejectionReason.trim().length < 10)) {
             setFeedback({
                 isOpen: true,
                 type: 'warning',
@@ -103,26 +104,25 @@ export function AdminDossierModal({ doctorId, isOpen, onClose, onReviewSuccess }
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    action: reviewMode,
-                    rejectionReason: reviewMode === 'REJECT' ? rejectionReason.trim() : null,
+                    action: actionToExecute,
+                    rejectionReason: actionToExecute === 'REJECT' ? rejectionReason.trim() : null,
                 }),
             });
 
             if (res.ok) {
-                const actionTitle = reviewMode === 'APPROVE' ? 'Credenciamento Homologado!' : 'Dossiê Reprovado!';
-                const actionMsg = reviewMode === 'APPROVE'
+                const actionTitle = actionToExecute === 'APPROVE' ? 'Credenciamento Homologado!' : 'Dossiê Reprovado!';
+                const actionMsg = actionToExecute === 'APPROVE'
                     ? 'O médico foi aprovado e seu consultório virtual foi liberado com 15 dias de teste grátis. A operação foi registrada na trilha de auditoria e conformidade.'
                     : 'A solicitação de ajustes foi registrada e o médico foi notificado no painel. A operação foi registrada na trilha de auditoria e conformidade.';
 
                 setFeedback({
                     isOpen: true,
-                    type: reviewMode === 'APPROVE' ? 'success' : 'info',
+                    type: actionToExecute === 'APPROVE' ? 'success' : 'info',
                     title: actionTitle,
                     message: actionMsg,
                 });
 
                 onReviewSuccess();
-                onClose();
             } else {
                 const errData = await res.json().catch(() => ({}));
                 setFeedback({
@@ -379,7 +379,7 @@ export function AdminDossierModal({ doctorId, isOpen, onClose, onReviewSuccess }
                                                 type="button"
                                                 onClick={() => {
                                                     setReviewMode('APPROVE');
-                                                    handleExecuteReview();
+                                                    handleExecuteReview('APPROVE');
                                                 }}
                                                 disabled={submittingReview}
                                                 className="w-1/2 sm:w-auto px-6 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 disabled:opacity-70"
@@ -404,7 +404,13 @@ export function AdminDossierModal({ doctorId, isOpen, onClose, onReviewSuccess }
                 type={feedback.type}
                 title={feedback.title}
                 message={feedback.message}
-                onConfirm={() => setFeedback({ ...feedback, isOpen: false })}
+                onConfirm={() => {
+                    const shouldClose = feedback.type === 'success' || feedback.type === 'info';
+                    setFeedback({ ...feedback, isOpen: false });
+                    if (shouldClose) {
+                        onClose();
+                    }
+                }}
             />
         </div>
     );

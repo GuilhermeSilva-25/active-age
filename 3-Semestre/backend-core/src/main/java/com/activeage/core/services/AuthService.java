@@ -126,6 +126,10 @@ public class AuthService {
             throw new IllegalArgumentException("E-mail ou senha incorretos.");
         }
 
+        if (!user.isActive()) {
+            throw new IllegalArgumentException("Sua conta foi suspensa ou desativada pela administração da plataforma. Para mais esclarecimentos, entre em contato com o suporte.");
+        }
+
         return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
     }
 
