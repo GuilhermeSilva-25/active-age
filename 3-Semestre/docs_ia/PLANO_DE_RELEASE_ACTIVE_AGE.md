@@ -88,7 +88,7 @@ gantt
 #### 📅 Sprint 3 — Release v0.3.0: Gestão de Perfil, Vitrine de Horários e Agendamento Concorrente (UC18, UC08, UC09, UC10)
 * **Objetivo:** Estruturar a gestão completa de perfil e identidade visual de Médicos e Pacientes, e implantar a vitrine de agendamentos com reserva atômica sem *double-booking*.
 * **Entregas Previstas:**
-  1. **Módulo de Perfil Médico & Paciente (SPEC-06 / UC18 / RF014):** Edição de perfil com upload de foto de rosto (avatar), biografia profissional, áreas de foco geriátrico, valor da consulta (R$), duração estimada, endereço residencial do paciente e cadastro do cuidador familiar com contato de emergência.
+  1. [x] **Módulo de Perfil Médico & Paciente (SPEC-06 / UC18 / RF014) — [CONCLUÍDO ✅]:** Edição de perfil com upload de foto de rosto (avatar), biografia profissional, áreas de foco geriátrico, valor da consulta (R$), duração estimada, endereço residencial do paciente e cadastro do cuidador familiar com contato de emergência.
   2. Coleção e entidade `HorarioDisponivel` no MongoDB Atlas.
   3. Médico cria, visualiza e remove slots de horários livres em sua agenda (UC10).
   4. Vitrine de busca e filtros neutros de médicos geriatras aprovados pelo paciente (UC08 / Res. CFM nº 2.336/2023).

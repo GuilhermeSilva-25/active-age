@@ -128,6 +128,7 @@ public class AuthController {
         profile.put("cpf", user.getCpf());
         profile.put("phone", user.getPhone());
         profile.put("birthDate", user.getBirthDate());
+        profile.put("avatarUrl", user.getAvatarUrl());
         profile.put("active", user.isActive());
         profile.put("dossierStatus", user.getDossierStatus() != null ? user.getDossierStatus().name() : null);
         profile.put("rejectionReason", user.getRejectionReason());

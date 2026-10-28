@@ -5,7 +5,7 @@
 > **Módulo:** Perfil do Usuário, Identidade Visual (Avatar) e Dados de Atendimento / Cuidador  
 > **Casos de Uso Relacionados:** UC18 (Manter Perfil de Usuário) — Requisito Funcional: RF014 (Reflete em UC08, UC09 na Vitrine de Especialistas)  
 > **Data:** 28 de Outubro de 2026  
-> **Status:** AGUARDANDO APROVAÇÃO DO PO (Guilherme Silva)  
+> **Status:** CONCLUÍDA E HOMOLOGADA ✅  
 > **Metodologia:** Spec-Driven Development (SDD)
 
 ---

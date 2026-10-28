@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface AuthUser {
     id: string;
@@ -9,39 +9,36 @@ export interface AuthUser {
     ufCrm?: string;
     dossierStatus?: 'PENDING_DOCS' | 'UNDER_REVIEW' | 'DOCS_REJECTED' | 'APPROVED';
     active?: boolean;
+    avatarUrl?: string;
 }
 
 /**
  * Hook utilitário para recuperar os dados da sessão do usuário autenticado.
- * Retorna o usuário ativo, estado de carregamento e o caminho exato do seu painel/dashboard.
+ * Retorna o usuário ativo, estado de carregamento, função de atualização e o caminho exato do dashboard.
  */
 export function useAuthUser() {
     const [user, setUser] = useState<AuthUser | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        let isMounted = true;
-        const fetchUser = async () => {
-            try {
-                const res = await fetch('/api/auth/me');
-                if (res.ok) {
-                    const data: AuthUser = await res.json();
-                    if (isMounted) setUser(data);
-                } else {
-                    if (isMounted) setUser(null);
-                }
-            } catch {
-                if (isMounted) setUser(null);
-            } finally {
-                if (isMounted) setLoading(false);
+    const fetchUser = useCallback(async () => {
+        try {
+            const res = await fetch('/api/auth/me');
+            if (res.ok) {
+                const data: AuthUser = await res.json();
+                setUser(data);
+            } else {
+                setUser(null);
             }
-        };
-
-        fetchUser();
-        return () => {
-            isMounted = false;
-        };
+        } catch {
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchUser();
+    }, [fetchUser]);
 
     const getDashboardPath = (): string => {
         if (!user) return '/';
@@ -57,5 +54,6 @@ export function useAuthUser() {
         loading,
         isAuthenticated: !!user && user.active !== false,
         dashboardPath: getDashboardPath(),
+        refreshUser: fetchUser,
     };
 }

@@ -7,8 +7,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -130,4 +132,66 @@ public class User {
      * Data limite do período promocional de 15 dias de teste grátis no consultório virtual.
      */
     private LocalDateTime trialExpiresAt;
+
+    // ==========================================
+    // IDENTIDADE VISUAL & AVATAR (RF014 / UC18)
+    // ==========================================
+
+    /**
+     * URL ou rota relativa da foto de perfil (avatar) do usuário.
+     */
+    private String avatarUrl;
+
+    // ==========================================
+    // CAMPOS DE PERFIL DO PACIENTE (RF014 / UC18)
+    // ==========================================
+
+    /**
+     * Endereço residencial do paciente para validade de receitas digitais.
+     */
+    private UserAddress address;
+
+    /**
+     * Informações do cuidador ou familiar responsável de apoio.
+     */
+    private CaregiverInfo caregiver;
+
+    /**
+     * Resumo clínico declaratório básico para auxílio na anamnese geriátrica.
+     */
+    private PatientHealthSummary healthSummary;
+
+    // ==========================================
+    // CAMPOS DE PERFIL PROFISSIONAL DO MÉDICO (RF014 / UC18 / Res. CFM nº 2.336/2023)
+    // ==========================================
+
+    /**
+     * Registro de Qualificação de Especialista (RQE em Geriatria).
+     */
+    private String rqe;
+
+    /**
+     * Mini-biografia e trajetória profissional do médico geriatra (máx. 1200 caracteres).
+     */
+    private String bio;
+
+    /**
+     * Lista de áreas de foco clínico / especialidades de atendimento geriátrico.
+     */
+    private List<String> clinicalFocus;
+
+    /**
+     * Valor dos honorários brutos da teleconsulta (BRL).
+     */
+    private BigDecimal consultationFee;
+
+    /**
+     * Duração estimada da teleconsulta em minutos (padrão 50 min).
+     */
+    private Integer consultationDurationMinutes;
+
+    /**
+     * Link para o currículo oficial na Plataforma Lattes do CNPq.
+     */
+    private String lattesUrl;
 }

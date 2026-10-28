@@ -11,7 +11,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -203,9 +205,29 @@ public class DataInitializer implements CommandLineRunner {
             financial.setUpdatedAt(LocalDateTime.now().minusDays(10));
             doctor.setFinancialInfo(financial);
 
+            // Perfil Profissional e Atendimento (RF014 / UC18)
+            doctor.setRqe("RQE " + crm.substring(0, 4));
+            doctor.setBio("Médico(a) especialista em Geriatria e Gerontologia, dedicado(a) ao cuidado integral da pessoa idosa, longevidade saudável e avaliação ampla.");
+            doctor.setClinicalFocus(Arrays.asList("Avaliação Geriátrica Ampla (AGA)", "Memória e Demências", "Longevidade Ativa", "Prevenção de Quedas"));
+            doctor.setConsultationFee(BigDecimal.valueOf(350.00));
+            doctor.setConsultationDurationMinutes(50);
+            doctor.setLattesUrl("https://lattes.cnpq.br");
+
             userRepository.save(doctor);
             logger.info(">>> [SEED] Médico pioneiro homologado com sucesso: {} (CRM {}/{})", fullName, crm, ufCrm);
         } else {
+            userRepository.findByEmail(email).ifPresent(doc -> {
+                if (doc.getRqe() == null || doc.getBio() == null) {
+                    doc.setRqe("RQE " + crm.substring(0, 4));
+                    doc.setBio("Médico(a) especialista em Geriatria e Gerontologia, dedicado(a) ao cuidado integral da pessoa idosa, longevidade saudável e avaliação ampla.");
+                    doc.setClinicalFocus(Arrays.asList("Avaliação Geriátrica Ampla (AGA)", "Memória e Demências", "Longevidade Ativa", "Prevenção de Quedas"));
+                    doc.setConsultationFee(BigDecimal.valueOf(350.00));
+                    doc.setConsultationDurationMinutes(50);
+                    doc.setLattesUrl("https://lattes.cnpq.br");
+                    userRepository.save(doc);
+                    logger.info(">>> [SEED] Perfil enriquecido para médico existente: {}", email);
+                }
+            });
             logger.info(">>> [SEED] Médico já existente: {}", email);
         }
     }

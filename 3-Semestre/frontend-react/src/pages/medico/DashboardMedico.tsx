@@ -29,6 +29,7 @@ interface DoctorProfile {
     role: string;
     crm?: string;
     ufCrm?: string;
+    avatarUrl?: string;
     dossierStatus?: 'PENDING_DOCS' | 'UNDER_REVIEW' | 'DOCS_REJECTED' | 'APPROVED';
     rejectionReason?: string;
     trialExpiresAt?: string;
@@ -111,8 +112,12 @@ export function DashboardMedico() {
                         
                         {/* Identificação Completa (Desktop / Tablet) */}
                         <div className="hidden sm:flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-xl bg-brand-orange/10 border border-brand-orange/20 flex items-center justify-center text-brand-orange shadow-inner shrink-0">
-                                <Stethoscope className="w-6 h-6" />
+                            <div className="w-11 h-11 rounded-xl bg-brand-orange/10 border border-brand-orange/20 overflow-hidden flex items-center justify-center text-brand-orange shadow-inner shrink-0">
+                                {profile?.avatarUrl ? (
+                                    <img src={profile.avatarUrl} alt={profile.fullName} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Stethoscope className="w-6 h-6" />
+                                )}
                             </div>
                             <div>
                                 <span className="text-[11px] font-bold uppercase tracking-wider text-brand-orange block">
@@ -141,6 +146,18 @@ export function DashboardMedico() {
                             </span>
                         </div>
 
+                        <Link
+                            to="/medico/perfil"
+                            className="p-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs inline-flex items-center gap-1.5 shrink-0"
+                            title="Gerenciar Perfil Profissional e Honorários"
+                        >
+                            {profile?.avatarUrl ? (
+                                <img src={profile.avatarUrl} alt={profile.fullName} className="w-4 h-4 rounded-full object-cover shrink-0" />
+                            ) : (
+                                <Stethoscope className="w-4 h-4 text-brand-orange shrink-0" />
+                            )}
+                            <span className="hidden sm:inline">Meu Perfil</span>
+                        </Link>
                         <Link
                             to="/medico/credenciamento"
                             className="p-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs inline-flex items-center gap-1.5 shrink-0"

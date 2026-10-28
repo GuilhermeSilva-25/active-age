@@ -22,6 +22,7 @@ interface PatientProfile {
     id: string;
     fullName: string;
     email: string;
+    avatarUrl?: string;
     role: string;
     phone?: string;
     birthDate?: string;

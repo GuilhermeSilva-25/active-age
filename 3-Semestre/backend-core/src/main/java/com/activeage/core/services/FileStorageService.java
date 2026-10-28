@@ -29,7 +29,9 @@ import java.util.UUID;
 public class FileStorageService {
 
     private final Path rootLocation;
+    private final Path avatarLocation;
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+    private static final long MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5 MB
 
     private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList(
             "application/pdf",
@@ -38,12 +40,23 @@ public class FileStorageService {
             "image/jpg"
     );
 
-    public FileStorageService(@Value("${activeage.upload.dir:uploads/dossiers}") String uploadDir) {
+    private static final List<String> ALLOWED_AVATAR_CONTENT_TYPES = Arrays.asList(
+            "image/jpeg",
+            "image/png",
+            "image/jpg",
+            "image/webp"
+    );
+
+    public FileStorageService(
+            @Value("${activeage.upload.dir:uploads/dossiers}") String uploadDir,
+            @Value("${activeage.upload.avatar-dir:uploads/avatars}") String avatarDir) {
         this.rootLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
+        this.avatarLocation = Paths.get(avatarDir).toAbsolutePath().normalize();
         try {
             Files.createDirectories(this.rootLocation);
+            Files.createDirectories(this.avatarLocation);
         } catch (IOException e) {
-            throw new RuntimeException("Não foi possível inicializar o diretório de armazenamento de documentos.", e);
+            throw new RuntimeException("Não foi possível inicializar os diretórios de armazenamento.", e);
         }
     }
 
@@ -137,6 +150,81 @@ public class FileStorageService {
             Path doctorDir = this.rootLocation.resolve(doctorId).normalize();
             Path filePath = doctorDir.resolve(storedFileName).normalize();
             if (filePath.startsWith(doctorDir)) {
+                Files.deleteIfExists(filePath);
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    /**
+     * Valida e armazena a foto de perfil (avatar) do usuário.
+     *
+     * @param userId ID do usuário titular.
+     * @param file Imagem enviada na requisição multipart.
+     * @return Nome do arquivo salvo no diretório de avatares.
+     */
+    public String storeAvatar(String userId, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("A foto de perfil não pode ser vazia.");
+        }
+
+        if (file.getSize() > MAX_AVATAR_SIZE) {
+            throw new IllegalArgumentException("A foto de perfil excede o limite máximo permitido de 5MB.");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_AVATAR_CONTENT_TYPES.contains(contentType.toLowerCase())) {
+            throw new IllegalArgumentException("Formato não suportado. Por favor, envie imagens JPG, PNG ou WEBP.");
+        }
+
+        try {
+            String originalFileName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "avatar.jpg";
+            String extension = getFileExtension(originalFileName);
+            String storedFileName = "avatar_" + userId + "_" + UUID.randomUUID() + extension;
+
+            Path targetLocation = this.avatarLocation.resolve(storedFileName).normalize();
+
+            if (!targetLocation.startsWith(this.avatarLocation)) {
+                throw new SecurityException("Tentativa de acesso ilegal a caminho de arquivo.");
+            }
+
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            return storedFileName;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Falha ao salvar a foto de perfil no servidor.", e);
+        }
+    }
+
+    /**
+     * Carrega a foto de perfil como recurso para download ou exibição em tela.
+     */
+    public Resource loadAvatarResource(String storedFileName) {
+        try {
+            Path filePath = this.avatarLocation.resolve(storedFileName).normalize();
+            if (!filePath.startsWith(this.avatarLocation)) {
+                throw new SecurityException("Tentativa de acesso ilegal a caminho de arquivo.");
+            }
+
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new IllegalArgumentException("Foto de perfil não encontrada no servidor.");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Erro ao localizar o arquivo da foto de perfil.", e);
+        }
+    }
+
+    /**
+     * Remove um avatar antigo após a substituição.
+     */
+    public void deleteAvatar(String storedFileName) {
+        if (storedFileName == null || storedFileName.isBlank()) return;
+        try {
+            Path filePath = this.avatarLocation.resolve(storedFileName).normalize();
+            if (filePath.startsWith(this.avatarLocation)) {
                 Files.deleteIfExists(filePath);
             }
         } catch (IOException ignored) {

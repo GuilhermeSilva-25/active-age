@@ -427,6 +427,50 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 6. Funcionalidade: Gestão de Perfil do Usuário & Identidade Visual (UC18 / RF014)
+
+### História de Usuário (User Story)
+* **Como** um Médico Especialista ou Paciente idoso / Cuidador
+* **Eu quero** gerenciar meu perfil, atualizar minha foto (avatar), cadastrar endereço de entrega de receitas e dados de apoio familiar
+* **Para que** as teleconsultas sejam humanizadas, seguras perante o CFM e preparadas para a emissão correta de documentos médicos
+
+---
+
+### Cenário 1: Atualização de Perfil Profissional do Médico com Sucesso (Caminho Feliz)
+* **Dado que** o médico `ada.lovelace@activeage.com` (`ROLE_MEDICO`) está logado e acessa `/medico/perfil`
+* **Quando** preenche o RQE `"RQE 1842"`, telefone `"(11) 98142-1852"`, define o valor de consulta em `R$ 380,00`, seleciona as áreas de foco e clica em *"Salvar Alterações do Perfil"*
+* **Então** o backend persiste as informações no MongoDB com status 200 OK E exibe o modal acessível `FeedbackModal` com título *"Perfil Atualizado!"* E atualiza os dados em tempo real no dashboard.
+
+---
+
+### Cenário 2: Upload de Foto de Perfil (Avatar) com Validação de Extensão e Tamanho (Caminho Feliz & Triste)
+* **Dado que** o usuário (Médico ou Paciente) clica no ícone de câmera para selecionar uma nova foto
+* **Quando** envia um arquivo de imagem compatível (JPG, PNG ou WEBP) de até 5MB
+* **Então** o servidor armazena o arquivo com nome sanitizado e UUID em diretório isolado E atualiza o campo `avatarUrl` do usuário E renderiza imediatamente a imagem circular na interface.
+
+| Caso de Teste | Arquivo Testado | Tamanho | Formato | Resultado Esperado |
+|---|---|---|---|---|
+| TC-PRF-01 | `foto_rosto.jpg` | 1.8 MB | `.jpg` | Upload aceito e avatar atualizado |
+| TC-PRF-02 | `avatar_profissional.png` | 2.4 MB | `.png` | Upload aceito e avatar atualizado |
+| TC-PRF-03 | `foto_pesada.jpg` | 8.2 MB | `.jpg` | Rejeitado por exceder 5MB com FeedbackModal |
+| TC-PRF-04 | `documento.pdf` | 600 KB | `.pdf` | Rejeitado por formato incompatível |
+
+---
+
+### Cenário 3: Atualização de Endereço Residencial e Cuidador pelo Paciente (Caminho Feliz / IHC)
+* **Dado que** o paciente `antonio.silva@email.com` (`ROLE_PACIENTE`) acessa `/paciente/perfil`
+* **Quando** preenche seu endereço residencial completo e marca a opção *"Possuo um cuidador"* preenchendo o nome do filho e WhatsApp de emergência
+* **Então** o backend grava os subdocumentos `address` e `caregiver` no MongoDB E exibe mensagem de sucesso via `FeedbackModal` sem uso de `window.alert()`.
+
+---
+
+### Cenário 4: Blindagem contra Edição Arbitrária de Dados Regulatórios (Caminho Triste / Segurança)
+* **Dado que** o usuário tenta forçar alteração de campos protegidos como `crm`, `cpf` ou `email` via payload arbitrário no endpoint `PUT /api/users/profile/doctor` ou `patient`
+* **Quando** a requisição é processada
+* **Então** o backend ignora solenemente alterações a esses atributos E preserva os dados originais validados na base.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

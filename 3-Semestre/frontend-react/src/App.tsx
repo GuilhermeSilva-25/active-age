@@ -21,7 +21,9 @@ import { AdminUsuarios } from './pages/admin/AdminUsuarios';
 import { AdminAuditoria } from './pages/admin/AdminAuditoria';
 import { DossieCredenciamento } from './pages/medico/DossieCredenciamento';
 import { DashboardMedico } from './pages/medico/DashboardMedico';
+import { PerfilMedico } from './pages/medico/PerfilMedico';
 import { DashboardPaciente } from './pages/paciente/DashboardPaciente';
+import { PerfilPaciente } from './pages/paciente/PerfilPaciente';
 import { ScrollToTop } from './components/common/ScrollToTop';
 
 function App() {
@@ -50,12 +52,14 @@ function App() {
                 {/* === Grupo 3: Área do Paciente (Blindada por RBAC: ROLE_PACIENTE) === */}
                 <Route element={<ProtectedRoute requiredRole="ROLE_PACIENTE" />}>
                     <Route path="/paciente/dashboard" element={<DashboardPaciente />} />
+                    <Route path="/paciente/perfil" element={<PerfilPaciente />} />
                 </Route>
 
                 {/* === Grupo 4: Área Médica (Blindada por RBAC: ROLE_MEDICO) === */}
                 <Route element={<ProtectedRoute requiredRole="ROLE_MEDICO" />}>
                     <Route path="/medico/dashboard" element={<DashboardMedico />} />
                     <Route path="/medico/credenciamento" element={<DossieCredenciamento />} />
+                    <Route path="/medico/perfil" element={<PerfilMedico />} />
                 </Route>
 
                 {/* === Grupo 5: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}
