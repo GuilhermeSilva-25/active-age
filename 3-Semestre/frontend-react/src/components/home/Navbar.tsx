@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, User as UserIcon, LayoutDashboard } from 'lucide-react';
+import { Menu, X, LogOut, User as UserIcon, LayoutDashboard, Loader2 } from 'lucide-react';
 import logoImg from '../../assets/logo-active-age.png';
 
 interface UserProfile {
@@ -17,6 +17,7 @@ export function Navbar() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -38,10 +39,12 @@ export function Navbar() {
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch (err) {
       console.error('Erro ao realizar logout', err);
     } finally {
+      setIsLoggingOut(false);
       setCurrentUser(null);
       navigate('/');
     }
@@ -99,11 +102,21 @@ export function Navbar() {
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="inline-flex items-center gap-1.5 text-red-600 hover:text-red-700 font-semibold px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
+                    disabled={isLoggingOut}
+                    className="inline-flex items-center gap-1.5 text-red-600 hover:text-red-700 font-semibold px-3 py-2 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                     title="Encerrar sessão segura"
                   >
-                    <LogOut size={18} />
-                    Sair
+                    {isLoggingOut ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin text-red-600" />
+                        <span>Saindo...</span>
+                      </>
+                    ) : (
+                      <>
+                        <LogOut size={18} />
+                        <span>Sair</span>
+                      </>
+                    )}
                   </button>
                 </>
               ) : (
@@ -158,10 +171,20 @@ export function Navbar() {
                     setIsMenuOpen(false);
                     handleLogout();
                   }}
-                  className="w-full text-left px-3 py-3 text-red-600 font-semibold hover:bg-red-50 rounded-md flex items-center gap-2"
+                  disabled={isLoggingOut}
+                  className="w-full text-left px-3 py-3 text-red-600 font-semibold hover:bg-red-50 rounded-md flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <LogOut size={18} />
-                  Sair da Conta
+                  {isLoggingOut ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin text-red-600" />
+                      <span>Saindo...</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogOut size={18} />
+                      <span>Sair da Conta</span>
+                    </>
+                  )}
                 </button>
               </>
             ) : (

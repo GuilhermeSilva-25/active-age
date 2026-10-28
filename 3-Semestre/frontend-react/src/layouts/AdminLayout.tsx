@@ -10,20 +10,24 @@ import {
   X, 
   ShieldCheck, 
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  Loader2
 } from 'lucide-react';
 import logoImg from '../assets/logo-active-age.png';
 
 export const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch (error) {
       console.error('Erro ao efetuar logout:', error);
     } finally {
+      setIsLoggingOut(false);
       navigate('/login');
     }
   };
@@ -126,10 +130,20 @@ export const AdminLayout: React.FC = () => {
           <button
             type="button"
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-colors border border-red-200"
+            disabled={isLoggingOut}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-colors border border-red-200 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Encerrar Sessão</span>
+            {isLoggingOut ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-red-600" />
+                <span>Saindo...</span>
+              </>
+            ) : (
+              <>
+                <LogOut className="w-4 h-4" />
+                <span>Encerrar Sessão</span>
+              </>
+            )}
           </button>
         </div>
       </aside>
@@ -185,10 +199,20 @@ export const AdminLayout: React.FC = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors"
+              disabled={isLoggingOut}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <LogOut className="w-4 h-4" />
-              <span>Sair do Painel</span>
+              {isLoggingOut ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-red-600" />
+                  <span>Saindo...</span>
+                </>
+              ) : (
+                <>
+                  <LogOut className="w-4 h-4" />
+                  <span>Sair do Painel</span>
+                </>
+              )}
             </button>
           </div>
         </div>

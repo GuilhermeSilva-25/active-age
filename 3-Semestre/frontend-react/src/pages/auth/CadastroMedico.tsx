@@ -361,9 +361,16 @@ export function CadastroMedico() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold rounded-xl transition-all w-2/3 flex justify-center items-center gap-2 py-4 disabled:opacity-70"
+                            className="bg-brand-mint hover:bg-brand-mint/80 text-brown-dark font-bold rounded-xl transition-all w-2/3 flex justify-center items-center gap-2 py-4 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            {isSubmitting ? 'Registrando...' : 'Finalizar Pré-Cadastro'}
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    <span>Registrando...</span>
+                                </>
+                            ) : (
+                                <span>Finalizar Pré-Cadastro</span>
+                            )}
                         </button>
                     )}
                 </div>

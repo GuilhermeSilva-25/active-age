@@ -3,7 +3,7 @@ import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Link} from 'react-router-dom';
-import {Mail, ArrowRight, CheckCircle2, ArrowLeft} from 'lucide-react';
+import {Mail, ArrowRight, CheckCircle2, ArrowLeft, Loader2} from 'lucide-react';
 
 const recoverySchema = z.object({
     email: z.string().email('Por favor, insira um e-mail válido.'),
@@ -72,8 +72,17 @@ export function RecuperarSenha() {
                             disabled={isSubmitting}
                             className="w-full btn-primary flex justify-center items-center gap-2 py-4 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            {isSubmitting ? 'Processando...' : 'Enviar link de recuperação'}
-                            {!isSubmitting && <ArrowRight size={20}/>}
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    <span>Enviando link...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Enviar link de recuperação</span>
+                                    <ArrowRight size={20}/>
+                                </>
+                            )}
                         </button>
                     </form>
 

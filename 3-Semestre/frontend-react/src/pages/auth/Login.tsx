@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, ArrowRight, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Por favor, insira um e-mail válido."),
@@ -202,8 +202,17 @@ export function Login() {
           disabled={isSubmitting}
           className="w-full btn-primary flex justify-center items-center gap-2 py-4 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Verificando segurança..." : "Entrar na plataforma"}
-          {!isSubmitting && <ArrowRight size={20} />}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Entrando na plataforma...</span>
+            </>
+          ) : (
+            <>
+              <span>Entrar na plataforma</span>
+              <ArrowRight size={20} />
+            </>
+          )}
         </button>
       </form>
 

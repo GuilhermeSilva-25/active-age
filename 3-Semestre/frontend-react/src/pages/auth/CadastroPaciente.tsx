@@ -406,9 +406,16 @@ export function CadastroPaciente() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-primary w-2/3 flex justify-center items-center gap-2 py-4 disabled:opacity-70"
+              className="btn-primary w-2/3 flex justify-center items-center gap-2 py-4 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Criando Conta..." : "Finalizar Cadastro"}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Criando Conta...</span>
+                </>
+              ) : (
+                <span>Finalizar Cadastro</span>
+              )}
             </button>
           )}
         </div>

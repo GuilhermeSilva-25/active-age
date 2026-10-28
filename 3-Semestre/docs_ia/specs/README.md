@@ -21,6 +21,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-03B** | **Micro Tarefa 2.2B: Melhorias no Dossiê (Frente/Verso, Máscaras e Código COMPE)** | UC03, UC04, UC05 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.2B_MELHORIAS_DOSSIE_E_DADOS_BANCARIOS.md](./SPEC_SDD_MICRO_TAREFA_2.2B_MELHORIAS_DOSSIE_E_DADOS_BANCARIOS.md) |
 | **SPEC-04** | **Micro Tarefa 2.3: Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`)** | UC01, UC02, UC04, UC05 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.3_GESTAO_USUARIOS_E_AUDITORIA.md](./SPEC_SDD_MICRO_TAREFA_2.3_GESTAO_USUARIOS_E_AUDITORIA.md) |
 | **SPEC-05** | **Micro Tarefa 2.4: Dashboards Segregados de Paciente e Médico** | UC01, UC02, UC03, UC07, UC08, UC09, UC10, UC12, UC14, UC16 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md](./SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md) |
+| **SPEC-05B** | **Melhoria IHC: Padronização Universal de Spinners em Botões Assíncronos** | UC01, UC02, UC03, UC04, UC05 | **Concluída / Live ✅** | [SPEC_SDD_MELHORIA_IHC_PADRONIZACAO_SPINNERS_ASSINCRONOS.md](./SPEC_SDD_MELHORIA_IHC_PADRONIZACAO_SPINNERS_ASSINCRONOS.md) |
 
 ---
 

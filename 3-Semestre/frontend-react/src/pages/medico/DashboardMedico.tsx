@@ -15,7 +15,8 @@ import {
     LogOut,
     CreditCard,
     Star,
-    Lock
+    Lock,
+    Loader2
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { Footer } from '../../components/home/Footer';
@@ -38,6 +39,7 @@ export function DashboardMedico() {
     const navigate = useNavigate();
     const [profile, setProfile] = useState<DoctorProfile | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     // Feedback Modal
     const [feedback, setFeedback] = useState<{
@@ -75,10 +77,12 @@ export function DashboardMedico() {
 
     const handleLogout = async () => {
         try {
+            setIsLoggingOut(true);
             await fetch('/api/auth/logout', { method: 'POST' });
         } catch (err) {
             console.error('Erro ao efetuar logout:', err);
         } finally {
+            setIsLoggingOut(false);
             navigate('/login');
         }
     };
@@ -148,11 +152,21 @@ export function DashboardMedico() {
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="inline-flex items-center gap-1.5 p-2 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0"
+                            disabled={isLoggingOut}
+                            className="inline-flex items-center gap-1.5 p-2 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0 disabled:opacity-70 disabled:cursor-not-allowed"
                             title="Encerrar sessão médica segura"
                         >
-                            <LogOut className="w-4 h-4 shrink-0" />
-                            <span className="hidden sm:inline">Encerrar Sessão</span>
+                            {isLoggingOut ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 shrink-0 animate-spin text-red-600" />
+                                    <span className="hidden sm:inline">Saindo...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <LogOut className="w-4 h-4 shrink-0" />
+                                    <span className="hidden sm:inline">Encerrar Sessão</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
