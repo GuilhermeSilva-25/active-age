@@ -74,7 +74,7 @@ export function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center gap-3">
-              <img src={logoImg} alt="Active Age" className="h-10 w-auto" />
+              <img src={logoImg} alt="Active Age" className="h-14 sm:h-16 w-auto object-contain transition-transform hover:scale-105" />
             </Link>
           </div>
 

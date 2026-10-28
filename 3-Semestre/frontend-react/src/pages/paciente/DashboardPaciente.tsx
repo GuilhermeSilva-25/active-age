@@ -108,7 +108,7 @@ export function DashboardPaciente() {
                 <div className="max-w-6xl mx-auto px-3.5 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
                     <div className="flex items-center gap-3 sm:gap-6">
                         <Link to="/" className="flex items-center gap-2 group" title="Ir para a página inicial">
-                            <img src={logoImg} alt="Active Age" className="h-9 sm:h-12 w-auto transition-transform group-hover:scale-105" />
+                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-14 md:h-16 w-auto object-contain transition-transform group-hover:scale-105" />
                         </Link>
                         
                         <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
