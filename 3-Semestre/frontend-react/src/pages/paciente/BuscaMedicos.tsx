@@ -6,7 +6,6 @@ import {
     ArrowLeft,
     ShieldCheck,
     Clock,
-    DollarSign,
     Award,
     Sparkles,
     CalendarCheck,
@@ -426,8 +425,7 @@ export function BuscaMedicos() {
                                     {/* Rodapé do Card com Valores e Ações */}
                                     <div className="p-4 sm:p-5 bg-gradient-to-b from-gray-50/50 to-orange-50/30 border-t border-brand-pot/30 space-y-3">
                                         <div className="flex items-center justify-between text-xs sm:text-sm">
-                                            <div className="flex items-center gap-1.5 font-bold text-brown-dark">
-                                                <DollarSign className="w-4 h-4 text-brand-orange" />
+                                            <div>
                                                 <span className="text-base sm:text-lg font-black text-brand-orange">
                                                     {formattedFee}
                                                 </span>
