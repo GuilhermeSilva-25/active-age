@@ -76,6 +76,7 @@ flowchart TD
 | Módulo / Funcionalidade | Semestre de Foco | Descrição da Funcionalidade | Dependência Técnica |
 | :--- | :---: | :--- | :--- |
 | **Módulo de Mensageria & Notificações** | **3º / 4º Semestre** | Microsserviço independente para envio de e-mails de recuperação de senha, alertas de consulta e avisos por WhatsApp/SMS aos cuidadores. | RabbitMQ ou Redis Streams + Provedor SMTP/API. |
+| **Aprimoramento de Moderação & Suporte 360º** | **3º / 4º Semestre** | Relatório estruturado de motivos de bloqueio/suspensão de contas e tela de atendimento com dossiê completo para operadores de suporte. | Expansão de `User` / `audit_logs` + Módulo de Atendimento. |
 | **Assinatura Digital de Receitas (CFM)** | **4º Semestre** | Emissão de receitas e atestados em PDF com assinatura eletrônica padrão ICP-Brasil e QRCode para validação em farmácias. | Integração com biblioteca de assinatura e certificado digital A1/A3. |
 | **Teleconsulta WebRTC com Sala Virtual** | **4º / 6º Semestre** | Chamada de vídeo peer-to-peer protegida por criptografia de ponta a ponta com chat em tempo real e visualizador de exames integrado. | WebRTC + Servidor de Sinalização (WebSocket / STUN / TURN). |
 | **Módulo Cuidador & Compartilhamento Familiar** | **4º Semestre** | Perfil de acesso secundário onde o filho ou cuidador autorizado acompanha medicações tomadas, agenda do idoso e alertas clínicos. | RBAC com delegação de autoridade (`ROLE_CUIDADOR`). |
@@ -95,5 +96,37 @@ Ao iniciar a codificação do módulo de mensageria e reset de senha, devem ser 
 5. **Invalidação de Sessões Anteriores:** Ao redefinir a senha com sucesso, todos os cookies de sessão ou tokens JWT emitidos anteriormente devem ser invalidados.
 
 ---
+
+## 5. Destaque: Aprimoramento da Moderação de Usuários (Bloqueio, Suspensão & Protocolo de Suporte)
+
+### 5.1. Contexto e Diretriz do Tech Lead (Guilherme Silva)
+> **Diretiva do PO:**  
+> A funcionalidade de bloqueio perimetral e revogação de sessão de usuários (UC05) já está implementada e operacional. No entanto, é necessário aprimorar o fluxo de atendimento: melhorar a comunicação visual e acolhedora com o usuário quando este for bloqueado e registrar um **relatório/dossiê detalhado do motivo do bloqueio**, de modo que a equipe de suporte tenha todas as informações centralizadas para orientar o usuário quando houver contato.
+
+### 5.2. Requisitos Planejados para a Evolução da Moderação
+
+#### 1. Relatório Estruturado de Bloqueio / Suspensão (Backend Core & Admin)
+Ao inativar ou suspender uma conta pela interface administrativa:
+- **Categorização Mandatória:** Seleção da categoria de bloqueio (ex: *Inconsistência de CRM/RQE, Irregularidade Documental, Conduta Antiética/CFM, Solicitação do Titular/LGPD, Suspeita de Fraude ou Inadimplência SaaS*).
+- **Justificativa Detalhada Interna:** Campo de texto estruturado para o auditor/administrador descrever os fatos apurados e passos recomendados para resolução.
+- **Evidências & Anexos (Opcional):** Possibilidade de anexar print ou parecer comprobatório da decisão.
+- **Rastreabilidade Imutável:** Vinculação automática com a coleção `audit_logs`, registrando o ID do operador, data/hora, IP e hash da operação.
+
+#### 2. Dossiê de Atendimento para a Equipe de Suporte (Visão 360º)
+Interface dedicada ou painel integrado de atendimento ao cliente:
+- **Busca Rápida de Usuário Bloqueado:** Localização instantânea por e-mail, CPF ou CRM.
+- **Ficha de Moderação do Usuário:** O atendente de suporte visualiza:
+  - Quem bloqueou e quando;
+  - Categoria e justificativa exata da moderação;
+  - Histórico de reincidências ou advertências anteriores;
+  - **Script de Resolução Aconselhada:** Orientações prontas para passar ao usuário (ex: *"Solicite que o médico envie certidão do CRM emitida nos últimos 30 dias pelo e-mail suporte@activeage.com.br"*).
+- **Abertura de Protocolo de Reanálise:** O suporte poderá gerar uma solicitação interna de reavaliação para a fila do Administrador.
+
+#### 3. Comunicação Acolhedora e Acessível para o Usuário (IHC Geriátrico)
+- **Tela de Bloqueio Humanizada:** Substituição de mensagens genéricas de erro por uma tela explicativa, em conformidade com as diretrizes de acessibilidade para idosos.
+- **Geração de Protocolo de Atendimento:** Exibição clara de um código de protocolo de contato e botão direto para acionar o canal oficial de atendimento (WhatsApp ou e-mail de suporte).
+
+---
+
 *Documento registrado e mantido sob metodologia Spec-Driven Development (SDD).*  
 *Active Age — Telessaúde Geriátrica Integrada.*
