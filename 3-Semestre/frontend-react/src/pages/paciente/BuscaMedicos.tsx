@@ -354,16 +354,24 @@ export function BuscaMedicos() {
                                     <div className="p-5 sm:p-6 space-y-4">
                                         <div className="flex items-start gap-4">
                                             {/* Foto de Perfil */}
-                                            <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden bg-brand-orange/10 border border-brand-orange/20 shadow-inner shrink-0 flex items-center justify-center group-hover:scale-103 transition-transform">
+                                            <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden bg-brand-orange/10 border border-brand-orange/20 shadow-inner shrink-0 flex items-center justify-center group-hover:scale-103 transition-transform relative">
                                                 {doctor.avatarUrl ? (
                                                     <img
                                                         src={doctor.avatarUrl}
                                                         alt={doctor.fullName}
+                                                        referrerPolicy="no-referrer"
+                                                        crossOrigin="anonymous"
+                                                        onError={(e) => {
+                                                            (e.currentTarget as HTMLElement).style.display = 'none';
+                                                            const fallback = e.currentTarget.parentElement?.querySelector('.avatar-fallback');
+                                                            if (fallback) fallback.classList.remove('hidden');
+                                                        }}
                                                         className="w-full h-full object-cover"
                                                     />
-                                                ) : (
+                                                ) : null}
+                                                <div className={`avatar-fallback items-center justify-center w-full h-full ${doctor.avatarUrl ? 'hidden' : 'flex'}`}>
                                                     <Stethoscope className="w-8 h-8 text-brand-orange" />
-                                                )}
+                                                </div>
                                             </div>
 
                                             <div className="flex-1 min-w-0">

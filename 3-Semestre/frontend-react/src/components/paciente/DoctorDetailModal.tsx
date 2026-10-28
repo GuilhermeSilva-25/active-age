@@ -80,16 +80,24 @@ export function DoctorDetailModal({
 
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
                         {/* Avatar com borda */}
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-brand-orange/10 border-2 border-brand-orange/30 shadow-md shrink-0 flex items-center justify-center">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-brand-orange/10 border-2 border-brand-orange/30 shadow-md shrink-0 flex items-center justify-center relative">
                             {doctor.avatarUrl ? (
                                 <img
                                     src={doctor.avatarUrl}
                                     alt={doctor.fullName}
+                                    referrerPolicy="no-referrer"
+                                    crossOrigin="anonymous"
+                                    onError={(e) => {
+                                        (e.currentTarget as HTMLElement).style.display = 'none';
+                                        const fallback = e.currentTarget.parentElement?.querySelector('.modal-avatar-fallback');
+                                        if (fallback) fallback.classList.remove('hidden');
+                                    }}
                                     className="w-full h-full object-cover"
                                 />
-                            ) : (
+                            ) : null}
+                            <div className={`modal-avatar-fallback items-center justify-center w-full h-full ${doctor.avatarUrl ? 'hidden' : 'flex'}`}>
                                 <Stethoscope className="w-10 h-10 text-brand-orange" />
-                            )}
+                            </div>
                         </div>
 
                         <div className="flex-1">
