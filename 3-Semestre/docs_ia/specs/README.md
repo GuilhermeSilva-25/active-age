@@ -23,7 +23,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-04B** | **Caso de Uso UC05: Bloqueio Perimetral de Login e Revogação de Sessão (Moderação)** | UC05 | **Concluída / Live ✅** | [SPEC_SDD_UC05_BLOQUEIO_E_MODERACAO_DE_USUARIOS.md](./SPEC_SDD_UC05_BLOQUEIO_E_MODERACAO_DE_USUARIOS.md) |
 | **SPEC-05** | **Micro Tarefa 2.4: Dashboards Segregados de Paciente e Médico** | UC01, UC02, UC03, UC07, UC08, UC09, UC10, UC12, UC14, UC16 | **Concluída / Live ✅** | [SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md](./SPEC_SDD_MICRO_TAREFA_2.4_DASHBOARDS_PACIENTE_E_MEDICO.md) |
 | **SPEC-05B** | **Melhoria IHC: Padronização Universal de Spinners em Botões Assíncronos** | UC01, UC02, UC03, UC04, UC05 | **Concluída / Live ✅** | [SPEC_SDD_MELHORIA_IHC_PADRONIZACAO_SPINNERS_ASSINCRONOS.md](./SPEC_SDD_MELHORIA_IHC_PADRONIZACAO_SPINNERS_ASSINCRONOS.md) |
-| **SPEC-05C** | **Semeador de Dados: Médicos Homologados em Homenagem aos Pioneiros da Tecnologia** | UC01, UC03, UC04, UC08, UC09 | **Em Especificação ⏳** | [SPEC_SDD_SEED_MEDICOS_HOMENAGEM_TECNOLOGIA.md](./SPEC_SDD_SEED_MEDICOS_HOMENAGEM_TECNOLOGIA.md) |
+| **SPEC-05C** | **Semeador de Dados: Médicos Homologados em Homenagem aos Pioneiros da Tecnologia** | UC01, UC03, UC04, UC08, UC09 | **Concluída / Live ✅** | [SPEC_SDD_SEED_MEDICOS_HOMENAGEM_TECNOLOGIA.md](./SPEC_SDD_SEED_MEDICOS_HOMENAGEM_TECNOLOGIA.md) |
 
 ---
 
