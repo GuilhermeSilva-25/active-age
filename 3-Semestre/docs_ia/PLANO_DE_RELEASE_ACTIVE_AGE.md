@@ -89,9 +89,9 @@ gantt
 * **Objetivo:** Estruturar a gestão completa de perfil e identidade visual de Médicos e Pacientes, e implantar a vitrine de agendamentos com reserva atômica sem *double-booking*.
 * **Entregas Previstas:**
   1. [x] **Módulo de Perfil Médico & Paciente (SPEC-06 / UC18 / RF014) — [CONCLUÍDO ✅]:** Edição de perfil com upload de foto de rosto (avatar), biografia profissional, áreas de foco geriátrico, valor da consulta (R$), duração estimada, endereço residencial do paciente e cadastro do cuidador familiar com contato de emergência.
-  2. Coleção e entidade `HorarioDisponivel` no MongoDB Atlas.
-  3. Médico cria, visualiza e remove slots de horários livres em sua agenda (UC10).
-  4. Vitrine de busca e filtros neutros de médicos geriatras aprovados pelo paciente (UC08 / Res. CFM nº 2.336/2023).
+  2. [x] **Vitrine de Busca Inteligente e Catálogo Neutro de Médicos Geriatras (SPEC-07 / UC08 / RF005 / RN004) — [CONCLUÍDO ✅]:** Busca textual inteligente por nome/RQE/bio, filtros clínicos por foco geriátrico (AGA, Demências, Quedas, Polifarmácia), filtro por Estado (UF do CRM), ordenação neutra e transparente (Res. CFM nº 2.336/2023), cards informativos com foto oficial, RQE, duração e honorários, modal de detalhes com currículo Lattes e integração direta ao Dashboard do Paciente.
+  3. Coleção e entidade `HorarioDisponivel` no MongoDB Atlas.
+  4. Médico cria, visualiza e remove slots de horários livres em sua agenda (UC10).
   5. Reserva de consulta atômica com bloqueio imediato do slot para `OCUPADO` (UC09 / RN001).
   6. Cancelamento pelo paciente com antecedência de 24h e devolução do slot para `LIVRE` (RN002).
 

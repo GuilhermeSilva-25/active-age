@@ -37,6 +37,11 @@ public interface UserRepository extends MongoRepository<User, String> {
     List<User> findByRoleAndDossierStatus(Role role, DoctorDossierStatus dossierStatus);
 
     /**
+     * Retorna médicos homologados e ativos para exibição na vitrine de busca pública (UC08 / RN004).
+     */
+    List<User> findByRoleAndActiveAndDossierStatus(Role role, boolean active, DoctorDossierStatus dossierStatus);
+
+    /**
      * Conta médicos por status do Dossiê (para métricas e badges de pendência).
      */
     long countByRoleAndDossierStatus(Role role, DoctorDossierStatus dossierStatus);

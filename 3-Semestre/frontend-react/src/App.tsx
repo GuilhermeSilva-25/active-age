@@ -24,6 +24,7 @@ import { DashboardMedico } from './pages/medico/DashboardMedico';
 import { PerfilMedico } from './pages/medico/PerfilMedico';
 import { DashboardPaciente } from './pages/paciente/DashboardPaciente';
 import { PerfilPaciente } from './pages/paciente/PerfilPaciente';
+import { BuscaMedicos } from './pages/paciente/BuscaMedicos';
 import { ScrollToTop } from './components/common/ScrollToTop';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
                 <Route element={<ProtectedRoute requiredRole="ROLE_PACIENTE" />}>
                     <Route path="/paciente/dashboard" element={<DashboardPaciente />} />
                     <Route path="/paciente/perfil" element={<PerfilPaciente />} />
+                    <Route path="/paciente/busca-medicos" element={<BuscaMedicos />} />
                 </Route>
 
                 {/* === Grupo 4: Área Médica (Blindada por RBAC: ROLE_MEDICO) === */}

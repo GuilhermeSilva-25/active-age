@@ -471,6 +471,57 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 7. Funcionalidade: Vitrine Neutra e Busca Inteligente de Médicos Geriatras (UC08 / RF005 / RN004)
+
+### História de Usuário (User Story)
+* **Como** um Paciente idoso ou Cuidador familiar
+* **Eu quero** pesquisar médicos geriatras homologados por especialidade, estado, nome e honorários
+* **Para que** eu possa escolher o profissional ideal com total transparência e segurança ética
+
+---
+
+### Critérios de Aceite em Formato BDD (Gherkin)
+
+#### Cenário 7.1: Acesso e listagem inicial de médicos pioneiros homologados (Caminho Feliz)
+* **Dado** que o paciente autenticado clica no card "Agendar Consulta Geriátrica" no Dashboard
+* **Quando** a página de busca (`/paciente/busca-medicos`) é carregada
+* **Então** o sistema realiza uma requisição `GET /api/doctors/search`
+* **E** exibe os 5 médicos pioneiros cadastrados (Ada Lovelace, Alan Turing, Grace Hopper, Margaret Hamilton e Tim Berners-Lee)
+* **E** cada card apresenta foto oficial, nome completo, CRM/UF, RQE, resumo de apresentação, chips de especialidades, valor da teleconsulta e tempo estimado.
+
+#### Cenário 7.2: Filtro por Área de Foco Clínico Geriátrico (Caminho Feliz)
+* **Dado** que a vitrine de busca de especialistas está aberta
+* **Quando** o usuário clica no chip de foco "Memória e Demências"
+* **Então** a lista de médicos é filtrada dinamicamente
+* **E** apenas médicos que possuam essa área em seu perfil clínico (ex: Dr. Alan Turing) permanecem visíveis
+* **E** o contador de resultados atualiza para o total exato de correspondências.
+
+#### Cenário 7.3: Filtro Geográfico por Estado do CRM (Caminho Feliz)
+* **Dado** que a vitrine de especialistas está aberta
+* **Quando** o usuário seleciona o Estado "RJ - Rio de Janeiro" no dropdown de UF
+* **Então** o catálogo exibe exclusivamente médicos com CRM do Rio de Janeiro (Dra. Grace Hopper)
+* **E** médicos de outros estados (SP, MG, RS) são ocultados.
+
+#### Cenário 7.4: Ordenação Neutra e Objetiva por Menor Preço (Resolução CFM nº 2.336/2023)
+* **Dado** que a vitrine exibe múltiplos profissionais
+* **Quando** o usuário seleciona a ordenação "Menor Valor de Consulta"
+* **Então** a listagem é reordenada de forma puramente objetiva
+* **E** o primeiro médico posicionado no topo é o Dr. Tim Berners-Lee (R$ 200,00)
+* **E** nenhum profissional é destacado mediante cobrança de taxa de publicidade.
+
+#### Cenário 7.5: Médico Não Homologado ou Inativo Não Aparece na Vitrine (Regra de Negócio RN004 / Caminho Triste)
+* **Dado** que um médico cadastrado possui status de dossiê "PENDING_DOCS" ou conta bloqueada (`active = false`)
+* **Quando** qualquer pesquisa textual ou filtro for executado na rota pública
+* **Então** o backend MongoDB filtra na origem (`findByRoleAndActiveAndDossierStatus`)
+* **E** o profissional não homologado JAMAIS é retornado no JSON nem exibido para o paciente.
+
+#### Cenário 7.6: Proteção e Sigilo de Dados Pessoais Sensíveis (LGPD)
+* **Dado** que a requisição `GET /api/doctors/search` ou `GET /api/doctors/{id}` é inspecionada
+* **Quando** os campos do payload JSON retornado são verificados
+* **Então** o payload NÃO contém campos sensíveis como CPF, senha, dados bancários, comprovantes de residência ou telefone pessoal do médico.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

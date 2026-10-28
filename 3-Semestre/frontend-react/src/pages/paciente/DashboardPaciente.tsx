@@ -215,7 +215,7 @@ export function DashboardPaciente() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                         {/* Card 1: Agendar Teleconsulta */}
                         <div
-                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A vitrine com busca de médicos especialistas e horários de atendimento estará disponível em breve!')}
+                            onClick={() => navigate('/paciente/busca-medicos')}
                             role="button"
                             tabIndex={0}
                             className="group p-4 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl bg-white border-2 border-brand-orange/30 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
@@ -235,10 +235,10 @@ export function DashboardPaciente() {
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between">
                                 <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-orange">
-                                    Em breve
+                                    Vitrine Disponível
                                 </span>
                                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-brand-orange group-hover:translate-x-1 transition-transform">
-                                    Marcar Consulta →
+                                    Buscar Médicos →
                                 </span>
                             </div>
                         </div>
