@@ -85,14 +85,15 @@ gantt
 
 ---
 
-#### 📅 Sprint 3 — Release v0.3.0: Vitrine de Horários e Agendamento Concorrente (UC08, UC09, UC10)
-* **Objetivo:** Migrar e expandir a lógica de slots de horários do 2º Semestre para o Spring Boot + MongoDB, garantindo busca inteligente e reserva sem *double-booking*.
+#### 📅 Sprint 3 — Release v0.3.0: Gestão de Perfil, Vitrine de Horários e Agendamento Concorrente (UC01, UC03, UC07, UC08, UC09, UC10)
+* **Objetivo:** Estruturar a gestão completa de perfil e identidade visual de Médicos e Pacientes, e implantar a vitrine de agendamentos com reserva atômica sem *double-booking*.
 * **Entregas Previstas:**
-  1. Coleção e entidade `HorarioDisponivel` no MongoDB Atlas.
-  2. Médico cria, visualiza e remove slots de horários livres em sua agenda (UC10).
-  3. Busca e filtros inteligentes de médicos aprovados pelo paciente (UC08).
-  4. Reserva de consulta atômica com bloqueio imediato do slot para `OCUPADO` (UC09 / RN001).
-  5. Cancelamento pelo paciente com antecedência de 24h e devolução do slot para `LIVRE` (RN002).
+  1. **Módulo de Perfil Médico & Paciente (SPEC-06):** Edição de perfil com upload de foto de rosto (avatar), biografia profissional, áreas de foco geriátrico, valor da consulta (R$), duração estimada, endereço residencial do paciente e cadastro do cuidador familiar com contato de emergência.
+  2. Coleção e entidade `HorarioDisponivel` no MongoDB Atlas.
+  3. Médico cria, visualiza e remove slots de horários livres em sua agenda (UC10).
+  4. Vitrine de busca e filtros neutros de médicos geriatras aprovados pelo paciente (UC08 / Res. CFM nº 2.336/2023).
+  5. Reserva de consulta atômica com bloqueio imediato do slot para `OCUPADO` (UC09 / RN001).
+  6. Cancelamento pelo paciente com antecedência de 24h e devolução do slot para `LIVRE` (RN002).
 
 ---
 
