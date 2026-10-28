@@ -87,7 +87,14 @@ public class DataInitializer implements CommandLineRunner {
                 "341 - Itaú Unibanco S.A.",
                 "1842",
                 "18420-1",
-                "ada.lovelace@activeage.com"
+                "ada.lovelace@activeage.com",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Ada_Lovelace_portrait.jpg/600px-Ada_Lovelace_portrait.jpg",
+                "RQE 18420",
+                "Pioneira da matemática e programação, especialista em avaliação cognitiva geriátrica e raciocínio analítico no envelhecimento saudável. Foco em longevidade ativa, preservação da memória e acolhimento humanizado da pessoa idosa.",
+                Arrays.asList("Avaliação Geriátrica Ampla (AGA)", "Memória e Demências", "Longevidade Ativa", "Reabilitação Cognitiva"),
+                BigDecimal.valueOf(380.00),
+                50,
+                "https://lattes.cnpq.br/18421852"
         );
 
         // 2. Dr. Alan Turing (Pai da computação moderna e criptografia - 1936)
@@ -103,7 +110,14 @@ public class DataInitializer implements CommandLineRunner {
                 "001 - Banco do Brasil S.A.",
                 "1936",
                 "19360-2",
-                "alan.turing@activeage.com"
+                "alan.turing@activeage.com",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Alan_Turing_az_1930-as_%C3%A9vekben.jpg/600px-Alan_Turing_az_1930-as_%C3%A9vekben.jpg",
+                "RQE 19360",
+                "Pai da computação teórica e criptoanálise. Atua com rigor e empatia no diagnóstico precoce de distúrbios neurocognitivos, proteção contra declínio funcional e readequação de polifarmácia no paciente idoso.",
+                Arrays.asList("Memória e Demências", "Polifarmácia e Desprescrição", "Avaliação Geriátrica Ampla (AGA)", "Saúde Cardiovascular"),
+                BigDecimal.valueOf(400.00),
+                60,
+                "https://lattes.cnpq.br/19361954"
         );
 
         // 3. Dra. Grace Hopper (Criadora do primeiro compilador e pioneira do COBOL - 1952)
@@ -119,7 +133,14 @@ public class DataInitializer implements CommandLineRunner {
                 "260 - Nu Pagamentos S.A. (Nubank)",
                 "0001",
                 "19520-3",
-                "grace.hopper@activeage.com"
+                "grace.hopper@activeage.com",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Commodore_Grace_M._Hopper%2C_USN_%28covered%29.jpg/600px-Commodore_Grace_M._Hopper%2C_USN_%28covered%29.jpg",
+                "RQE 19520",
+                "Contra-almirante da Marinha e criadora do primeiro compilador da história. Dedicada à geriatria preventiva, fortalecimento musculoesquelético na terceira idade, prevenção de quedas e promoção da independência funcional de idosos longevos.",
+                Arrays.asList("Prevenção de Quedas", "Osteoporose e Sarcopenia", "Longevidade Ativa", "Nutrição do Idoso"),
+                BigDecimal.valueOf(350.00),
+                45,
+                "https://lattes.cnpq.br/19521992"
         );
 
         // 4. Dra. Margaret Hamilton (Diretora do software da missão Apollo 11 à Lua - 1969)
@@ -135,7 +156,14 @@ public class DataInitializer implements CommandLineRunner {
                 "077 - Banco Inter S.A.",
                 "0077",
                 "19690-4",
-                "margaret.hamilton@activeage.com"
+                "margaret.hamilton@activeage.com",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Margaret_Hamilton_-_restoration.jpg/600px-Margaret_Hamilton_-_restoration.jpg",
+                "RQE 19690",
+                "Diretora de Engenharia de Software da Missão Apollo 11. Especialista em gestão de cuidados complexos geriátricos, segurança do paciente idoso em polifarmácia, cuidados paliativos e transições seguras de cuidados.",
+                Arrays.asList("Polifarmácia e Desprescrição", "Cuidados Paliativos", "Avaliação Geriátrica Ampla (AGA)", "Prevenção de Quedas"),
+                BigDecimal.valueOf(360.00),
+                50,
+                "https://lattes.cnpq.br/19692026"
         );
 
         // 5. Dr. Tim Berners-Lee (Inventor da World Wide Web - 1989)
@@ -151,12 +179,19 @@ public class DataInitializer implements CommandLineRunner {
                 "237 - Banco Bradesco S.A.",
                 "1989",
                 "19890-5",
-                "tim.bernerslee@activeage.com"
+                "tim.bernerslee@activeage.com",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Sir_Tim_Berners-Lee_%28cropped%29.jpg/600px-Sir_Tim_Berners-Lee_%28cropped%29.jpg",
+                "RQE 19890",
+                "Inventor da World Wide Web e defensor do acesso universal. Atua na geriatria comunitária, telemedicina preventiva, envelhecimento ativo e integração harmoniosa entre saúde, apoio familiar e bem-estar do idoso.",
+                Arrays.asList("Longevidade Ativa", "Saúde Cardiovascular", "Avaliação Geriátrica Ampla (AGA)", "Reabilitação Cognitiva"),
+                BigDecimal.valueOf(350.00),
+                50,
+                "https://lattes.cnpq.br/19892026"
         );
     }
 
     /**
-     * Persiste de forma idempotente um médico com status aprovado e dados financeiros completos.
+     * Persiste de forma idempotente um médico com status aprovado, dados financeiros e perfil com foto.
      */
     private void seedApprovedDoctor(
             String fullName,
@@ -170,7 +205,14 @@ public class DataInitializer implements CommandLineRunner {
             String bankName,
             String agency,
             String accountNumber,
-            String pixKey
+            String pixKey,
+            String avatarUrl,
+            String rqe,
+            String bio,
+            java.util.List<String> clinicalFocus,
+            BigDecimal consultationFee,
+            Integer consultationDurationMinutes,
+            String lattesUrl
     ) {
         if (!userRepository.existsByEmail(email)) {
             User doctor = new User();
@@ -205,30 +247,30 @@ public class DataInitializer implements CommandLineRunner {
             financial.setUpdatedAt(LocalDateTime.now().minusDays(10));
             doctor.setFinancialInfo(financial);
 
-            // Perfil Profissional e Atendimento (RF014 / UC18)
-            doctor.setRqe("RQE " + crm.substring(0, 4));
-            doctor.setBio("Médico(a) especialista em Geriatria e Gerontologia, dedicado(a) ao cuidado integral da pessoa idosa, longevidade saudável e avaliação ampla.");
-            doctor.setClinicalFocus(Arrays.asList("Avaliação Geriátrica Ampla (AGA)", "Memória e Demências", "Longevidade Ativa", "Prevenção de Quedas"));
-            doctor.setConsultationFee(BigDecimal.valueOf(350.00));
-            doctor.setConsultationDurationMinutes(50);
-            doctor.setLattesUrl("https://lattes.cnpq.br");
+            // Perfil Profissional, Foto e Atendimento (RF014 / UC18)
+            doctor.setAvatarUrl(avatarUrl);
+            doctor.setRqe(rqe);
+            doctor.setBio(bio);
+            doctor.setClinicalFocus(clinicalFocus);
+            doctor.setConsultationFee(consultationFee);
+            doctor.setConsultationDurationMinutes(consultationDurationMinutes);
+            doctor.setLattesUrl(lattesUrl);
 
             userRepository.save(doctor);
             logger.info(">>> [SEED] Médico pioneiro homologado com sucesso: {} (CRM {}/{})", fullName, crm, ufCrm);
         } else {
             userRepository.findByEmail(email).ifPresent(doc -> {
-                if (doc.getRqe() == null || doc.getBio() == null) {
-                    doc.setRqe("RQE " + crm.substring(0, 4));
-                    doc.setBio("Médico(a) especialista em Geriatria e Gerontologia, dedicado(a) ao cuidado integral da pessoa idosa, longevidade saudável e avaliação ampla.");
-                    doc.setClinicalFocus(Arrays.asList("Avaliação Geriátrica Ampla (AGA)", "Memória e Demências", "Longevidade Ativa", "Prevenção de Quedas"));
-                    doc.setConsultationFee(BigDecimal.valueOf(350.00));
-                    doc.setConsultationDurationMinutes(50);
-                    doc.setLattesUrl("https://lattes.cnpq.br");
-                    userRepository.save(doc);
-                    logger.info(">>> [SEED] Perfil enriquecido para médico existente: {}", email);
-                }
+                doc.setAvatarUrl(avatarUrl);
+                doc.setRqe(rqe);
+                doc.setBio(bio);
+                doc.setClinicalFocus(clinicalFocus);
+                doc.setConsultationFee(consultationFee);
+                doc.setConsultationDurationMinutes(consultationDurationMinutes);
+                doc.setLattesUrl(lattesUrl);
+                userRepository.save(doc);
+                logger.info(">>> [SEED] Perfil e foto atualizados para médico pioneiro: {}", email);
             });
-            logger.info(">>> [SEED] Médico já existente: {}", email);
+            logger.info(">>> [SEED] Médico já existente verificado: {}", email);
         }
     }
 }

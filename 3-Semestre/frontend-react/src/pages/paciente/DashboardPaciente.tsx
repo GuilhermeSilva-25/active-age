@@ -103,25 +103,30 @@ export function DashboardPaciente() {
 
     return (
         <div className="min-h-screen bg-[#FDFBF7] text-brown-dark font-sans flex flex-col justify-between">
-            {/* Barra Superior Exclusiva do Portal do Paciente */}
-            <header className="bg-white border-b border-brand-pot/40 shadow-xs sticky top-0 z-30">
-                <div className="max-w-6xl mx-auto px-3.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-2 sm:gap-6">
-                        <Link to="/" title="Página Inicial Active Age" className="shrink-0 flex items-center">
-                            <img src={logoImg} alt="Active Age" className="h-10 sm:h-14 md:h-16 w-auto object-contain" />
+            {/* Header com Navegação Segura e Identificação do Paciente */}
+            <header className="bg-white border-b border-brand-pot/40 sticky top-0 z-40 shadow-xs">
+                <div className="max-w-6xl mx-auto px-3.5 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
+                    <div className="flex items-center gap-3 sm:gap-6">
+                        <Link to="/" className="flex items-center gap-2 group" title="Ir para a página inicial">
+                            <img src={logoImg} alt="Active Age" className="h-9 sm:h-12 w-auto transition-transform group-hover:scale-105" />
                         </Link>
+                        
                         <div className="h-8 w-px bg-brand-pot/40 hidden sm:block" />
                         
                         {/* Identificação Completa (Desktop / Tablet) */}
                         <div className="hidden sm:flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-full bg-brand-orange/10 border-2 border-brand-orange/30 flex items-center justify-center text-brand-orange shadow-inner shrink-0">
-                                <User className="w-6 h-6" />
+                            <div className="w-11 h-11 rounded-xl bg-brand-orange/10 border border-brand-orange/20 overflow-hidden flex items-center justify-center text-brand-orange shadow-inner shrink-0">
+                                {profile?.avatarUrl ? (
+                                    <img src={profile.avatarUrl} alt={profile.fullName} className="w-full h-full object-cover" />
+                                ) : (
+                                    <User className="w-6 h-6" />
+                                )}
                             </div>
                             <div>
                                 <span className="text-[11px] font-bold uppercase tracking-wider text-brand-orange block">
-                                    Portal do Paciente & Cuidador
+                                    Portal do Paciente & Cuidador • Active Age
                                 </span>
-                                <h1 className="text-lg sm:text-xl font-black text-brown-dark">
+                                <h1 className="text-base sm:text-lg font-black text-brown-dark">
                                     Olá, {loading ? '...' : firstName}!
                                 </h1>
                             </div>
@@ -132,24 +137,40 @@ export function DashboardPaciente() {
                         {/* Chip Compacto do Paciente (Mobile) */}
                         <div className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-brand-orange/10 border border-brand-orange/20 text-brand-orange">
                             <User className="w-4 h-4 shrink-0" />
-                            <span className="text-xs font-bold truncate max-w-[90px]">{loading ? '...' : firstName}</span>
+                            <span className="text-xs font-bold truncate max-w-[100px]">
+                                {loading ? '...' : firstName}
+                            </span>
                         </div>
+
+                        <Link
+                            to="/paciente/perfil"
+                            className="p-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs inline-flex items-center gap-1.5 shrink-0"
+                            title="Gerenciar Meu Perfil e Endereço"
+                        >
+                            {profile?.avatarUrl ? (
+                                <img src={profile.avatarUrl} alt={profile.fullName} className="w-4 h-4 rounded-full object-cover shrink-0" />
+                            ) : (
+                                <User className="w-4 h-4 text-brand-orange shrink-0" />
+                            )}
+                            <span className="hidden sm:inline">Meu Perfil</span>
+                        </Link>
 
                         <button
                             type="button"
                             onClick={() => handleFeatureNotice('Canais de Suporte & Cuidador', 'Nosso atendimento telefônico e via WhatsApp geriátrico está disponível de segunda a sexta, das 8h às 19h.')}
-                            className="p-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-brand-pot/10 hover:bg-brand-pot/30 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs inline-flex items-center gap-1.5 shrink-0"
+                            className="p-2 sm:px-4 sm:py-2.5 rounded-xl border border-brand-pot bg-white hover:bg-brand-pot/20 text-brown-dark text-xs sm:text-sm font-bold transition-all shadow-xs inline-flex items-center gap-1.5 shrink-0 cursor-pointer"
                             title="Precisa de ajuda com a plataforma?"
                         >
                             <PhoneCall className="w-4 h-4 text-brand-orange shrink-0" />
                             <span className="hidden sm:inline">Precisa de Ajuda?</span>
                         </button>
+
                         <button
                             type="button"
                             onClick={handleLogout}
                             disabled={isLoggingOut}
-                            className="inline-flex items-center gap-1.5 p-2 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0 disabled:opacity-70 disabled:cursor-not-allowed"
-                            title="Encerrar sessão com segurança"
+                            className="inline-flex items-center gap-1.5 p-2 sm:px-4 sm:py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                            title="Encerrar sessão segura"
                         >
                             {isLoggingOut ? (
                                 <>
@@ -159,7 +180,7 @@ export function DashboardPaciente() {
                             ) : (
                                 <>
                                     <LogOut className="w-4 h-4 shrink-0" />
-                                    <span className="hidden sm:inline">Sair com Segurança</span>
+                                    <span className="hidden sm:inline">Encerrar Sessão</span>
                                 </>
                             )}
                         </button>

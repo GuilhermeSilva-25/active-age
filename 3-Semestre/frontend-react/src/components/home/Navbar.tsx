@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, User as UserIcon, LayoutDashboard, Loader2, UserCheck } from 'lucide-react';
+import { Menu, X, LogOut, User as UserIcon, LayoutDashboard, Loader2 } from 'lucide-react';
 import logoImg from '../../assets/logo-active-age.png';
 
 interface UserProfile {
@@ -11,7 +11,6 @@ interface UserProfile {
   crm?: string;
   ufCrm?: string;
   dossierStatus?: string;
-  avatarUrl?: string;
 }
 
 export function Navbar() {
@@ -65,12 +64,6 @@ export function Navbar() {
     return '/paciente/dashboard';
   };
 
-  const getProfilePath = (role: string) => {
-    if (role === 'ROLE_MEDICO') return '/medico/perfil';
-    if (role === 'ROLE_PACIENTE') return '/paciente/perfil';
-    return '/admin';
-  };
-
   const firstName = currentUser?.fullName ? currentUser.fullName.split(' ')[0] : '';
 
   return (
@@ -90,40 +83,22 @@ export function Navbar() {
             <a href="/#beneficios" className="text-brown hover:text-brand-orange transition-colors font-medium">Benefícios</a>
             <a href="/#como-funciona" className="text-brown hover:text-brand-orange transition-colors font-medium">Como Funciona</a>
             
-            <div className="flex items-center space-x-3 border-l-2 border-brand-pot pl-8 ml-4">
+            <div className="flex items-center space-x-4 border-l-2 border-brand-pot pl-8 ml-4">
               {currentUser ? (
                 <>
                   <Link
                     to={getDashboardPath(currentUser.role, currentUser.dossierStatus)}
-                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
                     title="Acessar painel do usuário"
                   >
                     <LayoutDashboard size={18} />
-                    Painel
+                    Meu Painel
                   </Link>
 
-                  {currentUser.role !== 'ROLE_ADMIN' && (
-                    <Link
-                      to={getProfilePath(currentUser.role)}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-light hover:bg-brand-pot/20 text-brown-dark border border-brand-pot/30 font-semibold text-sm transition-all"
-                      title="Gerenciar Meu Perfil"
-                    >
-                      {currentUser.avatarUrl ? (
-                        <img
-                          src={currentUser.avatarUrl}
-                          alt={currentUser.fullName}
-                          className="w-5 h-5 rounded-full object-cover"
-                        />
-                      ) : (
-                        <UserIcon size={16} className="text-brand-orange" />
-                      )}
-                      Meu Perfil
-                    </Link>
-                  )}
-
-                  <div className="flex items-center gap-2 text-brown-dark font-medium px-3 py-2 rounded-xl bg-brand-pot/20">
+                  <div className="flex items-center gap-2 text-brown-dark font-medium px-3.5 py-2 rounded-xl bg-brand-pot/20">
+                    <UserIcon size={18} className="text-brand-orange" />
                     <span className="text-sm">
-                      Olá, <strong>{firstName}</strong>
+                      Olá, <strong>{firstName}</strong> ({getRoleLabel(currentUser.role)})
                     </span>
                   </div>
 
@@ -190,17 +165,6 @@ export function Navbar() {
                   <LayoutDashboard size={18} />
                   Acessar Meu Painel
                 </Link>
-
-                {currentUser.role !== 'ROLE_ADMIN' && (
-                  <Link
-                    to={getProfilePath(currentUser.role)}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="w-full text-left px-3 py-3 text-brown-dark font-semibold hover:bg-brand-pot/20 rounded-md flex items-center gap-2"
-                  >
-                    <UserCheck size={18} className="text-brand-orange" />
-                    Editar Meu Perfil
-                  </Link>
-                )}
 
                 <div className="px-3 py-2 text-sm text-brown-dark font-medium bg-brand-pot/20 rounded-md">
                   Conectado como <strong>{currentUser.fullName}</strong> ({getRoleLabel(currentUser.role)})

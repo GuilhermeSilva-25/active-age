@@ -48,6 +48,7 @@ export const PerfilMedico: React.FC = () => {
     const [consultationFee, setConsultationFee] = useState<number | ''>(350);
     const [consultationDurationMinutes, setConsultationDurationMinutes] = useState<number>(50);
     const [lattesUrl, setLattesUrl] = useState('');
+    const [customTagInput, setCustomTagInput] = useState('');
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -98,6 +99,15 @@ export const PerfilMedico: React.FC = () => {
         setClinicalFocus((prev) =>
             prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
         );
+    };
+
+    const handleAddCustomTag = () => {
+        const trimmed = customTagInput.trim();
+        if (!trimmed) return;
+        if (!clinicalFocus.includes(trimmed)) {
+            setClinicalFocus((prev) => [...prev, trimmed]);
+        }
+        setCustomTagInput('');
     };
 
     const handleAvatarSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -446,28 +456,80 @@ export const PerfilMedico: React.FC = () => {
 
                         <div>
                             <label className="block text-xs font-semibold text-brown-medium uppercase tracking-wider mb-2">
-                                Áreas de Foco Clínico (Selecione para destacar na vitrine)
+                                Áreas de Foco Clínico & Especialidades (Destaque na Vitrine)
                             </label>
-                            <div className="flex flex-wrap gap-2">
-                                {CLINICAL_FOCUS_OPTIONS.map((tag) => {
-                                    const selected = clinicalFocus.includes(tag);
-                                    return (
-                                        <button
-                                            key={tag}
-                                            type="button"
-                                            onClick={() => toggleFocus(tag)}
-                                            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                                                selected
-                                                    ? 'bg-brand-orange text-white shadow-xs font-semibold'
-                                                    : 'bg-brand-light text-brown-medium hover:bg-brand-pot/20 border border-brand-pot/30'
-                                            }`}
-                                        >
-                                            {selected ? '✓ ' : '+ '}
-                                            {tag}
-                                        </button>
-                                    );
-                                })}
+
+                            {/* Tags Selecionadas */}
+                            {clinicalFocus.length > 0 && (
+                                <div className="mb-3">
+                                    <span className="text-xs font-bold text-brown-dark block mb-2">
+                                        Especialidades Ativas ({clinicalFocus.length}):
+                                    </span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {clinicalFocus.map((tag) => (
+                                            <span
+                                                key={tag}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-orange text-white shadow-xs"
+                                            >
+                                                ✓ {tag}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleFocus(tag)}
+                                                    className="hover:text-red-200 ml-1 font-bold cursor-pointer transition-colors"
+                                                    title={`Remover tag ${tag}`}
+                                                >
+                                                    ×
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Campo para Adicionar Nova Tag Customizada */}
+                            <div className="flex gap-2 items-center mb-3">
+                                <input
+                                    type="text"
+                                    value={customTagInput}
+                                    onChange={(e) => setCustomTagInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            handleAddCustomTag();
+                                        }
+                                    }}
+                                    placeholder="Digite outra especialidade (ex: Reumatologia Geriátrica, Cuidados Domiciliares)..."
+                                    className="flex-1 px-4 py-2.5 bg-white border border-brand-pot/30 rounded-xl text-brown-dark text-xs sm:text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddCustomTag}
+                                    className="px-4 py-2.5 bg-brand-pot/20 hover:bg-brand-pot/40 text-brown-dark font-bold text-xs sm:text-sm rounded-xl transition-all border border-brand-pot/40 cursor-pointer shrink-0"
+                                >
+                                    + Adicionar Tag
+                                </button>
                             </div>
+
+                            {/* Sugestões Rápidas de Tags */}
+                            {CLINICAL_FOCUS_OPTIONS.some((tag) => !clinicalFocus.includes(tag)) && (
+                                <div>
+                                    <span className="text-xs text-brown-light block mb-2">
+                                        Sugestões mais procuradas por idosos e famílias:
+                                    </span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {CLINICAL_FOCUS_OPTIONS.filter((tag) => !clinicalFocus.includes(tag)).map((tag) => (
+                                            <button
+                                                key={tag}
+                                                type="button"
+                                                onClick={() => toggleFocus(tag)}
+                                                className="px-3 py-1 rounded-full text-xs font-medium bg-brand-light text-brown-medium hover:bg-brand-pot/20 border border-brand-pot/30 transition-all cursor-pointer"
+                                            >
+                                                + {tag}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
