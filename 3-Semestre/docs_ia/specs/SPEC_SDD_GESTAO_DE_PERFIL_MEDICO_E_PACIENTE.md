@@ -3,7 +3,7 @@
 > **Código da Spec:** SPEC-06  
 > **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
 > **Módulo:** Perfil do Usuário, Identidade Visual (Avatar) e Dados de Atendimento / Cuidador  
-> **Casos de Uso Relacionados:** UC01, UC03, UC07, UC08, UC09 (Vitrine de Especialistas)  
+> **Casos de Uso Relacionados:** UC18 (Manter Perfil de Usuário) — Requisito Funcional: RF014 (Reflete em UC08, UC09 na Vitrine de Especialistas)  
 > **Data:** 28 de Outubro de 2026  
 > **Status:** AGUARDANDO APROVAÇÃO DO PO (Guilherme Silva)  
 > **Metodologia:** Spec-Driven Development (SDD)

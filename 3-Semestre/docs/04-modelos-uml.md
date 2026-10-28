@@ -15,6 +15,7 @@ flowchart LR
     %% Casos de Uso
     subgraph Active Age - Plataforma
         UC1(Cadastrar e Autenticar)
+        UC18(Gerenciar Perfil e Avatar)
         UC2(Buscar Especialistas)
         UC3(Pagar e Agendar Consulta)
         UC4(Gerenciar Vitrine de Horários)
@@ -31,6 +32,9 @@ flowchart LR
     M --> UC1
     A --> UC1
     
+    P --> UC18
+    M --> UC18
+
     P --> UC2
     P --> UC3
     P --> UC5
@@ -47,7 +51,7 @@ flowchart LR
 ```
 
 ## 2. Diagrama de Classes (Entidades de Domínio)
-O mapeamento das coleções que irão residir no MongoDB. O uso de Herança simplifica o gerenciamento de usuários.
+O mapeamento das coleções que residem no MongoDB Atlas. O uso de Herança simplifica o gerenciamento de usuários e herança de identidade/perfil.
 
 ```mermaid
 classDiagram
@@ -57,18 +61,49 @@ classDiagram
         +String nome
         +String email
         +String senha
+        +String telefone
+        +String avatarUrl
         +Enum tipoUsuario
+        +atualizarPerfil()
+        +alterarSenha()
+    }
+
+    class UserAddress {
+        +String cep
+        +String logradouro
+        +String numero
+        +String complemento
+        +String bairro
+        +String cidade
+        +String uf
+    }
+
+    class CaregiverInfo {
+        +Boolean hasCaregiver
+        +String caregiverName
+        +String caregiverPhone
+        +String relationship
     }
 
     class Paciente {
         +Date dataNascimento
+        +String cpf
+        +UserAddress endereco
+        +CaregiverInfo cuidador
         +uploadExame()
         +baixarReceita()
     }
 
     class Medico {
         +String crm
+        +String ufCrm
+        +String rqe
         +String especialidade
+        +String biografia
+        +List~String~ areasFoco
+        +BigDecimal precoConsulta
+        +Integer duracaoMinutos
+        +String lattesUrl
         +Enum statusValidacao
         +disponibilizarHorario()
         +emitirReceita()
@@ -107,6 +142,9 @@ classDiagram
     Usuario <|-- Paciente
     Usuario <|-- Medico
     Usuario <|-- Administrador
+
+    Paciente *-- UserAddress : possui
+    Paciente *-- CaregiverInfo : possui
 
     Medico "1" --> "*" HorarioDisponivel : gerencia
     Paciente "1" --> "*" Agendamento : realiza
@@ -147,4 +185,3 @@ sequenceDiagram
     Back-->>Front: Status 201 (Created) + Link da Teleconsulta
     Front-->>Paciente: "Consulta Confirmada com Sucesso!"
 ```
-

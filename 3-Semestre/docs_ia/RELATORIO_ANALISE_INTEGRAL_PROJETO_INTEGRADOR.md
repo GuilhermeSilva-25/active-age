@@ -94,7 +94,7 @@ flowchart TD
 ```
 
 * **1º Semestre (PPC Pág. 35):** *"Nesta disciplina (Engenharia de Software I) o professor é responsável por desenvolver um projeto Interdisciplinar integrando as disciplinas de Desenvolvimento Web I e Design Digital..."*
-  * *Evidência no Active Age:* O repositório em `1-Semestre/` contempla exatamente essa tríade: telas web nativas (`Desenvolvimento Web I`), paleta acessível e logotipo (`Design Digital`), e requisitos RF001-RF013 com Canvas e Casos de Uso (`Engenharia de Software I`).
+  * *Evidência no Active Age:* O repositório em `1-Semestre/` contempla exatamente essa tríade: telas web nativas (`Desenvolvimento Web I`), paleta acessível e logotipo (`Design Digital`), e requisitos RF001-RF014 com Canvas e Casos de Uso UC01-UC18 (`Engenharia de Software I`).
 * **2º Semestre (PPC Pág. 42):** *"Nesta disciplina (Engenharia de Software II) o professor é responsável por desenvolver um projeto Interdisciplinar integrando as disciplinas de Desenvolvimento Web II e Banco de Dados Relacional..."*
   * *Evidência no Active Age:* O repositório em `2-Semestre/` materializou uma API em Express/Node (`Desenvolvimento Web II`), persistência relacional com normalização, concorrência e seeds no MySQL (`Banco de Dados Relacional`), aliada à modelagem orientada a objetos com herança e polimorfismo (`Técnicas de Programação I`).
 * **3º Semestre (PPC Pág. 50):** *"Nesta disciplina (Gestão Ágil de Projetos de Software) o professor é responsável por desenvolver um projeto Interdisciplinar integrando as disciplinas de Desenvolvimento Web III, Banco de Dados Não Relacional e Interação Humano Computador..."*
@@ -140,10 +140,10 @@ O repositório é composto rigorosamente por **121 arquivos**. Todos foram exami
 | 3 | `1-Semestre/README.md` | Documentação | Síntese de objetivos e guia do 1º Semestre | 1-Semestre | Analisado |
 | 4 | `1-Semestre/assets/hero-image.png` | Asset Binário | Imagem representativa de idosos sorrindo | `index.html` (Design Digital) | Analisado |
 | 5 | `1-Semestre/assets/logo-active-age.png` | Asset Binário | Logotipo oficial da marca | Design Digital | Analisado |
-| 6 | `1-Semestre/docs/casos-de-uso.md` | Documentação | 17 Casos de Uso detalhados (UC01 a UC17) | Engenharia de Software I | Analisado |
+| 6 | `1-Semestre/docs/casos-de-uso.md` | Documentação | 18 Casos de Uso detalhados (UC01 a UC18) | Engenharia de Software I | Analisado |
 | 7 | `1-Semestre/docs/modelagem-dados.md` | Documentação | Mapeamento inicial das entidades conceituais | Modelagem de Banco de Dados | Analisado |
 | 8 | `1-Semestre/docs/planejamento.md` | Documentação | Metas SMART (6 semestres) e Lean Canvas | Gestão de Negócios | Analisado |
-| 9 | `1-Semestre/docs/requisitos.md` | Documentação | Requisitos funcionais (RF01-13) e não-funcionais | Engenharia de Software I | Analisado |
+| 9 | `1-Semestre/docs/requisitos.md` | Documentação | Requisitos funcionais (RF01-14) e não-funcionais | Engenharia de Software I | Analisado |
 | 10 | `1-Semestre/src/app.js` | Código (JS) | Gestão client-side de login e cadastro em `localStorage` | Desenvolvimento Web I | Analisado |
 | 11 | `1-Semestre/src/cadastro.html` | Interface (HTML) | Formulário inicial de cadastro com alternância de perfil | Desenvolvimento Web I | Analisado |
 | 12 | `1-Semestre/src/dashboard.html` | Interface (HTML) | Painel simulado com saudação dinâmica | Desenvolvimento Web I | Analisado |

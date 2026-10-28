@@ -131,7 +131,7 @@ Uma micro tarefa só é considerada **CONCLUÍDA** quando todos os itens abaixo 
 | Módulo | Casos de Uso (UC) | Descrição do Escopo | Status Atual |
 |---|---|---|---|
 | **M1: Fundação & Acesso** | UC01, UC02 | Cadastro de Paciente e Médico, Login Seguro, Rate Limit, Logout | **Concluído e Live** ✅ |
-| **M2: Credenciamento & Gestão** | UC03, UC04, UC05 | Upload completo do Dossiê Médico (Habilitação, Ética, Telemedicina ICP-Brasil e Financeiro), Fila de Auditoria do Admin com Trilha de Auditoria (`audit_logs`) e aprovação/rejeição com justificativa | Em Especificação / Andamento 🚧 |
+| **M2: Credenciamento, Moderação & Gestão de Perfil** | UC03, UC04, UC05, UC18 | Dossiê Médico Completo (4 Pilares), Fila de Auditoria do Admin (`audit_logs`), Gestão de Usuários e Gestão/Edição de Perfil & Avatar (RF014 / UC18) | **Concluído e Live** ✅ (Perfil em Andamento 🚧) |
 | **M3: Vitrine & Agendamento** | UC08, UC09, UC10 | Vitrine de horários livres, busca inteligente e reserva de consultas sem double-booking | Especificação Pendente ⏳ |
 | **M4: Prontuário & Documentos** | UC11, UC13, UC14, UC15, UC16 | Upload de exames prévios, prontuário imutável e emissão/download de receitas (PDF) | Especificação Pendente ⏳ |
 | **M5: Teleconsulta & Finanças** | UC06, UC07, UC12, UC17 | Sala de teleconsulta segura, pagamento integrado de consulta e assinatura do médico | Especificação Pendente ⏳ |

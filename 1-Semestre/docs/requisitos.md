@@ -18,6 +18,7 @@ Descrevem as ações e serviços que o sistema deve realizar para atender aos us
 * **RF011 - Avaliação de Consulta:** O sistema deve permitir que o paciente avalie o atendimento pós-consulta.
 * **RF012 - Pagamento de Consultas:** O sistema deve processar o pagamento da consulta pelo paciente de forma integrada no momento da confirmação do agendamento.
 * **RF013 - Gestão de Assinaturas (SaaS):** O sistema deve gerenciar a cobrança recorrente (mensalidade) dos médicos para a utilização do seu "consultório virtual" na plataforma.
+* **RF014 - Gestão e Edição de Perfil de Usuário:** O sistema deve permitir que médicos e pacientes atualizem suas informações cadastrais, façam upload de foto de rosto (avatar), configurem dados de atendimento (médico: RQE, mini-bio, áreas de foco, valor de consulta e duração) e dados de apoio familiar/emergência (paciente: endereço residencial completo e contato do cuidador responsável).
 
 ## 2. Requisitos Não Funcionais (RNF)
 Definem os atributos de qualidade, tecnologia e segurança da plataforma.
