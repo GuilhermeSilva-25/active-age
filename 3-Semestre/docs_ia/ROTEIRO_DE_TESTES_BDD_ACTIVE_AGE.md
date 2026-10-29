@@ -698,11 +698,68 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 * **Então** exibe os contadores agregados de consultas agendadas, médicos homologados e horários livres disponíveis
 * **E** não exibe nenhuma informação clínica confidencial (sintomas, diagnósticos ou prontuário).
 
-#### Cenário 11.4: Automação Bi-Diária da Grade do Médico Teste (SPEC-11B)
-* **Dado** que a rotina agendada Spring `@Scheduled` executa bi-diariamente
+#### Cenário 11.4: Automação Contínua da Grade e Teleconsultas do Dia Atual (SPEC-11B)
+* **Dado** que a rotina agendada Spring `@Scheduled` executa de hora em hora
 * **Quando** verifica a disponibilidade do médico padrão (`medico@teste.com`)
-* **Então** assegura 14 horários livres para o dia atual e o próximo dia
-* **E** remove horários livres anteriores sem tocar em consultas já confirmadas.
+* **Então** assegura horários livres para o dia de hoje e o dia de amanhã
+* **E** assegura uma consulta ativa confirmada (`AppointmentStatus.AGENDADA`) no dia de hoje com a paciente de teste (`paciente@teste.com`)
+* **E** disponibiliza 2 exames prévios no cofre GridFS da paciente para teste no cockpit clínico
+* **E** higieniza horários livres que ficaram no passado sem tocar em consultas já confirmadas.
+
+---
+
+## 12. Funcionalidade: Cockpit Integrado de Teleconsulta, Prontuário Ético Imutável, Exames e Prescrições Digitais (SPEC-12)
+
+### História de Usuário (User Story)
+* **Como** um médico geriatra credenciado e homologado perante o CFM
+* **Eu quero** realizar atendimentos virtuais por meio de uma sala de teleconsulta com cockpit clínico integrado (visualização de exames, prontuário com avaliação geriátrica ampla e emissão de receitas com código seguro)
+* **Para que** eu possa prestar assistência remota com alto rigor ético-médico, segurança jurídica e comodidade para a pessoa idosa e seu cuidador familiar
+
+---
+
+### Critérios de Aceite em Formato BDD (Gherkin)
+
+#### Cenário 12.1: Entrada Bilateral na Sala Virtual de Teleconsulta (UC12-Demo)
+* **Dado** que o médico e o paciente possuem uma consulta confirmada para o dia atual
+* **Quando** o médico clica em "Abrir Sala Virtual" no dashboard ou o paciente clica em "Entrar na Sala Virtual"
+* **Então** ambos são direcionados para `/teleconsulta/:appointmentId`
+* **E** o cockpit de atendimento exibe os controles de chamada (microfone, câmera, timer e encerramento)
+* **E** se o usuário estiver em um computador, exibe layout dividido (vídeo à esquerda e painel clínico à direita)
+* **E** se o usuário estiver em um celular/smartphone, adapta a tela verticalmente permitindo alternar entre vídeo e ferramentas.
+
+#### Cenário 12.2: Consulta Médica aos Exames do Paciente no Cofre Digital (UC13)
+* **Dado** que o médico está dentro da chamada virtual com Dona Maria de Lourdes
+* **Quando** clica na aba "Exames do Paciente"
+* **Então** visualiza os laudos anexados no MongoDB GridFS (Hemograma Completo e Eletrocardiograma de Repouso)
+* **E** pode abrir ou baixar os documentos diretamente dentro da consulta sem perder o contato visual com a paciente.
+
+#### Cenário 12.3: Preenchimento e Trava de Imutabilidade do Prontuário Geriátrico (UC14 / RN003)
+* **Dado** que o médico preenche a Anamnese, a Avaliação Geriátrica Ampla (cognição, mobilidade, nutrição, suporte familiar), o CID-11 e a Conduta
+* **Quando** clica em "Finalizar e Assinar Prontuário"
+* **Então** o sistema gera um Hash criptográfico SHA-256 do prontuário
+* **E** trava os campos contra qualquer edição posterior, registrando a data/hora e o CRM do signatário em conformidade com o CFM e SBIS NGS2.
+
+#### Cenário 12.4: Emissão de Receita Médica com Código Seguro ICP-Brasil (UC15 / RN006)
+* **Dado** que o médico está na aba "Prescrições e Atestados"
+* **Quando** preenche a receita médica (medicamentos, posologia e orientações) e clica em "Emitir Documento Oficial"
+* **Então** o sistema gera um código alfanumérico seguro único no formato `AA-2026-XXXXXX`
+* **E** disponibiliza o modal de visualização e impressão timbrada com layout oficial, dados do médico e QR Code de autenticação.
+
+#### Cenário 12.5: Validação Pública de Autenticidade do Documento Médico (UC16)
+* **Dado** que um farmacêutico ou paciente acessa `/validar-documento`
+* **Quando** informa o código de verificação `AA-2026-XXXXXX`
+* **Então** o sistema valida os dados diretamente no banco e exibe o status de autenticidade, nome do médico, CRM, data de emissão e medicamentos prescritos, garantindo conformidade perante o CFM.
+
+---
+
+## 13. Catálogo de Credenciais Oficiais para Testes Imediatos
+
+| Perfil | E-mail / Usuário | Senha | Funcionalidades Habilitadas para Teste |
+| :--- | :--- | :--- | :--- |
+| **Administrador** | `admin@activeage.com` | `AdminPassword2026!` | Painel Geral, Fila de Credenciamento Médico, Gestão de Usuários, Moderação, Trilha de Auditoria CFM/SBIS e Métricas Operacionais |
+| **Médico de Teste** | `medico@teste.com` | `123456` | Dashboard Médico, Dossiê Homologado, Gestão de Grade, Consultas do Dia, Cockpit de Teleconsulta, Prontuário e Emissão de Receitas |
+| **Paciente de Teste** | `paciente@teste.com` | `123456` | Dashboard Paciente, Próxima Consulta Hoje, Sala Virtual, Cofre de Exames Prévios e Impressão de Documentos Emitidos |
+| **Médicos Pioneiros** | `ada.lovelace@activeage.com`<br>`alan.turing@activeage.com`<br>*(17 especialistas)* | `ActiveAge2026!` | Vitrine de Médicos, Busca Avançada com Filtros por Foco Geriátrico e Estado, e Agendamento Concorrente com Reserva Atômica |
 
 ---
 

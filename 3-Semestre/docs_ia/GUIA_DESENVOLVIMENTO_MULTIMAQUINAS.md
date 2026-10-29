@@ -19,9 +19,13 @@ Ao abrir o projeto no Antigravity em uma máquina nova (ou iniciar uma nova conv
 > *"Olá! Estou iniciando o desenvolvimento nesta máquina. Por favor, leia o `GEMINI.md` e o `3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md`, verifique o estado atual do repositório e me diga exatamente onde paramos e qual é o próximo passo a ser executado."*
 
 Com essa instrução simples, o Antigravity:
-- Identificará que a **Release v0.1.0** está em produção no Render e Vercel.
-- Identificará que a próxima tarefa é a **Sprint 2 (Micro Tarefa 1.2)**.
-- Seguirá rigorosamente a governança de SDD (nenhum código sem Spec prévia aprovada por você).
+- Identificará que o **3º Semestre está 100% concluído em produção (v0.1.0 a v0.4.0)**, incluindo Cockpit de Teleconsulta, Prontuário Ético Imutável SHA-256, Exames no GridFS, Emissão de Receitas ICP-Brasil e a Automação Contínua com Médico e Paciente de Teste (`medico@teste.com` e `paciente@teste.com` / `123456`).
+- Identificará que as credenciais universais para testes bilaterais são:
+  - **Administrador:** `admin@activeage.com` / `AdminPassword2026!`
+  - **Médico Teste:** `medico@teste.com` / `123456` (com consulta confirmada para hoje)
+  - **Paciente Teste:** `paciente@teste.com` / `123456` (com 2 exames prévios no GridFS e consulta hoje)
+  - **17 Médicos Pioneiros:** `ActiveAge2026!` (com fotos históricas reais)
+- Seguirá rigorosamente a governança de SDD (nenhum código sem Spec prévia aprovada pelo Guilherme).
 
 ---
 

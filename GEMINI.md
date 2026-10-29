@@ -82,13 +82,14 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Submissão e Cofre Digital de Exames Prévios pelo Paciente com MongoDB GridFS (SPEC-08 / UC11).
   - Gestão da Agenda Médica com turnos em lote e slots avulsos (SPEC-09 / UC10).
   - Agendamento Concorrente de Teleconsulta com reserva atômica sem double-booking, painel de "Minhas Consultas" e política ética de cancelamento com mais de 24 horas e reciclagem de horários (SPEC-10 / UC09).
-  - Semeador de Médico de Teste (`medico@teste.com` / `123456`) com automação bi-diária de grade via Spring `@Scheduled` e catálogo ampliado com 17 médicos pioneiros da tecnologia homologados (SPEC-11B).
+  - Semeador de Médico de Teste (`medico@teste.com` / `123456`) e Paciente de Teste (`paciente@teste.com` / `123456`) com consulta garantida para o dia de hoje, exames prévios no GridFS e automação horária contínua via Spring `@Scheduled` (SPEC-11B).
   - Rastreabilidade de Teleconsultas na Trilha de Auditoria Imutável (`audit_logs`) e Painel de Métricas Operacionais com sigilo LGPD no Dashboard do Administrador (SPEC-11C / UC04, UC05, UC09).
+  - Padronização Universal das Fotos dos 17 Médicos Pioneiros com Retratos Históricos Reais de domínio público / Wikimedia Commons e proteção anti-hotlink no frontend (SPEC-11D).
 - **Release v0.4.0 (Conclusão do 3º Semestre) — [CONCLUÍDA / EM PRODUÇÃO]:**
   - Cockpit Integrado de Teleconsulta com experiência responsiva computador/mobile (UC12-Demo).
   - Prontuário Ético Eletrônico Geriátrico Imutável (Anamnese, AGA, CID-11, Conduta, Hash SHA-256 e trava irrevogável de integridade) (UC14 / RN003).
   - Visualização Médica dos Exames e Laudos do Idoso dentro da chamada virtual (UC13).
-  - Módulo de Emissão de Receitas Médicas Digitais, Pedidos de Exames e Atestados com código seguro ICP-Brasil (UC15).
+  - Módulo de Emissão de Receitas Médicas Digitais, Pedidos de Exames e Atestados com código seguro ICP-Brasil `AA-2026-XXXXXX` (UC15).
   - Painel do Paciente para Consulta e Impressão Timbrada de Documentos Oficiais (UC16).
   - Validador Público de Prescrições e Atestados perante o CRM e ICP-Brasil (`/validar-documento`).
 - **4º Semestre — [PRÓXIMA ETAPA]:**
@@ -102,6 +103,10 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
 Ao iniciar qualquer interação neste repositório:
 1. Reconheça o Guilherme como PO e confirme que o contexto de governança e arquitetura foi carregado a partir deste arquivo.
 2. Verifique o arquivo `3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md` para identificar exatamente onde paramos.
-3. Não inicie implementação de código antes de:
-   - Validar se o Guilherme já testou a release anterior;
-   - Submeter a Spec Técnica da próxima micro tarefa para aprovação formal.
+3. Lembre-se que as credenciais universais para testes imediatos são:
+   - Administrador: `admin@activeage.com` / `AdminPassword2026!`
+   - Médico Teste: `medico@teste.com` / `123456` (sempre possui consulta confirmada para hoje)
+   - Paciente Teste: `paciente@teste.com` / `123456` (possui exames prévios no cofre e consulta hoje)
+4. Não inicie implementação de código antes de:
+   - Apresentar a Spec Técnica detalhada da próxima micro tarefa/ajuste;
+   - Obter a aprovação formal e explícita do Guilherme.
