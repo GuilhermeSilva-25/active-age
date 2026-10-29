@@ -25,6 +25,8 @@ public interface DoctorScheduleSlotRepository extends MongoRepository<DoctorSche
 
     boolean existsByDoctorIdAndStartDateTime(String doctorId, LocalDateTime startDateTime);
 
+    void deleteByDoctorIdAndStatusAndStartDateTimeBefore(String doctorId, SlotStatus status, LocalDateTime threshold);
+
     long countByDoctorIdAndStatus(String doctorId, SlotStatus status);
 
     long countByDoctorId(String doctorId);

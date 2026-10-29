@@ -29,6 +29,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-08** | **Submissão e Gestão de Exames Prévios pelo Paciente (Cofre Digital com GridFS)** | UC11 (RF008, RN007) | **Concluída / Live ✅** | [SPEC_SDD_UC11_SUBMETER_EXAMES_PREVIOS.md](./SPEC_SDD_UC11_SUBMETER_EXAMES_PREVIOS.md) |
 | **SPEC-09** | **Gestão da Agenda Médica & Grade de Disponibilidade (Turnos e Slots)** | UC10 (RF006, RF007, RN001, RN008) | **Concluída / Live ✅** | [SPEC_SDD_UC10_GERENCIAR_AGENDA_MEDICA.md](./SPEC_SDD_UC10_GERENCIAR_AGENDA_MEDICA.md) |
 | **SPEC-10** | **Agendamento Concorrente de Teleconsulta pelo Paciente (Reserva Atômica e Cancelamento Ético)** | UC09 (RF006, RF007, RN001, RN002) | **Concluída / Live ✅** | [SPEC_SDD_UC09_AGENDAR_TELECONSULTA.md](./SPEC_SDD_UC09_AGENDAR_TELECONSULTA.md) |
+| **SPEC-11B** | **Médico Teste, Automação de Agenda Bi-Diária e Expansão de Médicos Homenageados** | UC01, UC08, UC09, UC10 | **Concluída / Live ✅** | [SPEC_SDD_SEMEADOR_MEDICO_TESTE_E_AUTOMACOES.md](./SPEC_SDD_SEMEADOR_MEDICO_TESTE_E_AUTOMACOES.md) |
 
 ---
 
