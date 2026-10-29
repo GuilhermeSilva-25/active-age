@@ -275,7 +275,7 @@ export function DashboardPaciente() {
 
                         {/* Card 3: Meu Cofre de Saúde & Documentos */}
                         <div
-                            onClick={() => handleFeatureNotice('Cofre de Documentos de Saúde', 'O acesso aos seus documentos de saúde com assinatura digital ICP-Brasil estará disponível em breve!')}
+                            onClick={() => navigate('/paciente/exames')}
                             role="button"
                             tabIndex={0}
                             className="group p-4 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl bg-white border-2 border-brand-pot/60 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"

@@ -100,7 +100,7 @@ gantt
 #### 📅 Sprint 4 — Release v0.4.0: Prontuário Ético Eletrônico e Documentos Digitais (UC11, UC13, UC14, UC15, UC16)
 * **Objetivo:** Implementar o núcleo clínico da plataforma com conformidade legal do CFM e cofre digital vitalício de saúde.
 * **Entregas Previstas:**
-  1. Upload de laudos e exames antigos pelo paciente via GridFS / Storage (UC11).
+  1. [x] **Submissão e Gestão de Exames Prévios pelo Paciente no Cofre de Saúde (SPEC-08 / UC11 / RF008 / RN007) — [CONCLUÍDO ✅]:** Upload de laudos laboratoriais e exames de imagem em PDF/JPG/PNG com persistência em nuvem via MongoDB GridFS, categorização clínica, data do exame, anotações, visualização inline e exclusão segura.
   2. Médico visualiza histórico de exames anexados pelo paciente durante o atendimento (UC13).
   3. Registro de Prontuário Eletrônico (Anamnese, Diagnóstico e Conduta) com trava de **imutabilidade** após finalizado (UC14 / RN003).
   4. Emissão de Receitas, Pedidos de Exames e Atestados em formato PDF assinado (UC15).

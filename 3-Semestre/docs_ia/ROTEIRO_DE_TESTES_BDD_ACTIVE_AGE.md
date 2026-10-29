@@ -522,6 +522,61 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 8. Funcionalidade: Submissão e Gestão de Exames Prévios pelo Paciente (UC11 / RF008 / RN007)
+
+### História de Usuário (User Story)
+* **Como** um Paciente idoso ou Cuidador familiar
+* **Eu quero** anexar laudos de exames laboratoriais e de imagem no meu Cofre de Saúde
+* **Para que** fiquem guardados de forma segura e possam ser consultados pelo médico geriatra durante a teleconsulta
+
+---
+
+### Critérios de Aceite em Formato BDD (Gherkin)
+
+#### Cenário 8.1: Upload de laudo em PDF com persistência no GridFS (Caminho Feliz)
+* **Dado** que o paciente autenticado acessa o "Meu Cofre de Saúde" (`/paciente/exames`)
+* **Quando** clica em "Enviar Novo Exame ou Laudo"
+* **E** preenche o título "Hemograma e Bioquímica Completa", categoria "Laboratorial", data do exame "15/05/2026"
+* **E** anexa um arquivo PDF de 1.8 MB e confirma o envio
+* **Então** o backend processa o arquivo multipart e o persiste no MongoDB GridFS
+* **E** o exame é salvo na coleção `patient_exams` vinculado ao `patientId`
+* **E** um novo card informativo é exibido na lista com badge verde e dados formatados.
+
+#### Cenário 8.2: Filtro por Categoria Clínica de Exame (Caminho Feliz)
+* **Dado** que o paciente possui múltiplos exames de categorias diferentes cadastrados
+* **Quando** clica no chip de filtro "Cardiológicos"
+* **Então** o sistema realiza a requisição `GET /api/patient/exams?category=CARDIOLOGICO`
+* **E** exibe apenas exames dessa categoria (ex: Eletrocardiograma, Ecocardiograma, Holter)
+* **E** oculta exames laboratoriais e de imagem.
+
+#### Cenário 8.3: Visualização do Laudo em Nova Aba Segura (Caminho Feliz)
+* **Dado** que o paciente possui um laudo anexado
+* **Quando** clica no botão "Visualizar Laudo"
+* **Então** o navegador abre uma nova aba na rota `GET /api/patient/exams/{id}/download`
+* **E** o arquivo PDF é transmitido via streaming do GridFS com cabeçalho `Content-Disposition: inline`
+* **E** o laudo é renderizado diretamente no leitor de PDF do navegador.
+
+#### Cenário 8.4: Tentativa de Envio com Data Futura (Caminho Triste)
+* **Dado** que o paciente preenche o formulário de envio de exame
+* **Quando** seleciona uma data posterior ao dia de hoje
+* **Então** o sistema rejeita a submissão com HTTP 400 Bad Request
+* **E** exibe a mensagem de alerta: "A data de realização do exame não pode ser uma data futura."
+
+#### Cenário 8.5: Exclusão Segura de Exame pelo Paciente (Caminho Feliz)
+* **Dado** que o paciente clica no ícone de lixeira em um exame existente
+* **Quando** o modal de confirmação acessível é exibido e o paciente confirma a exclusão
+* **Então** o sistema envia a requisição `DELETE /api/patient/exams/{id}`
+* **E** o arquivo é permanentemente removido do MongoDB GridFS e da coleção `patient_exams`
+* **E** o card é removido instantaneamente da tela com feedback de sucesso.
+
+#### Cenário 8.6: Isolamento Estrito de Acesso entre Pacientes (LGPD Art. 11 / Segurança)
+* **Dado** que o Paciente A tenta acessar o exame do Paciente B chamando `/api/patient/exams/{idDoPacienteB}/download`
+* **Quando** o backend verifica o `patientId` do exame contra o usuário autenticado na sessão
+* **Então** a requisição é bloqueada com HTTP 400 ou 403
+* **E** nenhum byte do documento do outro paciente é transmitido.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

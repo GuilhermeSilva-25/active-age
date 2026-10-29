@@ -303,6 +303,84 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Valida e armazena um exame prévio ou laudo médico do paciente no MongoDB GridFS (UC11 / RF008).
+     *
+     * @param patientId ID do paciente titular.
+     * @param file Arquivo do laudo/exame em formato PDF ou imagem.
+     * @return Nome único identificador do arquivo salvo no GridFS.
+     */
+    public String storePatientExam(String patientId, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("O arquivo do exame não pode ser vazio.");
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new IllegalArgumentException("O arquivo excede o limite máximo permitido de 10MB.");
+        }
+
+        String contentType = file.getContentType();
+        List<String> allowedExamTypes = Arrays.asList(
+                "application/pdf",
+                "image/jpeg",
+                "image/png",
+                "image/jpg",
+                "image/webp"
+        );
+
+        if (contentType == null || !allowedExamTypes.contains(contentType.toLowerCase())) {
+            throw new IllegalArgumentException("Formato não suportado. Por favor, envie laudos em PDF, JPG, PNG ou WEBP.");
+        }
+
+        try {
+            String originalFileName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "exame";
+            String extension = getFileExtension(originalFileName);
+            String storedFileName = "exam_" + patientId + "_" + UUID.randomUUID() + extension;
+
+            // Armazenamento Primário no MongoDB GridFS (Atlas)
+            gridFsTemplate.store(file.getInputStream(), storedFileName, contentType);
+            log.info("Exame do paciente persistido com sucesso no MongoDB GridFS: {}", storedFileName);
+
+            return storedFileName;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Falha ao salvar o exame prévio no cofre de saúde.", e);
+        }
+    }
+
+    /**
+     * Carrega o arquivo binário do exame prévio do paciente como recurso a partir do MongoDB GridFS.
+     */
+    public Resource loadPatientExamResource(String storedFileName) {
+        try {
+            GridFSFile gridFsFile = gridFsTemplate.findOne(Query.query(Criteria.where("filename").is(storedFileName)));
+            if (gridFsFile != null) {
+                GridFsResource resource = gridFsTemplate.getResource(gridFsFile);
+                if (resource.exists() && resource.isReadable()) {
+                    return resource;
+                }
+            }
+        } catch (Exception ex) {
+            log.warn("Erro ao buscar exame do paciente no MongoDB GridFS: {}", ex.getMessage());
+        }
+
+        throw new IllegalArgumentException("Arquivo do exame não encontrado no cofre de saúde.");
+    }
+
+    /**
+     * Remove o arquivo do exame prévio do paciente do MongoDB GridFS.
+     */
+    public void deletePatientExam(String storedFileName) {
+        if (storedFileName == null || storedFileName.isBlank()) return;
+
+        try {
+            gridFsTemplate.delete(Query.query(Criteria.where("filename").is(storedFileName)));
+            log.info("Exame do paciente removido com sucesso do MongoDB GridFS: {}", storedFileName);
+        } catch (Exception ex) {
+            log.warn("Erro ao remover exame do GridFS: {}", ex.getMessage());
+        }
+    }
+
     private String getFileExtension(String filename) {
         int lastDotIndex = filename.lastIndexOf('.');
         if (lastDotIndex > 0 && lastDotIndex < filename.length() - 1) {
