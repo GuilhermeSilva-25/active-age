@@ -29,7 +29,21 @@ interface PatientProfile {
     active: boolean;
 }
 
+interface NextAppointment {
+    id: string;
+    doctorName: string;
+    doctorCrm: string;
+    doctorUfCrm: string;
+    doctorSpecialty: string;
+    startDateTime: string;
+    endDateTime: string;
+    durationMinutes: number;
+    consultationFee: number;
+    status: string;
+}
+
 export function DashboardPaciente() {
+    const [nextAppointment, setNextAppointment] = useState<NextAppointment | null>(null);
     const navigate = useNavigate();
     const [profile, setProfile] = useState<PatientProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -49,24 +63,36 @@ export function DashboardPaciente() {
     });
 
     useEffect(() => {
-        const loadProfile = async () => {
+        const loadDashboardData = async () => {
             try {
-                const response = await fetch('/api/auth/me');
-                if (response.ok) {
-                    const data: PatientProfile = await response.json();
+                const [profileRes, nextAppRes] = await Promise.all([
+                    fetch('/api/auth/me'),
+                    fetch('/api/patient/appointments/next'),
+                ]);
+
+                if (profileRes.ok) {
+                    const data: PatientProfile = await profileRes.json();
                     setProfile(data);
                 } else {
                     navigate('/login');
+                    return;
+                }
+
+                if (nextAppRes.ok && nextAppRes.status === 200) {
+                    const appData = await nextAppRes.json();
+                    setNextAppointment(appData);
+                } else {
+                    setNextAppointment(null);
                 }
             } catch (err) {
-                console.error('Erro ao buscar perfil do paciente:', err);
+                console.error('Erro ao buscar dados do paciente:', err);
                 navigate('/login');
             } finally {
                 setLoading(false);
             }
         };
 
-        loadProfile();
+        loadDashboardData();
     }, [navigate]);
 
     const handleLogout = async () => {
@@ -245,7 +271,7 @@ export function DashboardPaciente() {
 
                         {/* Card 2: Minhas Consultas Agendadas */}
                         <div
-                            onClick={() => handleFeatureNotice('Minhas Consultas', 'Seu histórico e acompanhamento em tempo real de consultas agendadas estará disponível junto ao módulo de agenda.')}
+                            onClick={() => navigate('/paciente/consultas')}
                             role="button"
                             tabIndex={0}
                             className="group p-4 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl bg-white border-2 border-brand-pot/60 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
@@ -348,7 +374,7 @@ export function DashboardPaciente() {
                         </div>
                         <button
                             type="button"
-                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A busca e agendamento de consultas com médicos geriatras estarão disponíveis em breve!')}
+                            onClick={() => navigate('/paciente/busca-medicos')}
                             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
                         >
                             <CalendarPlus className="w-4 h-4" />
@@ -356,7 +382,46 @@ export function DashboardPaciente() {
                         </button>
                     </div>
 
-                    {/* Empty State Acolhedor */}
+                    {nextAppointment ? (
+                        <div className="p-5 sm:p-6 rounded-2xl bg-emerald-50/60 border-2 border-emerald-300 mt-4 sm:mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in duration-200">
+                            <div className="flex items-start gap-3.5">
+                                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                                    <Calendar className="w-6 h-6" />
+                                </div>
+                                <div className="space-y-0.5">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-200/60 px-2 py-0.5 rounded-md">
+                                            Confirmada
+                                        </span>
+                                        <span className="text-xs font-bold text-brown-light">
+                                            Teleconsulta de {nextAppointment.durationMinutes} min
+                                        </span>
+                                    </div>
+                                    <h4 className="text-base sm:text-lg font-black text-brown-dark">
+                                        {nextAppointment.doctorName}
+                                    </h4>
+                                    <p className="text-xs text-brown-light">
+                                        CRM {nextAppointment.doctorCrm}/{nextAppointment.doctorUfCrm} • {nextAppointment.doctorSpecialty}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-900 pt-1">
+                                        <Clock className="w-3.5 h-3.5 text-emerald-700" />
+                                        <span>
+                                            {new Date(nextAppointment.startDateTime).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })} às {nextAppointment.startDateTime.split('T')[1].substring(0, 5)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => navigate('/paciente/consultas')}
+                                className="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 self-start md:self-auto cursor-pointer min-h-[44px]"
+                            >
+                                <span>Ver Detalhes da Consulta →</span>
+                            </button>
+                        </div>
+                    ) : (
+                        /* Empty State Acolhedor */
                     <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
                         <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-3 sm:mb-4">
                             <Clock className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -369,13 +434,14 @@ export function DashboardPaciente() {
                         </p>
                         <button
                             type="button"
-                            onClick={() => handleFeatureNotice('Agendamento de Consultas', 'A busca e agendamento de consultas com médicos geriatras estarão disponíveis em breve!')}
+                            onClick={() => navigate('/paciente/busca-medicos')}
                             className="w-full sm:w-auto px-6 py-3 rounded-xl border border-brand-orange text-brand-orange hover:bg-orange-50 font-bold text-sm transition-all inline-flex items-center justify-center gap-2"
                         >
                             <CalendarPlus className="w-4 h-4" />
                             Agendar Minha Primeira Consulta
                         </button>
                     </div>
+                    )}
                 </div>
 
                 {/* Card de Dica de Saúde Geriátrica & Longevidade */}

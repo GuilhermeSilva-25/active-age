@@ -629,6 +629,47 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 10. Funcionalidade: Agendamento Concorrente de Teleconsulta pelo Paciente (UC09 / RF006 / RF007 / RN001 / RN002)
+
+### História de Usuário (User Story)
+* **Como** um paciente idoso ou cuidador cadastrado
+* **Eu quero** escolher um horário livre na vitrine do médico especialista e confirmar meu agendamento
+* **Para que** eu garanta minha teleconsulta geriátrica com atenção individualizada e sem risco de duplicidade de reserva
+
+---
+
+### Critérios de Aceite em Formato BDD (Gherkin)
+
+#### Cenário 10.1: Agendamento com Sucesso em Slot Livre (Caminho Feliz / RN001)
+* **Dado** que o médico "Dr. Alan Turing" possui um slot "LIVRE" em `06/11/2026` às `10:00`
+* **E** o paciente "Antônio Carlos da Silva" está autenticado com `ROLE_PACIENTE`
+* **Quando** o paciente submete o agendamento informando a queixa principal "Ajuste de medicamentos para pressão"
+* **Então** o sistema cria o registro na coleção `appointments` com status `AGENDADA`
+* **E** atualiza atomicamente o slot do médico para `OCUPADO` associado ao ID do paciente
+* **E** exibe feedback modal acessível confirmando a consulta com os dados do profissional.
+
+#### Cenário 10.2: Tentativa Concorrente de Agendar em Slot Já Ocupado (Caminho Triste / Double-Booking)
+* **Dado** que outro paciente reservou o mesmo slot uma fração de segundo antes
+* **Quando** o paciente tenta confirmar o agendamento do mesmo slot
+* **Então** o backend rejeita a operação com status HTTP 400 Bad Request
+* **E** exibe a mensagem de validação: *"Este horário não está mais disponível para agendamento. Por favor, escolha outro horário."*
+* **E** nenhum agendamento duplicado é gravado.
+
+#### Cenário 10.3: Cancelamento de Consulta com Mais de 24h de Antecedência e Devolução do Slot (Caminho Feliz / RN002)
+* **Dado** que o paciente possui uma consulta agendada para daqui a 3 dias (mais de 24 horas no futuro)
+* **Quando** clica em "Cancelar Consulta" e confirma no modal acessível
+* **Então** o status do agendamento é alterado para `CANCELADA_PELO_PACIENTE`
+* **E** o slot correspondente em `doctor_schedule_slots` é devolvido para o status `LIVRE`
+* **E** o horário volta a aparecer na vitrine para que outros pacientes possam agendar.
+
+#### Cenário 10.4: Tentativa de Cancelamento de Consulta com Menos de 24h de Antecedência (Caminho Triste / RN002)
+* **Dado** que a consulta do paciente está agendada para daqui a 4 horas (menos de 24 horas)
+* **Quando** o paciente tenta cancelar a consulta pelo portal
+* **Então** o sistema bloqueia a ação informando que consultas com menos de 24 horas de antecedência não podem ser canceladas pela plataforma
+* **E** o agendamento permanece ativo.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

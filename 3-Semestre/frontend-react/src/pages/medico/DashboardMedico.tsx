@@ -36,7 +36,20 @@ interface DoctorProfile {
     active: boolean;
 }
 
+interface DoctorTodayAppointment {
+    id: string;
+    patientId: string;
+    patientName: string;
+    startDateTime: string;
+    endDateTime: string;
+    durationMinutes: number;
+    consultationFee: number;
+    patientNotes?: string;
+    status: string;
+}
+
 export function DashboardMedico() {
+    const [todayAppointments, setTodayAppointments] = useState<DoctorTodayAppointment[]>([]);
     const navigate = useNavigate();
     const [profile, setProfile] = useState<DoctorProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -62,6 +75,17 @@ export function DashboardMedico() {
                 if (response.ok) {
                     const data: DoctorProfile = await response.json();
                     setProfile(data);
+                    if (data.dossierStatus === 'APPROVED') {
+                        try {
+                            const appsRes = await fetch('/api/doctor/appointments/today');
+                            if (appsRes.ok) {
+                                const appsData = await appsRes.json();
+                                setTodayAppointments(appsData);
+                            }
+                        } catch (e) {
+                            console.error('Erro ao buscar consultas de hoje:', e);
+                        }
+                    }
                 } else {
                     navigate('/login');
                 }
@@ -508,11 +532,44 @@ export function DashboardMedico() {
                             </p>
                         </div>
                         <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brown-light">
-                            0 consultas para hoje
+                            {todayAppointments.length} {todayAppointments.length === 1 ? 'consulta para hoje' : 'consultas para hoje'}
                         </span>
                     </div>
 
-                    <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
+                    {todayAppointments.length > 0 ? (
+                        <div className="py-4 space-y-3">
+                            {todayAppointments.map(app => (
+                                <div key={app.id} className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-black px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
+                                                {app.startDateTime.split('T')[1].substring(0, 5)} - {app.endDateTime.split('T')[1].substring(0, 5)}
+                                            </span>
+                                            <span className="text-xs font-bold text-brown-light">
+                                                Teleconsulta ({app.durationMinutes} min)
+                                            </span>
+                                        </div>
+                                        <h4 className="text-sm sm:text-base font-black text-brown-dark">
+                                            Paciente: {app.patientName}
+                                        </h4>
+                                        {app.patientNotes && (
+                                            <p className="text-xs text-brown-light italic">
+                                                "{app.patientNotes}"
+                                            </p>
+                                        )}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleFeatureNotice('Sala de Teleconsulta', 'A sala com conexão segura de vídeo (WebRTC - UC12) estará disponível em breve!')}
+                                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
+                                    >
+                                        Abrir Sala Virtual →
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
                         <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-3 sm:mb-4">
                             <Clock className="w-6 h-6 sm:w-8 sm:h-8" />
                         </div>
@@ -523,6 +580,7 @@ export function DashboardMedico() {
                             Assim que sua agenda for disponibilizada e os pacientes confirmarem a reserva, as informações completas aparecerão aqui.
                         </p>
                     </div>
+                    )}
                 </div>
             </main>
 

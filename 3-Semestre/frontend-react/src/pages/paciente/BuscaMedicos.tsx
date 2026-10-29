@@ -18,6 +18,7 @@ import logoImg from '../../assets/logo-active-age.png';
 import { Footer } from '../../components/home/Footer';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { DoctorDetailModal } from '../../components/paciente/DoctorDetailModal';
+import { AgendarConsultaModal } from '../../components/paciente/AgendarConsultaModal';
 import type { DoctorPublicProfile } from '../../components/paciente/DoctorDetailModal';
 import type { FeedbackModalType } from '../../components/common/FeedbackModal';
 
@@ -61,6 +62,7 @@ export function BuscaMedicos() {
     const [doctors, setDoctors] = useState<DoctorPublicProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedDoctorForModal, setSelectedDoctorForModal] = useState<DoctorPublicProfile | null>(null);
+    const [selectedDoctorForBooking, setSelectedDoctorForBooking] = useState<DoctorPublicProfile | null>(null);
 
     // Feedback Modal Acessível
     const [feedback, setFeedback] = useState<{
@@ -120,12 +122,8 @@ export function BuscaMedicos() {
     }, [searchTerm, selectedUf, selectedFocus, sortBy]);
 
     const handleSelectSchedule = (doctor: DoctorPublicProfile) => {
-        setFeedback({
-            isOpen: true,
-            type: 'info',
-            title: `Agendar com ${doctor.fullName}`,
-            message: `Você selecionou a agenda de ${doctor.fullName} (CRM ${doctor.crm}/${doctor.ufCrm}). A vitrine com horários livres para reserva imediata (UC09) será exibida no próximo passo!`,
-        });
+        setSelectedDoctorForModal(null);
+        setSelectedDoctorForBooking(doctor);
     };
 
     return (
@@ -468,6 +466,17 @@ export function BuscaMedicos() {
                 isOpen={!!selectedDoctorForModal}
                 onClose={() => setSelectedDoctorForModal(null)}
                 onSelectSchedule={handleSelectSchedule}
+            />
+
+            {/* Modal de Agendamento Concorrente com Slots Reais (UC09) */}
+            <AgendarConsultaModal
+                doctor={selectedDoctorForBooking}
+                isOpen={!!selectedDoctorForBooking}
+                onClose={() => setSelectedDoctorForBooking(null)}
+                onSuccess={() => {
+                    setSelectedDoctorForBooking(null);
+                    navigate('/paciente/consultas');
+                }}
             />
 
             {/* Modal de Feedback Acessível (WCAG 2.1 AA) */}
