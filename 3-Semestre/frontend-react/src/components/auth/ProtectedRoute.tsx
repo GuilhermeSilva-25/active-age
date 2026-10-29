@@ -90,7 +90,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // 3. Autenticado mas com Conta Inativada / Suspensa (UC05)
+  // 3. Autenticado mas com Conta Inativada / Suspensa
   if (currentUser.active === false) {
     const handleLogoutAndExit = async () => {
       try {

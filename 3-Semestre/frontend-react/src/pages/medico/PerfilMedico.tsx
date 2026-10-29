@@ -590,7 +590,7 @@ export const PerfilMedico: React.FC = () => {
                                     ))}
                                 </div>
                                 <p className="text-xs text-brown-light mt-1.5">
-                                    Tempo estimado para que o sistema monte os slots na sua agenda (UC10).
+                                    Tempo estimado de atendimento padrão para organização dos horários na sua agenda.
                                 </p>
                             </div>
                         </div>

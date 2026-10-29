@@ -12,7 +12,7 @@ import lombok.Builder;
 @AllArgsConstructor
 public class CreateAppointmentRequest {
 
-    @NotBlank(message = "O identificador do horário (slot) é obrigatório.")
+    @NotBlank(message = "A seleção do horário de atendimento é obrigatória.")
     private String slotId;
 
     private String patientNotes;

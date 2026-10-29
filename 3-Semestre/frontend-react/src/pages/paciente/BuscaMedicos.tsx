@@ -468,7 +468,7 @@ export function BuscaMedicos() {
                 onSelectSchedule={handleSelectSchedule}
             />
 
-            {/* Modal de Agendamento Concorrente com Slots Reais (UC09) */}
+            {/* Modal de Agendamento de Consulta */}
             <AgendarConsultaModal
                 doctor={selectedDoctorForBooking}
                 isOpen={!!selectedDoctorForBooking}

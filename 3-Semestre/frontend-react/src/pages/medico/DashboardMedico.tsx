@@ -560,7 +560,7 @@ export function DashboardMedico() {
                                     </div>
                                     <button
                                         type="button"
-                                        onClick={() => handleFeatureNotice('Sala de Teleconsulta', 'A sala com conexão segura de vídeo (WebRTC - UC12) estará disponível em breve!')}
+                                        onClick={() => handleFeatureNotice('Sala de Teleconsulta', 'A sala com conexão segura de videoconferência estará disponível no horário agendado.')}
                                         className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
                                     >
                                         Abrir Sala Virtual →

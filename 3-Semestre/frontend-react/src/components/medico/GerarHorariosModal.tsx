@@ -326,14 +326,14 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-5 py-3 rounded-xl border border-brand-pot/60 text-brown-dark text-xs sm:text-sm font-bold hover:bg-gray-50 transition-all cursor-pointer min-h-[48px]"
+                                className="whitespace-nowrap px-5 py-3 rounded-xl border border-brand-pot/60 text-brown-dark text-xs sm:text-sm font-bold hover:bg-gray-50 transition-all cursor-pointer min-h-[48px] shrink-0"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
                                 disabled={loading || estimatedSlots <= 0}
-                                className="px-6 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 cursor-pointer disabled:opacity-50 min-h-[48px]"
+                                className="whitespace-nowrap px-6 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 cursor-pointer disabled:opacity-50 min-h-[48px] shrink-0"
                             >
                                 {loading ? (
                                     <>
@@ -415,14 +415,14 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-5 py-3 rounded-xl border border-brand-pot/60 text-brown-dark text-xs sm:text-sm font-bold hover:bg-gray-50 transition-all cursor-pointer min-h-[48px]"
+                                className="whitespace-nowrap px-5 py-3 rounded-xl border border-brand-pot/60 text-brown-dark text-xs sm:text-sm font-bold hover:bg-gray-50 transition-all cursor-pointer min-h-[48px] shrink-0"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="px-6 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 cursor-pointer disabled:opacity-50 min-h-[48px]"
+                                className="whitespace-nowrap px-6 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 cursor-pointer disabled:opacity-50 min-h-[48px] shrink-0"
                             >
                                 {loading ? (
                                     <>

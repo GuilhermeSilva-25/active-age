@@ -156,7 +156,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
             setFeedback({
                 isOpen: true,
                 title: 'Horário Indisponível',
-                message: err.message || 'Este horário acabou de ser reservado. Por favor, escolha outro slot.',
+                message: err.message || 'Este horário acabou de ser reservado por outro paciente. Por favor, escolha outro horário.',
                 type: 'error',
             });
             // Recarrega horários atualizados
@@ -185,7 +185,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div
-                className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
+                className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header com Dados do Especialista */}
@@ -231,7 +231,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                     <div className="p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-900 font-medium">
                         <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0" />
                         <span>
-                            <strong>Garantia Anti-Double-Booking:</strong> Horário reservado com exclusividade no momento da confirmação. Atenção síncrona individualizada conforme Res. CFM nº 2.314/2022.
+                            <strong>Horário Reservado com Exclusividade:</strong> Atendimento individualizado confirmado no momento da reserva, em conformidade com a Resolução CFM nº 2.314/2022.
                         </span>
                     </div>
 
@@ -325,27 +325,27 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                 </div>
 
                 {/* Rodapé com Ações */}
-                <div className="p-4 sm:p-5 bg-gray-50 border-t border-brand-pot/30 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <div className="text-xs text-brown-dark font-medium text-center sm:text-left">
+                <div className="p-4 sm:p-5 bg-gray-50 border-t border-brand-pot/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+                    <div className="text-xs text-brown-dark font-medium text-center sm:text-left flex-1 min-w-0">
                         {selectedSlotObj ? (
-                            <span>
+                            <span className="block truncate sm:whitespace-normal">
                                 Horário selecionado:{' '}
                                 <strong className="text-brand-orange font-black">
                                     {formatHeaderDate(selectedSlotObj.startDateTime.split('T')[0])} às {formatTimeOnly(selectedSlotObj.startDateTime)}
                                 </strong>
                             </span>
                         ) : (
-                            <span className="text-brown-light italic">
+                            <span className="text-brown-light italic block">
                                 Selecione um horário livre acima para prosseguir
                             </span>
                         )}
                     </div>
 
-                    <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                    <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 justify-end">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 sm:flex-none px-5 py-3 rounded-xl border border-brand-pot bg-white hover:bg-gray-100 text-brown-dark font-bold text-xs sm:text-sm transition-colors cursor-pointer min-h-[48px]"
+                            className="flex-1 sm:flex-none whitespace-nowrap px-5 py-3 rounded-xl border border-brand-pot bg-white hover:bg-gray-100 text-brown-dark font-bold text-xs sm:text-sm transition-colors cursor-pointer min-h-[48px] shrink-0"
                         >
                             Voltar
                         </button>
@@ -354,7 +354,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                             type="button"
                             disabled={!selectedSlotId || submitting}
                             onClick={handleConfirmBooking}
-                            className="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
+                            className="flex-1 sm:flex-none whitespace-nowrap px-5 sm:px-6 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] shrink-0"
                         >
                             {submitting ? (
                                 <>

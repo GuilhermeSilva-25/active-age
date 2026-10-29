@@ -16,7 +16,7 @@ export function Privacidade() {
           <p className="mb-4 leading-relaxed">Coletamos diferentes tipos de dados para operar a plataforma e fornecer os serviços com máxima segurança:</p>
           
           <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">2.1. Dados Pessoais de Cadastro (Todos os Usuários)</h3>
-          <p className="mb-4 leading-relaxed">Nome completo, e-mail, telefone celular/WhatsApp e senha de acesso (fortemente criptografada com algoritmo BCrypt).</p>
+          <p className="mb-4 leading-relaxed">Nome completo, e-mail, telefone celular/WhatsApp e senha de acesso (fortemente criptografada com algoritmo de alta segurança).</p>
           
           <h3 className="text-xl font-bold text-brown-dark mt-4 mb-2">2.2. Dados Pessoais (Paciente/Cuidador)</h3>
           <p className="mb-4 leading-relaxed">Data de nascimento (maioridade obrigatória de 18+ anos ou representação legal), CPF, dados para faturamento de consultas e informações voluntárias no agendamento.</p>
@@ -67,7 +67,7 @@ export function Privacidade() {
             <li><strong>Armazenamento Seguro e Isolado:</strong> Os documentos do Dossiê do Médico e prontuários de saúde são armazenados em repositório privado, com bloqueio absoluto de acesso público direto via URL estática.</li>
             <li><strong>Controle de Acesso Perimetral:</strong> Qualquer requisição a arquivos ou dados médicos exige autenticação em sessão segura ativa e privilégio correspondente ou titularidade do documento.</li>
             <li><strong>Trilha de Auditoria Imutável (Audit Trail):</strong> Cada visualização, download ou alteração de status documental gera um registro permanente na trilha de auditoria e conformidade, gravando a identidade do usuário, endereço IP e carimbo de data/hora (timestamp).</li>
-            <li><strong>Criptografia em Trânsito e em Repouso:</strong> Todas as conexões utilizam protocolo HTTPS com TLS moderno. Senhas utilizam BCrypt com salt dinâmico, e os dados bancários contam com proteção restrita.</li>
+            <li><strong>Criptografia em Trânsito e em Repouso:</strong> Todas as conexões utilizam protocolo HTTPS com TLS moderno. Senhas de acesso são protegidas por criptografia moderna e irreversível com salt dinâmico, e os dados bancários contam com proteção restrita.</li>
           </ul>
 
           <h2 className="text-2xl font-bold text-brand-mint mt-8 mb-4">6. Seus Direitos (LGPD) e Prazos do CFM</h2>

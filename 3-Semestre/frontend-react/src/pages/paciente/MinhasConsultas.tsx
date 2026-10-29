@@ -136,7 +136,7 @@ export const MinhasConsultas: React.FC = () => {
             setFeedback({
                 isOpen: true,
                 title: 'Consulta Cancelada',
-                message: 'Sua consulta foi cancelada com sucesso e o horário foi devolvido à vitrine pública (RN002).',
+                message: 'Sua consulta foi cancelada com sucesso e o horário foi liberado na agenda médica.',
                 type: 'success',
             });
         } catch (err: any) {
@@ -193,7 +193,7 @@ export const MinhasConsultas: React.FC = () => {
 
                         <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200/80 rounded-2xl text-xs font-semibold text-amber-900 self-start md:self-auto">
                             <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0" />
-                            <span>Cancelamento com 24h de antecedência (RN002)</span>
+                            <span>Cancelamento sem custos com mais de 24h de antecedência</span>
                         </div>
                     </div>
 
@@ -362,7 +362,7 @@ export const MinhasConsultas: React.FC = () => {
                                 <div className="pt-3 border-t border-brand-pot/20 flex flex-col sm:flex-row items-center justify-between gap-3">
                                     <div className="flex items-center gap-2 text-xs text-brown-light">
                                         <Video className="w-4 h-4 text-blue-600" />
-                                        <span>Link seguro gerado para sala virtual (UC12 em breve)</span>
+                                        <span>Link seguro gerado para sala virtual (disponível próximo ao horário)</span>
                                     </div>
 
                                     {app.status === 'AGENDADA' && (
@@ -378,7 +378,7 @@ export const MinhasConsultas: React.FC = () => {
                                                 </button>
                                             ) : (
                                                 <span
-                                                    title="Cancelamento bloqueado: faltam menos de 24 horas para a consulta (RN002)"
+                                                    title="Cancelamento bloqueado: faltam menos de 24 horas para a consulta conforme política de agendamento"
                                                     className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gray-100 text-gray-400 text-xs font-bold flex items-center justify-center gap-1.5 cursor-not-allowed min-h-[44px]"
                                                 >
                                                     <XCircle className="w-4 h-4" />
@@ -400,7 +400,7 @@ export const MinhasConsultas: React.FC = () => {
                     isOpen={true}
                     type="warning"
                     title="Cancelar Teleconsulta?"
-                    message="Tem certeza que deseja cancelar esta consulta? O horário será liberado imediatamente para outros idosos na vitrine (RN002)."
+                    message="Tem certeza que deseja cancelar esta consulta? O horário será liberado para outros pacientes que necessitam de atendimento."
                     confirmText={cancelling ? 'Cancelando...' : 'Sim, Cancelar Consulta'}
                     cancelText="Manter Consulta"
                     showCancelButton={true}
