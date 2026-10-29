@@ -1,6 +1,8 @@
 package com.activeage.core.controllers;
 
 import com.activeage.core.dtos.responses.DoctorPublicProfileResponse;
+import com.activeage.core.dtos.responses.DoctorScheduleSlotResponse;
+import com.activeage.core.services.DoctorScheduleService;
 import com.activeage.core.services.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final DoctorScheduleService doctorScheduleService;
 
     /**
      * Pesquisa médicos geriatras homologados com filtros opcionais objetivos.
@@ -52,5 +55,17 @@ public class DoctorController {
     public ResponseEntity<DoctorPublicProfileResponse> getDoctorById(@PathVariable String id) {
         DoctorPublicProfileResponse doctor = doctorService.getApprovedDoctorById(id);
         return ResponseEntity.ok(doctor);
+    }
+
+    /**
+     * Obtém a lista de horários livres futuros de um médico para agendamento (UC08 / UC09).
+     *
+     * @param id Identificador único do médico.
+     * @return Lista de slots livres com data futura.
+     */
+    @GetMapping("/{id}/availability")
+    public ResponseEntity<List<DoctorScheduleSlotResponse>> getDoctorAvailability(@PathVariable String id) {
+        List<DoctorScheduleSlotResponse> availability = doctorScheduleService.listPublicAvailability(id);
+        return ResponseEntity.ok(availability);
     }
 }

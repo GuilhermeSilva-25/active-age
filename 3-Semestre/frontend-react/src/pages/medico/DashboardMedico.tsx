@@ -378,7 +378,7 @@ export function DashboardMedico() {
                                     handleFeatureNotice('Agenda Bloqueada', 'Sua agenda estará disponível para abertura de horários assim que o dossiê for homologado.');
                                     return;
                                 }
-                                handleFeatureNotice('Gestão de Agenda', 'O módulo de criação e gerenciamento de horários de atendimento estará disponível em breve!');
+                                navigate('/medico/agenda');
                             }}
                             role="button"
                             tabIndex={0}
@@ -407,7 +407,7 @@ export function DashboardMedico() {
                                 </p>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-brand-orange">
-                                <span>Em breve</span>
+                                <span>Disponível</span>
                                 <span>Acessar Agenda →</span>
                             </div>
                         </div>

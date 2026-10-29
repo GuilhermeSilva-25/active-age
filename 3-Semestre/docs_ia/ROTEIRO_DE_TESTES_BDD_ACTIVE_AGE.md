@@ -577,6 +577,58 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 9. Funcionalidade: Gestão de Agenda Médica & Grade de Horários (UC10 / RF006 / RF007 / RN001 / RN008)
+
+### História de Usuário (User Story)
+* **Como** um médico geriatra credenciado e homologado na plataforma Active Age
+* **Eu quero** definir e gerenciar meus horários de consulta através de turnos semanais ou horários avulsos
+* **Para que** eu organize meu consultório virtual com zelo e forneça disponibilidade para agendamento dos pacientes idosos
+
+---
+
+### Critérios de Aceite em Formato BDD (Gherkin)
+
+#### Cenário 9.1: Geração de Grade de Atendimento em Lote por Turno (Caminho Feliz)
+* **Dado** que o médico com status `APPROVED` acessa `/medico/agenda`
+* **Quando** clica em "Disponibilizar Novos Horários" e preenche a geração em lote:
+  * *Data:* `05/11/2026`
+  * *Horário de Início:* `08:00`
+  * *Horário de Término:* `12:00`
+  * *Duração da Consulta:* `50 minutos` (padrão geriátrico)
+  * *Pausa Técnica:* `10 minutos`
+* **Então** o sistema calcula e persiste 4 slots na coleção `doctor_schedule_slots` com status `LIVRE`:
+  * Slot 1: 08:00 às 08:50
+  * Slot 2: 09:00 às 09:50
+  * Slot 3: 10:00 às 10:50
+  * Slot 4: 11:00 às 11:50
+* **E** exibe feedback modal acessível confirmando a geração de 4 novos horários.
+
+#### Cenário 9.2: Tentativa de Criação de Horário Duplicado ou Sobreposto (Caminho Triste)
+* **Dado** que o médico já possui um slot cadastrado em `05/11/2026` às `14:00`
+* **Quando** tenta cadastrar manualmente outro slot avulso com início em `05/11/2026` às `14:00`
+* **Então** o backend rejeita a operação com status HTTP 400 Bad Request
+* **E** exibe a mensagem de validação: *"Você já possui um horário disponibilizado neste mesmo dia e horário."*
+
+#### Cenário 9.3: Bloqueio Temporário de Slot Livre (Caminho Feliz)
+* **Dado** que o médico possui um horário com status `LIVRE`
+* **Quando** clica na opção "Bloquear Horário"
+* **Então** o status do slot é alterado no banco para `BLOQUEADO`
+* **E** o horário deixa de ser retornado na rota pública de disponibilidade dos pacientes.
+
+#### Cenário 9.4: Tentativa de Exclusão Direta de Slot com Consulta Agendada (Caminho Triste)
+* **Dado** que um horário do médico possui status `OCUPADO` com consulta vinculada a um paciente
+* **Quando** o médico clica para excluir o slot na lixeira da grade
+* **Então** o sistema bloqueia a exclusão com HTTP 400 Bad Request
+* **E** exibe o alerta: *"Horários com consultas agendadas não podem ser excluídos diretamente. Utilize a opção de cancelamento de consulta."*
+
+#### Cenário 9.5: Bloqueio de Médico Não Homologado Tenta Abrir Agenda (RN008 / Segurança)
+* **Dado** que o médico está com status de credenciamento `PENDING_DOCS` ou `UNDER_REVIEW`
+* **Quando** tenta disparar uma requisição para `/api/doctor/schedule/batch` ou `/api/doctor/schedule/slot`
+* **Então** o Spring Security / Service rejeita a operação com HTTP 403 Forbidden
+* **E** informa que o consultório virtual requer homologação do CFM para ser ativado.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.

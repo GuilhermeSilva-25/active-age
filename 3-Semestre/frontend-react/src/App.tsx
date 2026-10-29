@@ -22,6 +22,7 @@ import { AdminAuditoria } from './pages/admin/AdminAuditoria';
 import { DossieCredenciamento } from './pages/medico/DossieCredenciamento';
 import { DashboardMedico } from './pages/medico/DashboardMedico';
 import { PerfilMedico } from './pages/medico/PerfilMedico';
+import { MinhaAgenda } from './pages/medico/MinhaAgenda';
 import { DashboardPaciente } from './pages/paciente/DashboardPaciente';
 import { PerfilPaciente } from './pages/paciente/PerfilPaciente';
 import { BuscaMedicos } from './pages/paciente/BuscaMedicos';
@@ -64,6 +65,7 @@ function App() {
                     <Route path="/medico/dashboard" element={<DashboardMedico />} />
                     <Route path="/medico/credenciamento" element={<DossieCredenciamento />} />
                     <Route path="/medico/perfil" element={<PerfilMedico />} />
+                    <Route path="/medico/agenda" element={<MinhaAgenda />} />
                 </Route>
 
                 {/* === Grupo 5: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}

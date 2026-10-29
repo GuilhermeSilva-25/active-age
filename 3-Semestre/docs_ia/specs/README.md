@@ -27,11 +27,12 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-06** | **Módulo de Gestão de Perfil do Usuário (Médico & Paciente) com Foto e Cuidador** | UC18 (RF014) | **Concluída / Live ✅** | [SPEC_SDD_GESTAO_DE_PERFIL_MEDICO_E_PACIENTE.md](./SPEC_SDD_GESTAO_DE_PERFIL_MEDICO_E_PACIENTE.md) |
 | **SPEC-07** | **Vitrine e Busca Inteligente de Médicos Geriatras (Catálogo Neutro & Filtros)** | UC08 (RF005, RN004) | **Concluída / Live ✅** | [SPEC_SDD_UC08_BUSCA_MEDICO_GERIATRA.md](./SPEC_SDD_UC08_BUSCA_MEDICO_GERIATRA.md) |
 | **SPEC-08** | **Submissão e Gestão de Exames Prévios pelo Paciente (Cofre Digital com GridFS)** | UC11 (RF008, RN007) | **Concluída / Live ✅** | [SPEC_SDD_UC11_SUBMETER_EXAMES_PREVIOS.md](./SPEC_SDD_UC11_SUBMETER_EXAMES_PREVIOS.md) |
+| **SPEC-09** | **Gestão da Agenda Médica & Grade de Disponibilidade (Turnos e Slots)** | UC10 (RF006, RF007, RN001, RN008) | **Concluída / Live ✅** | [SPEC_SDD_UC10_GERENCIAR_AGENDA_MEDICA.md](./SPEC_SDD_UC10_GERENCIAR_AGENDA_MEDICA.md) |
 
 ---
 
 ### 3. Próximas Especificações no Roadmap (Sprint 3 e 4)
 
-* **SPEC-07B (Sprint 3 / Release v0.3.0):** Gestão de Slots de Horários Livres pelo Médico e Agendamento Concorrente sem Double-Booking (UC09, UC10, RN001, RN002).
-* **SPEC-08B (Sprint 4 / Release v0.4.0):** Prontuário Ético Eletrônico Imutável, Visualização Médica de Exames e Assinatura Digital ICP-Brasil (UC13, UC14, UC15, UC16).
-* **SPEC-09 (Sprint 5 / Release v0.5.0):** Sala de Teleconsulta Integrada e Gateway com Split Direto (UC06, UC07, UC12, UC17).
+* **SPEC-10 (Sprint 3 / Release v0.3.0):** Agendamento de Teleconsulta pelo Paciente com Bloqueio Atômico e Prevenção de Double-Booking (UC09, RN001, RN002).
+* **SPEC-11 (Sprint 4 / Release v0.4.0):** Prontuário Ético Eletrônico Imutável, Visualização Médica de Exames e Assinatura Digital ICP-Brasil (UC13, UC14, UC15, UC16).
+* **SPEC-12 (Sprint 5 / Release v0.5.0):** Microsserviços de Teleconsulta (WebRTC) e Gateway Financeiro com Split Direto (UC06, UC07, UC12, UC17).

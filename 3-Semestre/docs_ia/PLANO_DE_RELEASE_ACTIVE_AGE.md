@@ -90,10 +90,8 @@ gantt
 * **Entregas Previstas:**
   1. [x] **Módulo de Perfil Médico & Paciente (SPEC-06 / UC18 / RF014) — [CONCLUÍDO ✅]:** Edição de perfil com upload de foto de rosto (avatar), biografia profissional, áreas de foco geriátrico, valor da consulta (R$), duração estimada, endereço residencial do paciente e cadastro do cuidador familiar com contato de emergência.
   2. [x] **Vitrine de Busca Inteligente e Catálogo Neutro de Médicos Geriatras (SPEC-07 / UC08 / RF005 / RN004) — [CONCLUÍDO ✅]:** Busca textual inteligente por nome/RQE/bio, filtros clínicos por foco geriátrico (AGA, Demências, Quedas, Polifarmácia), filtro por Estado (UF do CRM), ordenação neutra e transparente (Res. CFM nº 2.336/2023), cards informativos com foto oficial, RQE, duração e honorários, modal de detalhes com currículo Lattes e integração direta ao Dashboard do Paciente.
-  3. Coleção e entidade `HorarioDisponivel` no MongoDB Atlas.
-  4. Médico cria, visualiza e remove slots de horários livres em sua agenda (UC10).
-  5. Reserva de consulta atômica com bloqueio imediato do slot para `OCUPADO` (UC09 / RN001).
-  6. Cancelamento pelo paciente com antecedência de 24h e devolução do slot para `LIVRE` (RN002).
+  3. [x] **Gestão da Agenda Médica & Grade de Disponibilidade (SPEC-09 / UC10 / RF006, RF007, RN001, RN008) — [CONCLUÍDO ✅]:** Entidade `DoctorScheduleSlot` no MongoDB Atlas com índice único anti-colisão, geração em lote de turnos com pausas técnicas (CFM/SBGG 50 min), slots avulsos, alternância de bloqueio e trava para médicos sem homologação de CRM.
+  4. [ ] **Agendamento Concorrente de Teleconsulta sem Double-Booking (SPEC-10 / UC09 / RN001, RN002):** Paciente seleciona slot livre na vitrine, bloqueio atômico de slot com status `OCUPADO`, listagem de consultas do paciente e política de cancelamento ético com antecedência de 24h.
 
 ---
 

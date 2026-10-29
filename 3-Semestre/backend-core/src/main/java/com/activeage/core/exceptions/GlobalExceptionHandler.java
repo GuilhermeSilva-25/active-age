@@ -29,6 +29,26 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Trata estados ilegais da aplicação (ex: tentativa de excluir horário com consulta agendada).
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalStateException(IllegalStateException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Trata violações de segurança e regras de compliance/RBAC (ex: médico não homologado tentando abrir agenda).
+     */
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<Map<String, String>> handleSecurityException(SecurityException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    /**
      * Trata erros de validação dos DTOs anotados com Jakarta Validation (@Valid).
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
