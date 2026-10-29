@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DoctorScheduleSlotRepository extends MongoRepository<DoctorScheduleSlot, String> {
@@ -24,6 +25,8 @@ public interface DoctorScheduleSlotRepository extends MongoRepository<DoctorSche
     );
 
     boolean existsByDoctorIdAndStartDateTime(String doctorId, LocalDateTime startDateTime);
+
+    Optional<DoctorScheduleSlot> findByDoctorIdAndStartDateTime(String doctorId, LocalDateTime startDateTime);
 
     void deleteByDoctorIdAndStatusAndStartDateTimeBefore(String doctorId, SlotStatus status, LocalDateTime threshold);
 

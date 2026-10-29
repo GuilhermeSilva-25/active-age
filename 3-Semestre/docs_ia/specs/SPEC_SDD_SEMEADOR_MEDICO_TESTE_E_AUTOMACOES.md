@@ -1,10 +1,10 @@
-# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): MÉDICO TESTE, AUTOMAÇÃO DE AGENDA BI-DIÁRIA E EXPANSÃO DO CATÁLOGO DE MÉDICOS HOMENAGEADOS
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): MÉDICO TESTE, PACIENTE TESTE, AUTOMAÇÃO DE TELECONSULTA DIÁRIA E EXPANSÃO DO CATÁLOGO DE MÉDICOS HOMENAGEADOS
 
 > **Código da Spec:** SPEC-11B  
 > **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
-> **Módulo:** Semeador de Dados & Automação de Agendas para Apresentação  
-> **Casos de Uso Relacionados:** UC01 (Cadastro), UC08 (Vitrine de Médicos), UC09 (Agendamento de Teleconsultas), UC10 (Agenda Médica)  
-> **Requisitos Funcionais / Regras de Negócio:** RF006, RF007, RN001, RN008  
+> **Módulo:** Semeador de Dados & Automação de Agendas e Teleconsultas para Demonstração  
+> **Casos de Uso Relacionados:** UC01 (Cadastro), UC08 (Vitrine de Médicos), UC09 (Agendamento de Teleconsultas), UC10 (Agenda Médica), UC12 (Cockpit Teleconsulta)  
+> **Requisitos Funcionais / Regras de Negócio:** RF006, RF007, RF008, RF009, RN001, RN003, RN008  
 > **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022, Resolução CFM nº 2.336/2023  
 > **Data:** 29 de Outubro de 2026  
 > **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
@@ -15,15 +15,28 @@
 ## 1. Contexto & Diagnóstico da Necessidade
 
 Para a apresentação do sistema Active Age e demonstrações de fluxo completo de teleconsulta geriátrica:
-1. **Credencial de Acesso Fácil para Testes Imediatos:** Criação de um médico padrão homologado com credenciais universais e memoráveis:
-   - **E-mail:** `medico@teste.com`
-   - **Senha:** `123456`
-   - **Perfil:** Status `APPROVED`, CRM/RQE ativos, dados bancários de split direto configurados e foto profissional de alta resolução.
+1. **Credenciais de Acesso Fácil para Testes Imediatos (Bilateral):**
+   - **Médico Teste:**
+     - **E-mail:** `medico@teste.com`
+     - **Senha:** `123456`
+     - **Perfil:** Dr. Marcos Silveira, status `APPROVED`, CRM/RQE ativos, dados bancários de split direto configurados e foto profissional de alta resolução.
+   - **Paciente Teste:**
+     - **E-mail:** `paciente@teste.com`
+     - **Senha:** `123456`
+     - **Perfil:** Dona Maria de Lourdes Silva, 78 anos, CPF regular, cadastro completo para simulação de consultas e visualização de documentos.
 2. **Disponibilidade Permanente de Horários Livres sem Acúmulo Infinito:**
    - O médico de teste deve ter horários de atendimento livres **todos os dias**.
-   - Para não sobrecarregar o MongoDB Atlas com agendamentos infinitos no futuro, implementaremos uma **automação controlada no Spring Boot** que gera slots para **o dia atual (`LocalDate.now()`) e o próximo dia (`LocalDate.now().plusDays(1)`)**.
-   - Essa rotina é disparada **imediatamente na inicialização da aplicação** e mantida ativa por um agendador (`@Scheduled`) de **2 em 2 dias**.
-3. **Expansão da Vitrine de Médicos para Demonstração:**
+   - Para não sobrecarregar o MongoDB Atlas com agendamentos infinitos no futuro, implementamos uma **automação controlada no Spring Boot** que gera slots para **o dia atual (`LocalDate.now()`) e o próximo dia (`LocalDate.now().plusDays(1)`)**.
+   - Higieniza slots livres passados (`purgeExpiredFreeSlots`).
+3. **Garantia de Teleconsulta Ativa no Dia Atual (Cockpit de Atendimento):**
+   - Para que o avaliador ou usuário possa testar a sala virtual (`/teleconsulta/:appointmentId`) a qualquer momento sem precisar agendar manualmente antes:
+   - A automação verifica se o `medico@teste.com` já possui consulta com status `AGENDADA` no dia atual (`LocalDate.now()`).
+   - Caso não possua, reserva automaticamente um slot de hoje e cria um `Appointment` confirmado vinculado à paciente de teste `paciente@teste.com`.
+   - Adicionalmente, semeia 2 exames prévios (Hemograma Completo e Eletrocardiograma de Repouso) no cofre digital MongoDB GridFS da paciente para que o médico possa consultar os laudos dentro do cockpit de chamada virtual.
+4. **Frequência da Automação:**
+   - Disparada imediatamente no bootstrap da aplicação (`DataInitializer.java`).
+   - Mantida ativa por um agendador (`@Scheduled(cron = "0 0 * * * *")`) executado de **hora em hora**, garantindo sincronismo permanente mesmo em viradas de dia.
+5. **Expansão da Vitrine de Médicos para Demonstração:**
    - Adição de mais 12 grandes pioneiros da tecnologia e da ciência ao catálogo de médicos geriatras do `DataInitializer.java` (totalizando 17 médicos homologados).
    - Esses médicos extras **não terão consultas agendadas**, compondo uma vitrine diversificada com múltiplos Estados da Federação (SP, RJ, MG, RS, PR, BA, SC, DF, PE, CE, GO), faixas de preço e focos clínicos geriátricos para enriquecer os filtros de busca.
 
@@ -38,18 +51,24 @@ Para a apresentação do sistema Active Age e demonstrações de fluxo completo 
 Local: `com.activeage.core.services.DoctorScheduleAutomationService`
 
 **Responsabilidades:**
-1. `ensureTestDoctorSchedule()`:
+1. `ensureTestPatient()`:
+   - Assegura a existência do paciente padrão `paciente@teste.com` com senha `123456` e perfil `ROLE_PACIENTE`.
+2. `ensureTestPatientExams(testPatient)`:
+   - Armazena PDFs sintéticos válidos no MongoDB GridFS e vincula metadados na coleção `PatientExam` (Laboratorial e Cardiológico).
+3. `ensureTestDoctorSchedule()`:
    - Localiza o médico com e-mail `medico@teste.com`.
    - Itera pelos dias: `D0 = LocalDate.now()` e `D1 = LocalDate.now().plusDays(1)`.
    - Gera horários nos seguintes turnos de 50 minutos (com pausas técnicas de 10 min):
      - Manhã: `09:00`, `10:00`, `11:00`
      - Tarde: `14:00`, `15:00`, `16:00`, `17:00`
-   - Para cada horário, verifica se o slot já existe via `doctorScheduleSlotRepository.existsByDoctorIdAndStartDateTime(doctorId, startDateTime)`.
-   - Se não existir, persiste com `status = LIVRE`, `durationMinutes = 50` e `notes = "Atendimento Clínico Geriátrico"`.
-2. `purgeExpiredFreeSlots()`:
-   - Higieniza slots com status `LIVRE` cuja data de atendimento seja anterior a ontem, mantendo o banco limpo e performático.
-3. Agendamento com `@Scheduled`:
-   - `@Scheduled(cron = "0 0 1 */2 * *")`: Executa a cada 2 dias à 01:00 da manhã.
+   - Se o slot não existir, persiste com `status = LIVRE`, `durationMinutes = 50`.
+4. `ensureTodayActiveAppointment(doctor, patient)`:
+   - Busca consultas `AGENDADA` entre `startOfDay` e `endOfDay` de hoje.
+   - Se nenhuma existir, cria/reserva um slot de hoje e persiste um `Appointment` confirmado com anotações geriátricas prévias e ID de sala virtual.
+5. `purgeExpiredFreeSlots(doctorId)`:
+   - Higieniza slots com status `LIVRE` anteriores ao início do dia atual.
+6. Agendamento com `@Scheduled`:
+   - `@Scheduled(cron = "0 0 * * * *")`: Executa a cada hora cheia.
 
 ---
 
@@ -58,7 +77,6 @@ Local: `com.activeage.core.services.DoctorScheduleAutomationService`
 1. **Injeção:** Recebe `DoctorScheduleAutomationService` no construtor.
 2. **Método `seedTestDoctor()`:**
    - Garante a existência do usuário `medico@teste.com` com senha `123456` (BCrypt).
-   - Se já existir, atualiza a senha para `123456` para garantir que esteja sempre acessível.
    - Invoca imediatamente `doctorScheduleAutomationService.ensureTestDoctorSchedule()`.
 3. **Método `seedPioneerDoctors()` Ampliado:**
    - Mantém os 5 já existentes (Ada Lovelace, Alan Turing, Grace Hopper, Margaret Hamilton, Tim Berners-Lee).
@@ -80,20 +98,24 @@ Local: `com.activeage.core.services.DoctorScheduleAutomationService`
 
 ## 3. Critérios de Aceite & Validação (BDD)
 
-* **Cenário 1: Login do Médico Teste**
+* **Cenário 1: Login do Médico Teste e Visualização da Consulta do Dia**
   - **Dado** que o backend inicializou
   - **Quando** o usuário faz login com `medico@teste.com` e senha `123456`
-  - **Então** a autenticação é bem-sucedida e redireciona para `/medico/dashboard`.
+  - **Então** a autenticação é bem-sucedida e no painel `/medico/dashboard` visualiza Dona Maria de Lourdes na tabela de hoje com o botão "Abrir Sala Virtual →".
 
-* **Cenário 2: Disponibilidade Imediata de Horários na Vitrine**
+* **Cenário 2: Login da Paciente Teste e Acesso à Sala Virtual**
+  - **Dado** que o usuário faz login com `paciente@teste.com` e senha `123456`
+  - **Então** visualiza no dashboard `/paciente/dashboard` o card de Próxima Consulta com Dr. Marcos Silveira e o botão "Entrar na Sala Virtual".
+
+* **Cenário 3: Exames Prévios Visíveis no Cockpit de Teleconsulta**
+  - **Dado** que o médico entra na sala `/teleconsulta/:appointmentId`
+  - **Quando** clica na aba "Exames do Paciente"
+  - **Então** visualiza o Hemograma Completo e o ECG anexados no GridFS com opção de abrir ou visualizar o laudo.
+
+* **Cenário 4: Disponibilidade Imediata de Novos Horários na Vitrine**
   - **Dado** que um paciente acessa a vitrine de busca e clica em agendar com o "Dr. Médico Teste"
   - **Então** visualiza os horários livres para o dia de hoje e para o dia de amanhã.
 
-* **Cenário 3: Automação Bi-Diária sem Duplicação**
-  - **Dado** que a rotina agendada roda a cada 2 dias
-  - **Quando** verifica os slots de hoje e amanhã
-  - **Então** adiciona apenas os horários faltantes, respeitando o índice único anti-duplicação.
-
-* **Cenário 4: Apresentação com Vitrine Enriquecida**
+* **Cenário 5: Apresentação com Vitrine Enriquecida**
   - **Dado** que o paciente filtra por diferentes Estados (ex: RJ, MG, RS, BA)
   - **Então** encontra médicos especialistas correspondentes para ilustrar a abrangência nacional da telemedicina.
