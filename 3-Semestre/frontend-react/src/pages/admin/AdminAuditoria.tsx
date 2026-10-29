@@ -14,7 +14,8 @@ import {
     UserCheck,
     UploadCloud,
     X,
-    Globe
+    Globe,
+    Calendar
 } from 'lucide-react';
 import type { AuditLogResponse, AuditLogStatsResponse } from '../../types/admin';
 
@@ -131,6 +132,18 @@ export function AdminAuditoria() {
                         Submissão Dossiê
                     </span>
                 );
+            case 'APPOINTMENT_CREATED':
+                return (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        <Calendar className="w-3 h-3" /> Consulta Agendada
+                    </span>
+                );
+            case 'APPOINTMENT_CANCELLED':
+                return (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                        <XCircle className="w-3 h-3" /> Consulta Cancelada
+                    </span>
+                );
             default:
                 return (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-gray-100 text-gray-800">
@@ -228,6 +241,8 @@ export function AdminAuditoria() {
                     <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 scrollbar-none">
                         {[
                             { label: 'Todas as Ações', value: 'ALL' },
+                            { label: 'Consultas Agendadas', value: 'APPOINTMENT_CREATED' },
+                            { label: 'Consultas Canceladas', value: 'APPOINTMENT_CANCELLED' },
                             { label: 'Docs Inspecionados', value: 'VIEW_DOCUMENT' },
                             { label: 'Dossiês Aprovados', value: 'REVIEW_DOSSIER_APPROVE' },
                             { label: 'Dossiês Reprovados', value: 'REVIEW_DOSSIER_REJECT' },

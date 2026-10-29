@@ -1,17 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   UserCheck, 
   Users, 
-  ShieldAlert, 
+  Calendar, 
   FileText, 
   ArrowRight, 
   Server, 
   Database, 
-  Globe 
+  Globe,
+  Loader2
 } from 'lucide-react';
 
+interface AdminStats {
+  totalPatients: number;
+  totalApprovedDoctors: number;
+  pendingDoctorsQueue: number;
+  totalAppointments: number;
+  scheduledAppointments: number;
+  completedAppointments: number;
+  cancelledAppointments: number;
+  availableScheduleSlots: number;
+}
+
 export const AdminDashboard: React.FC = () => {
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/admin/stats');
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar estatísticas do admin:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in">
       {/* === CABEÇALHO DA PÁGINA === */}
@@ -35,7 +68,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* === CARDS DE MÉTRICAS (KPIS) === */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Card 1: Médicos Pendentes (Destaque) */}
+        {/* Card 1: Credenciamento Médico */}
         <div className="bg-white rounded-2xl p-6 border-2 border-amber-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
@@ -45,11 +78,17 @@ export const AdminDashboard: React.FC = () => {
               <UserCheck className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-brown-dark mb-1">
-            Fila Ativa
+          <div className="text-2xl sm:text-3xl font-extrabold text-brown-dark mb-1">
+            {loading ? (
+              <Loader2 className="w-6 h-6 animate-spin text-amber-600" />
+            ) : stats && stats.pendingDoctorsQueue > 0 ? (
+              `${stats.pendingDoctorsQueue} Pendente(s)`
+            ) : (
+              'Fila Zerada'
+            )}
           </div>
           <p className="text-xs text-brown-light font-medium mb-4">
-            Médicos aguardando verificação de CRM e especialidade
+            {stats ? `${stats.totalApprovedDoctors} médicos homologados no catálogo` : 'Médicos aguardando verificação de CRM'}
           </p>
           <Link
             to="/admin/medicos"
@@ -69,11 +108,17 @@ export const AdminDashboard: React.FC = () => {
               <Users className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-brown-dark mb-1">
-            Acesso Controlado
+          <div className="text-2xl sm:text-3xl font-extrabold text-brown-dark mb-1">
+            {loading ? (
+              <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+            ) : stats ? (
+              `${stats.totalPatients + stats.totalApprovedDoctors} Contas`
+            ) : (
+              'Acesso Ativo'
+            )}
           </div>
           <p className="text-xs text-brown-light font-medium mb-4">
-            Segregação de perfis Paciente, Médico e Administrador
+            {stats ? `${stats.totalPatients} pacientes e ${stats.totalApprovedDoctors} médicos ativos` : 'Segregação de perfis Paciente, Médico e Admin'}
           </p>
           <Link
             to="/admin/usuarios"
@@ -83,48 +128,57 @@ export const AdminDashboard: React.FC = () => {
           </Link>
         </div>
 
-        {/* Card 3: Segurança & Proteção de Acesso */}
+        {/* Card 3: Teleconsultas & Agendamentos */}
         <div className="bg-white rounded-2xl p-6 border border-brand-pot/50 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-brown-light">
-              Segurança
+              Teleconsultas
             </span>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <ShieldAlert className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+              <Calendar className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-brown-dark mb-1">
-            Proteção Ativa
+          <div className="text-2xl sm:text-3xl font-extrabold text-brown-dark mb-1">
+            {loading ? (
+              <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
+            ) : stats ? (
+              `${stats.scheduledAppointments} Ativa(s)`
+            ) : (
+              '0 Agendadas'
+            )}
           </div>
           <p className="text-xs text-brown-light font-medium mb-4">
-            Bloqueio inteligente contra tentativas indevidas de login
+            {stats ? `${stats.availableScheduleSlots} horários livres disponíveis na rede` : 'Monitoramento de consultas e turnos livres'}
           </p>
-          <span className="text-xs font-bold text-emerald-600 inline-flex items-center gap-1">
-            Monitoramento ativo
-          </span>
+          <Link
+            to="/admin/auditoria"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-orange hover:underline"
+          >
+            Auditar agendamentos <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
         {/* Card 4: Trilha de Auditoria (CFM & LGPD) */}
         <div className="bg-white rounded-2xl p-6 border border-brand-pot/50 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-brown-light">
-              Conformidade
+              Governança
             </span>
-            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <FileText className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-brown-dark mb-1">
+          <div className="text-2xl sm:text-3xl font-extrabold text-brown-dark mb-1">
             CFM & LGPD
           </div>
           <p className="text-xs text-brown-light font-medium mb-4">
-            Trilha de auditoria imutável para ações administrativas
+            Rastreabilidade perene com Nível de Segurança SBIS NGS1
           </p>
           <Link
             to="/admin/auditoria"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-orange hover:underline"
           >
-            Ver logs do sistema <ArrowRight className="w-3.5 h-3.5" />
+            Ver trilha de logs <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>

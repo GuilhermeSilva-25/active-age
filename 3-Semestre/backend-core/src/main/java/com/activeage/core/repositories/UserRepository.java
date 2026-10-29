@@ -45,4 +45,9 @@ public interface UserRepository extends MongoRepository<User, String> {
      * Conta médicos por status do Dossiê (para métricas e badges de pendência).
      */
     long countByRoleAndDossierStatus(Role role, DoctorDossierStatus dossierStatus);
+
+    /**
+     * Conta usuários por perfil (ex: ROLE_PACIENTE).
+     */
+    long countByRole(Role role);
 }

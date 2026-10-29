@@ -35,6 +35,7 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final DoctorScheduleSlotRepository scheduleSlotRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     /**
      * Realiza a reserva de consulta do paciente em um slot livre (RN001).
@@ -97,6 +98,23 @@ public class AppointmentService {
         slot.setAppointmentId(savedAppointment.getId());
         slot.setUpdatedAt(LocalDateTime.now());
         scheduleSlotRepository.save(slot);
+
+        // Registra formalmente na Trilha de Auditoria Imutável (CFM / SBIS NGS1)
+        try {
+            String logDetail = String.format("Teleconsulta agendada com Dr(a). %s (CRM %s/%s) para %s",
+                    doctor.getFullName(), doctor.getCrm(), doctor.getUfCrm(), slot.getStartDateTime());
+            auditService.log(
+                    patient.getId(),
+                    patient.getEmail(),
+                    "ROLE_PACIENTE",
+                    "APPOINTMENT_CREATED",
+                    doctor.getId(),
+                    logDetail,
+                    "127.0.0.1"
+            );
+        } catch (Exception ex) {
+            log.warn("Falha ao registrar log de auditoria para agendamento {}: {}", savedAppointment.getId(), ex.getMessage());
+        }
 
         log.info("Consulta {} agendada com sucesso pelo paciente {} com o médico {}",
                 savedAppointment.getId(), patient.getEmail(), doctor.getEmail());
@@ -164,6 +182,23 @@ public class AppointmentService {
                     log.info("Slot {} reciclado e devolvido à vitrine com status LIVRE", slot.getId());
                 }
             });
+        }
+
+        // Registra formalmente o cancelamento na Trilha de Auditoria Imutável (CFM / SBIS NGS1)
+        try {
+            String logDetail = String.format("Teleconsulta com Dr(a). %s para %s cancelada pelo paciente. Horário liberado na agenda médica.",
+                    appointment.getDoctorName(), appointment.getStartDateTime());
+            auditService.log(
+                    patient.getId(),
+                    patient.getEmail(),
+                    "ROLE_PACIENTE",
+                    "APPOINTMENT_CANCELLED",
+                    appointment.getDoctorId(),
+                    logDetail,
+                    "127.0.0.1"
+            );
+        } catch (Exception ex) {
+            log.warn("Falha ao registrar log de auditoria para cancelamento {}: {}", appointmentId, ex.getMessage());
         }
 
         log.info("Consulta {} cancelada pelo paciente {}", appointmentId, patient.getEmail());

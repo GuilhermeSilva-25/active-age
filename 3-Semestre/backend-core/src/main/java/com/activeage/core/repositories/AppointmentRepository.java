@@ -29,4 +29,10 @@ public interface AppointmentRepository extends MongoRepository<Appointment, Stri
     );
 
     boolean existsBySlotId(String slotId);
+
+    long countByStatus(AppointmentStatus status);
+
+    long countByStatusIn(List<AppointmentStatus> statuses);
+
+    List<Appointment> findAllByOrderByStartDateTimeDesc();
 }

@@ -29,5 +29,7 @@ public interface DoctorScheduleSlotRepository extends MongoRepository<DoctorSche
 
     long countByDoctorIdAndStatus(String doctorId, SlotStatus status);
 
+    long countByStatus(SlotStatus status);
+
     long countByDoctorId(String doctorId);
 }

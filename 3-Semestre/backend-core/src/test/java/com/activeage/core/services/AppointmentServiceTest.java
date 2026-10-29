@@ -39,6 +39,9 @@ class AppointmentServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private AuditService auditService;
+
     @InjectMocks
     private AppointmentService appointmentService;
 
