@@ -1,11 +1,14 @@
-# ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — RELEASE v0.1.0
-## Fundação, Gestão de Identidade e Autenticação Segura
-### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Concluída e Homologada em Produção (Live) ✅  
-**Data da Release:** 21 de Outubro de 2026  
-**Casos de Uso Cobertos:** UC01 (Cadastrar-se na Plataforma) e UC02 (Autenticar-se / Login Seguro)  
-**Requisitos Atendidos:** RF001, RNF001, RNF002, RNF003, RNF005, RNF006, RNF007, RN006  
-**Ambientes de Produção:** Backend Render (Docker Web Service) | Frontend Vercel (SPA Edge) | Banco MongoDB Atlas  
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): FUNDAÇÃO, GESTÃO DE IDENTIDADE E AUTENTICAÇÃO SEGURA
+
+> **Código da Spec:** SPEC-01  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
+> **Módulo:** Fundação, Identidade, Controle de Acesso e Autenticação Segura (Release v0.1.0)  
+> **Casos de Uso Relacionados:** UC01 (Cadastrar-se na Plataforma), UC02 (Autenticar-se / Login Seguro)  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RNF001, RNF002, RNF003, RNF005, RNF006, RNF007, RN006  
+> **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022, Lei Geral de Proteção de Dados (LGPD nº 13.709/2018), Padrões SBIS NGS1, Diretrizes W3C/WCAG 2.1 AA  
+> **Data:** 21 de Outubro de 2026  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
+> **Metodologia:** Spec-Driven Development (SDD)
 
 ---
 

@@ -1,11 +1,14 @@
-# ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MICRO TAREFA 2.1
-## Blindagem Perimetral RBAC, Layout Administrativo e Seeding de Administrador
-### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Concluída e Homologada em Produção (Live) ✅  
-**Data:** 22 de Outubro de 2026  
-**Casos de Uso Cobertos:** UC01, UC02, UC04 (Fundação de Gestão do Administrador)  
-**Requisitos Atendidos:** RF001, RF003, RNF001, RNF002, RNF006, RNF007  
-**Commit de Entrega:** `4c84353` (`feat(admin): implementa blindagem RBAC com ProtectedRoute, layout administrativo e seed admin`)  
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): BLINDAGEM PERIMETRAL RBAC, LAYOUT ADMINISTRATIVO E SEED ADMIN
+
+> **Código da Spec:** SPEC-02  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
+> **Módulo:** Governança de Segurança, RBAC e Painel Administrativo Base (Micro Tarefa 2.1)  
+> **Casos de Uso Relacionados:** UC01 (Cadastro), UC02 (Autenticação), UC04 (Fundação de Gestão do Administrador)  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RF003, RNF001, RNF002, RNF006, RNF007  
+> **Normas de Referência Ética & Regulatória:** Padrão SBIS NGS1, Resolução CFM nº 2.314/2022, Lei Federal nº 13.709/2018 (LGPD - Controle de Acessos Privilegiados)  
+> **Data:** 22 de Outubro de 2026  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
+> **Metodologia:** Spec-Driven Development (SDD)
 
 ---
 

@@ -1,11 +1,14 @@
-# ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MICRO TAREFA 2.2B
-## Melhorias no Dossiê de Credenciamento, Upload Frente/Verso e Padronização Bancária (COMPE)
-### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Aprovada pelo PO e Implementada com Sucesso ✅  
-**Data:** 27 de Outubro de 2026  
-**Casos de Uso:** UC03 (Upload do Dossiê Médico), UC04 (Fila e Auditoria de Credenciamento pelo Admin), UC05 (Homologação com Trilha de Auditoria)  
-**Regras de Negócio Associadas:** RN004, RN006, RN007, RN008  
-**Marcos Regulatórios:** Resolução CFM nº 2.314/2022 (Telemedicina), Lei Federal nº 13.709/2018 (LGPD), Febraban / BACEN (Códigos COMPE)  
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): MELHORIAS NO DOSSIÊ, UPLOAD FRENTE/VERSO E PADRONIZAÇÃO BANCÁRIA COMPE
+
+> **Código da Spec:** SPEC-03B  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
+> **Módulo:** Credenciamento Médico, Suporte a Múltiplos Arquivos e Padronização COMPE/Febraban (Micro Tarefa 2.2B)  
+> **Casos de Uso Relacionados:** UC03 (Upload do Dossiê Médico), UC04 (Fila e Auditoria de Credenciamento pelo Admin), UC05 (Homologação com Trilha de Auditoria)  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RF003, RN004, RN006, RN007, RN008  
+> **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022, Lei Federal nº 13.709/2018 (LGPD), BACEN/Febraban (Padrão COMPE)  
+> **Data:** 27 de Outubro de 2026  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
+> **Metodologia:** Spec-Driven Development (SDD)
 
 ---
 

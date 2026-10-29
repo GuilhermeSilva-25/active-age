@@ -1,10 +1,13 @@
 # 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): SEEDING DE MÉDICOS HOMOLOGADOS (HOMENAGEM À TECNOLOGIA)
 
-> **Projeto:** Active Age — Telessaúde Geriátrica  
+> **Código da Spec:** SPEC-05C  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
 > **Módulo:** Inicialização e Massa de Dados de Teste (`DataInitializer`)  
 > **Casos de Uso Relacionados:** UC01, UC03, UC04, UC08, UC09 (Vitrine de Especialistas)  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RF003, RF005, RN004  
+> **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022, Resolução CFM nº 2.336/2023, Padrões SBIS NGS1  
 > **Data:** 28 de Outubro de 2026  
-> **Status:** CONCLUÍDO E HOMOLOGADO EM PRODUÇÃO ✅  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
 > **Metodologia:** Spec-Driven Development (SDD)
 
 ---

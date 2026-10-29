@@ -1,11 +1,14 @@
-# ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MICRO TAREFA 2.3
-## Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`)
-### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Concluída e Homologada ✅  
-**Data:** 22 de Outubro de 2026  
-**Casos de Uso Cobertos:** UC01, UC02, UC04, UC05 (Moderação de Perfis e Auditoria de Conformidade)  
-**Requisitos Atendidos:** RF001, RF003, RNF001, RNF002, RNF003, RNF005, RNF006, RNF007, RN007  
-**Marcos Regulatórios:** SBIS/CFM (Padrão NGS1 - Rastreabilidade e Auditoria), Lei Geral de Proteção de Dados (Art. 37 da LGPD)  
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): GESTÃO DE USUÁRIOS & TRILHA DE AUDITORIA GLOBAL
+
+> **Código da Spec:** SPEC-04  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
+> **Módulo:** Governança Administrativa, Gestão de Usuários e Trilha de Auditoria Imutável (Micro Tarefa 2.3)  
+> **Casos de Uso Relacionados:** UC01 (Cadastro), UC02 (Autenticação), UC04 (Auditoria), UC05 (Moderação de Perfis)  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RF003, RNF001, RNF002, RNF003, RNF005, RNF006, RNF007, RN007  
+> **Normas de Referência Ética & Regulatória:** SBIS NGS1 (Rastreabilidade e Não-Repúdio), Resolução CFM nº 2.314/2022, Lei Federal nº 13.709/2018 (Art. 37 da LGPD)  
+> **Data:** 22 de Outubro de 2026  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
+> **Metodologia:** Spec-Driven Development (SDD)
 
 ---
 

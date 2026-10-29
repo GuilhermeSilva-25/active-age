@@ -1,11 +1,14 @@
-# ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — CASO DE USO UC05
-## Bloqueio Perimetral de Login e Revogação de Sessão para Contas Inativadas (Moderação)
-### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Aprovada pelo PO e Implementada com Sucesso ✅  
-**Data:** 28 de Outubro de 2026  
-**Casos de Uso Cobertos:** UC05 (Bloquear/Suspender Usuário — Moderação de Contas pelo Administrador)  
-**Requisitos Atendidos:** RF001, RF003, RNF002, RNF006, RN006, RN007  
-**Marcos Regulatórios:** SBIS/CFM (NGS1), LGPD (Art. 37)  
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): BLOQUEIO PERIMETRAL DE LOGIN E REVOGAÇÃO DE SESSÃO ATIVA
+
+> **Código da Spec:** SPEC-04B  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
+> **Módulo:** Moderação de Contas, Revogação de Sessões Ativas e Bloqueio Perimetral (Caso de Uso UC05)  
+> **Casos de Uso Relacionados:** UC05 (Bloquear/Suspender Usuário — Moderação de Contas pelo Administrador)  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RF003, RNF002, RNF006, RN006, RN007  
+> **Normas de Referência Ética & Regulatória:** SBIS NGS1, Resolução CFM nº 2.314/2022, Lei Federal nº 13.709/2018 (Art. 37 da LGPD)  
+> **Data:** 28 de Outubro de 2026  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
+> **Metodologia:** Spec-Driven Development (SDD)
 
 ---
 

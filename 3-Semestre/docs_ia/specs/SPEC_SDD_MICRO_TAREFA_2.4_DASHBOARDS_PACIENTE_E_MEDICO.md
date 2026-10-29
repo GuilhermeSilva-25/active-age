@@ -1,11 +1,14 @@
-# ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MICRO TAREFA 2.4
-## Dashboards Segregados de Paciente e Médico (`DashboardPaciente.tsx` e `DashboardMedico.tsx`)
-### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Concluída e Homologada ✅  
-**Data:** 22 de Outubro de 2026  
-**Casos de Uso Cobertos:** UC01, UC02, UC03, UC07, UC08, UC09, UC10, UC12, UC14, UC16 (Centralização dos Fluxos de Pacientes e Médicos)  
-**Requisitos Atendidos:** RF001, RF002, RF003, RF004, RF008, RNF001, RNF002, RNF004 (Acessibilidade IHC/WCAG 2.1 AA), RNF007, RN007  
-**Marcos Regulatórios:** Resolução CFM nº 2.314/2022 (Telemedicina Ética), Resolução CFM nº 2.336/2023 (Publicidade Médica Sem Autopromoção), Padrão SBIS/CFM NGS1 e Diretrizes de Acessibilidade Digital para Pessoas Idosas (W3C/WCAG 2.1 AA).
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): DASHBOARDS SEGREGADOS DE PACIENTE E MÉDICO
+
+> **Código da Spec:** SPEC-05  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
+> **Módulo:** Experiência de Uso, Dashboards Segregados, Acessibilidade WCAG e Roteamento (Micro Tarefa 2.4)  
+> **Casos de Uso Relacionados:** UC01, UC02, UC03, UC07, UC08, UC09, UC10, UC12, UC14, UC16  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RF002, RF003, RF004, RF008, RNF001, RNF002, RNF004 (WCAG 2.1 AA), RNF007, RN007  
+> **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022, Resolução CFM nº 2.336/2023, SBIS NGS1, Diretrizes W3C/WCAG 2.1 AA  
+> **Data:** 22 de Outubro de 2026  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
+> **Metodologia:** Spec-Driven Development (SDD)
 
 ---
 

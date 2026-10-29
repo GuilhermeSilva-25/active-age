@@ -4,9 +4,10 @@
 > **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
 > **Módulo:** Governança Administrativa, Métricas Operacionais & Trilha de Auditoria Imutável  
 > **Casos de Uso Relacionados:** UC04 (Auditoria do Credenciamento), UC05 (Moderação de Usuários), UC09 (Agendamentos de Consultas)  
+> **Requisitos Funcionais / Regras de Negócio:** RF001, RF003, RF006, RN007  
 > **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022 (Rastreabilidade e Segurança em Telemedicina), SBIS NGS1 (Nível de Garantia de Segurança 1 - Trilha de Auditoria Inviolável), Lei Federal nº 13.709/2018 (LGPD - Sigilo Médico e Princípio da Necessidade no Acesso Administrativo)  
 > **Data:** 29 de Outubro de 2026  
-> **Status:** CONCLUÍDA E HOMOLOGADA ✅  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
 > **Metodologia:** Spec-Driven Development (SDD)
 
 ---

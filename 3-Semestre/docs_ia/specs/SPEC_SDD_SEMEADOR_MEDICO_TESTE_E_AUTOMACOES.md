@@ -4,8 +4,10 @@
 > **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
 > **Módulo:** Semeador de Dados & Automação de Agendas para Apresentação  
 > **Casos de Uso Relacionados:** UC01 (Cadastro), UC08 (Vitrine de Médicos), UC09 (Agendamento de Teleconsultas), UC10 (Agenda Médica)  
+> **Requisitos Funcionais / Regras de Negócio:** RF006, RF007, RN001, RN008  
+> **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022, Resolução CFM nº 2.336/2023  
 > **Data:** 29 de Outubro de 2026  
-> **Status:** CONCLUÍDA E HOMOLOGADA ✅  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
 > **Metodologia:** Spec-Driven Development (SDD)
 
 ---

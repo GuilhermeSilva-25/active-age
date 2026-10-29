@@ -1,10 +1,14 @@
-# ESPECIFICAÇÃO TÉCNICA (SPEC SDD) — MELHORIA IHC & ACESSIBILIDADE
-## Padronização Universal de Spinners de Carregamento em Botões Assíncronos
-### Active Age — Telessaúde Geriátrica Integral | Fatec Diadema — DSM 3º Semestre
-**Status:** Aprovada pelo PO e Implementada com Sucesso ✅  
-**Data:** 28 de Outubro de 2026  
-**Casos de Uso Afetados:** UC01 (Cadastrar-se), UC02 (Autenticar-se / Logout), UC03 (Credenciamento), UC04/UC05 (Painel Administrativo)  
-**Diretrizes de Qualidade:** IHC, WCAG 2.1 AA (Critério 4.1.3 Status Messages, Critério 2.2.1 Timing Adjustable)  
+# 📋 ESPECIFICAÇÃO TÉCNICA (SPEC): PADRONIZAÇÃO UNIVERSAL DE SPINNERS EM BOTÕES ASSÍNCRONOS
+
+> **Código da Spec:** SPEC-05B  
+> **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
+> **Módulo:** Interface Humano-Computador (IHC) & Acessibilidade Visual Universal  
+> **Casos de Uso Relacionados:** UC01 (Cadastrar-se), UC02 (Autenticar-se / Logout), UC03 (Credenciamento), UC04/UC05 (Painel Administrativo)  
+> **Requisitos Funcionais / Regras de Negócio:** RNF001, RNF002, RNF004 (Acessibilidade e Feedback Imediato)  
+> **Normas de Referência Ética & Regulatória:** Diretrizes W3C/WCAG 2.1 AA (Critérios 4.1.3 Status Messages e 2.2.1 Timing Adjustable), Heurísticas de Usabilidade de Nielsen  
+> **Data:** 28 de Outubro de 2026  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
+> **Metodologia:** Spec-Driven Development (SDD)
 
 ---
 
@@ -20,15 +24,15 @@ Em aplicações de telessaúde com foco geriátrico como o **Active Age**, a pre
 
 | Componente / Página | Ação Assíncrona | Estado Atual | Solução Proposta com Padronização |
 |---|---|---|---|
-| [`Login.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/pages/auth/Login.tsx) | `POST /api/auth/login` | Exibe apenas texto *"Verificando segurança..."* | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Entrando na plataforma..."* |
-| [`CadastroPaciente.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/pages/auth/CadastroPaciente.tsx) | `POST /api/auth/register-patient` | Exibe apenas texto *"Criando Conta..."* na Etapa 3 | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Criando Conta..."* |
-| [`CadastroMedico.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/pages/auth/CadastroMedico.tsx) | `POST /api/auth/register-doctor` | Exibe apenas texto *"Registrando..."* na Etapa 3 | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Registrando..."* |
-| [`RecuperarSenha.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/pages/auth/RecuperarSenha.tsx) | Envio de e-mail de recuperação | Exibe apenas texto *"Processando..."* | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Enviando link..."* |
-| [`Navbar.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/components/home/Navbar.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
-| [`DashboardPaciente.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/pages/paciente/DashboardPaciente.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
-| [`DashboardMedico.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/pages/medico/DashboardMedico.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
-| [`DossieCredenciamento.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/pages/medico/DossieCredenciamento.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
-| [`AdminLayout.tsx`](file:///c:/Users/aluno/Desktop/DSM/active-age/3-Semestre/frontend-react/src/layouts/AdminLayout.tsx) | `POST /api/auth/logout` | Sem estado de loading no botão do menu | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
+| [`Login.tsx`](../../frontend-react/src/pages/auth/Login.tsx) | `POST /api/auth/login` | Exibe apenas texto *"Verificando segurança..."* | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Entrando na plataforma..."* |
+| [`CadastroPaciente.tsx`](../../frontend-react/src/pages/auth/CadastroPaciente.tsx) | `POST /api/auth/register-patient` | Exibe apenas texto *"Criando Conta..."* na Etapa 3 | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Criando Conta..."* |
+| [`CadastroMedico.tsx`](../../frontend-react/src/pages/auth/CadastroMedico.tsx) | `POST /api/auth/register-doctor` | Exibe apenas texto *"Registrando..."* na Etapa 3 | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Registrando..."* |
+| [`RecuperarSenha.tsx`](../../frontend-react/src/pages/auth/RecuperarSenha.tsx) | Envio de e-mail de recuperação | Exibe apenas texto *"Processando..."* | Incluir `<Loader2 className="w-5 h-5 animate-spin" />` + texto *"Enviando link..."* |
+| [`Navbar.tsx`](../../frontend-react/src/components/home/Navbar.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
+| [`DashboardPaciente.tsx`](../../frontend-react/src/pages/paciente/DashboardPaciente.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
+| [`DashboardMedico.tsx`](../../frontend-react/src/pages/medico/DashboardMedico.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
+| [`DossieCredenciamento.tsx`](../../frontend-react/src/pages/medico/DossieCredenciamento.tsx) | `POST /api/auth/logout` | Sem estado de loading (texto fixo *"Sair"*) | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
+| [`AdminLayout.tsx`](../../frontend-react/src/layouts/AdminLayout.tsx) | `POST /api/auth/logout` | Sem estado de loading no botão do menu | Adicionar estado `isLoggingOut` + `<Loader2 className="w-4 h-4 animate-spin" />` |
 
 *(Observação: Os botões de upload e submissão do Dossiê, moderação de usuários e modais de auditoria administrativa já possuem o spinner implementado e serão mantidos como referência de padrão).*
 

@@ -7,7 +7,7 @@
 > **Requisitos Funcionais / Regras de Negócio:** RF006, RF007, RN001, RN002, RN008  
 > **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.314/2022 (Diretrizes de Telemedicina), Código de Ética Médica (Resolução CFM nº 2.217/2018 - Pontualidade e Zelo no Atendimento), Lei Federal nº 13.709/2018 (LGPD)  
 > **Data:** 29 de Outubro de 2026  
-> **Status:** CONCLUÍDA E HOMOLOGADA ✅  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
 > **Metodologia:** Spec-Driven Development (SDD)
 
 ---
@@ -274,7 +274,7 @@ Regras de Negócio Implementadas na Camada de Serviço:
    - Abas claras: **"Turno em Lote (Recomendado)"** e **"Horário Avulso"**.
    - Campos táteis: Data, Horário Início, Horário Fim, Duração da Consulta (45 min, 50 min, 60 min), Pausa entre consultas (0, 10, 15 min).
    - Cálculo reativo em tempo real: *"Esta configuração gerará 4 consultas de 50 min com 10 min de pausa."*
-   - Feedback e confirmações integrados ao [`FeedbackModal.tsx`](file:///c:/Users/Proati/Desktop/Guilherme/active-age/3-Semestre/frontend-react/src/components/common/FeedbackModal.tsx).
+   - Feedback e confirmações integrados ao [`FeedbackModal.tsx`](../../frontend-react/src/components/common/FeedbackModal.tsx).
 
 ---
 

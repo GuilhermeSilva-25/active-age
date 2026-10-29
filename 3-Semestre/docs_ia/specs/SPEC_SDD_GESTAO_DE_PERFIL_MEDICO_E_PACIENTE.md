@@ -4,8 +4,9 @@
 > **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica  
 > **Módulo:** Perfil do Usuário, Identidade Visual (Avatar) e Dados de Atendimento / Cuidador  
 > **Casos de Uso Relacionados:** UC18 (Manter Perfil de Usuário) — Requisito Funcional: RF014 (Reflete em UC08, UC09 na Vitrine de Especialistas)  
+> **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.336/2023 (Publicidade Médica e Bio), Resolução CFM nº 2.314/2022, Lei Geral de Proteção de Dados (LGPD nº 13.709/2018)
 > **Data:** 28 de Outubro de 2026  
-> **Status:** CONCLUÍDA E HOMOLOGADA ✅  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
 > **Metodologia:** Spec-Driven Development (SDD)
 
 ---

@@ -6,7 +6,7 @@
 > **Casos de Uso Relacionados:** UC08 (Buscar Médico Geriatra: Pesquisa inteligente de profissionais ativos e validados) — Requisitos Funcionais: RF005, RF014 | Regras de Negócio: RN004  
 > **Normas de Referência Ética & Regulatória:** Resolução CFM nº 2.336/2023 (Publicidade Médica e Busca Neutra), Resolução CFM nº 2.314/2022 (Telemedicina), Lei Geral de Proteção de Dados (LGPD nº 13.709/2018)  
 > **Data:** 28 de Outubro de 2026  
-> **Status:** CONCLUÍDA E HOMOLOGADA ✅  
+> **Status:** CONCLUÍDA E HOMOLOGADA EM PRODUÇÃO ✅  
 > **Metodologia:** Spec-Driven Development (SDD)
 
 ---
