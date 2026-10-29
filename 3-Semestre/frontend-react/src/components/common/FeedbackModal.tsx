@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
+import { CheckCircle2, AlertCircle, AlertTriangle, Info, X, Loader2 } from 'lucide-react';
 
 export type FeedbackModalType = 'success' | 'error' | 'warning' | 'info';
 
@@ -13,6 +13,7 @@ export interface FeedbackModalProps {
   onConfirm: () => void;
   onCancel?: () => void;
   showCancelButton?: boolean;
+  isLoading?: boolean;
 }
 
 export const FeedbackModal: React.FC<FeedbackModalProps> = ({
@@ -25,8 +26,14 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   onConfirm,
   onCancel,
   showCancelButton = false,
+  isLoading = false,
 }) => {
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
+
+  const isBusy = isLoading || 
+    confirmText?.toLowerCase().includes('excluindo') || 
+    confirmText?.toLowerCase().includes('salvando') || 
+    confirmText?.toLowerCase().includes('carregando');
 
   useEffect(() => {
     if (isOpen) {
@@ -76,7 +83,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-labelledby="feedback-modal-title"
@@ -87,9 +94,10 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         {showCancelButton && onCancel && (
           <button
             type="button"
+            disabled={isBusy}
             onClick={onCancel}
             aria-label="Fechar modal"
-            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-brown-dark rounded-full hover:bg-gray-100 transition-colors focus:ring-2 focus:ring-brand-orange outline-none"
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-brown-dark rounded-full hover:bg-gray-100 transition-colors focus:ring-2 focus:ring-brand-orange outline-none disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <X className="w-5 h-5" />
           </button>
@@ -125,8 +133,9 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           {showCancelButton && onCancel && (
             <button
               type="button"
+              disabled={isBusy}
               onClick={onCancel}
-              className="w-full sm:w-auto flex-1 min-h-[50px] px-6 py-3 rounded-xl border-2 border-brand-pot text-brown-dark font-bold hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 outline-none transition-all shadow-sm"
+              className="w-full sm:w-auto flex-1 min-h-[50px] px-6 py-3 rounded-xl border-2 border-brand-pot text-brown-dark font-bold hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 outline-none transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {cancelText}
             </button>
@@ -135,10 +144,14 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           <button
             ref={confirmButtonRef}
             type="button"
+            disabled={isBusy}
             onClick={onConfirm}
-            className={`w-full sm:w-auto flex-1 min-h-[50px] px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-lg focus:ring-4 focus:ring-orange-200 outline-none transition-all transform hover:-translate-y-0.5 ${typeConfig.btnClass}`}
+            className={`w-full sm:w-auto flex-1 min-h-[50px] px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-lg focus:ring-4 focus:ring-orange-200 outline-none transition-all transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none ${typeConfig.btnClass}`}
           >
-            {confirmText}
+            {isBusy && (
+              <Loader2 className="w-5 h-5 animate-spin shrink-0 text-white" />
+            )}
+            <span>{confirmText}</span>
           </button>
         </div>
       </div>

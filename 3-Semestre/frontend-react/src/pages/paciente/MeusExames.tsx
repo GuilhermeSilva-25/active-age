@@ -426,6 +426,7 @@ export function MeusExames() {
                     confirmText={isDeleting ? 'Excluindo...' : 'Sim, Excluir'}
                     cancelText="Cancelar"
                     showCancelButton={true}
+                    isLoading={isDeleting}
                     onConfirm={handleConfirmDelete}
                     onCancel={() => setExamToDelete(null)}
                 />

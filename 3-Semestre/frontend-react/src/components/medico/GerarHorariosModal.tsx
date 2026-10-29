@@ -163,7 +163,7 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
             <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-brand-pot/40 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Cabeçalho */}
                 <div className="bg-brand-ice/80 px-6 py-5 border-b border-brand-pot/30 flex items-center justify-between">

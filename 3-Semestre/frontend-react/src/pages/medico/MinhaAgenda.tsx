@@ -526,6 +526,7 @@ export const MinhaAgenda: React.FC = () => {
                     confirmText={actionLoading ? 'Excluindo...' : 'Sim, Excluir Horário'}
                     cancelText="Cancelar"
                     showCancelButton={true}
+                    isLoading={actionLoading}
                     onConfirm={handleDeleteSlot}
                     onCancel={() => setDeleteTargetId(null)}
                 />
