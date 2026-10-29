@@ -31,6 +31,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-10** | **Agendamento Concorrente de Teleconsulta pelo Paciente (Reserva Atômica e Cancelamento Ético)** | UC09 (RF006, RF007, RN001, RN002) | **Concluída / Live ✅** | [SPEC_SDD_UC09_AGENDAR_TELECONSULTA.md](./SPEC_SDD_UC09_AGENDAR_TELECONSULTA.md) |
 | **SPEC-11B** | **Médico Teste, Automação de Agenda Bi-Diária e Expansão de Médicos Homenageados** | UC01, UC08, UC09, UC10 | **Concluída / Live ✅** | [SPEC_SDD_SEMEADOR_MEDICO_TESTE_E_AUTOMACOES.md](./SPEC_SDD_SEMEADOR_MEDICO_TESTE_E_AUTOMACOES.md) |
 | **SPEC-11C** | **Rastreabilidade de Consultas em Trilha de Auditoria e Painel de Métricas do Admin** | UC04, UC05, UC09 | **Concluída / Live ✅** | [SPEC_SDD_METRICAS_CONSULTAS_E_AUDITORIA_ADMIN.md](./SPEC_SDD_METRICAS_CONSULTAS_E_AUDITORIA_ADMIN.md) |
+| **SPEC-11D** | **Padronização das Fotos dos Médicos Homenageados com Retratos Históricos Reais** | UC08, UC09 | **Concluída / Live ✅** | [SPEC_SDD_FOTOS_REAIS_MEDICOS_HOMENAGEADOS.md](./SPEC_SDD_FOTOS_REAIS_MEDICOS_HOMENAGEADOS.md) |
 | **SPEC-12** | **Cockpit de Teleconsulta Integrado, Prontuário Ético Imutável, Exames e Prescrições Digitais** | UC12, UC13, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md](./SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md) |
 
 ---

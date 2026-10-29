@@ -195,13 +195,19 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                             <img
                                 src={doctor.avatarUrl}
                                 alt={doctor.fullName}
+                                referrerPolicy="no-referrer"
+                                crossOrigin="anonymous"
+                                onError={(e) => {
+                                    (e.currentTarget as HTMLElement).style.display = 'none';
+                                    const fallback = e.currentTarget.parentElement?.querySelector('.modal-avatar-fallback');
+                                    if (fallback) fallback.classList.remove('hidden');
+                                }}
                                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-brand-orange shadow-sm shrink-0"
                             />
-                        ) : (
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-orange-100 border-2 border-brand-orange flex items-center justify-center text-brand-orange shrink-0">
-                                <User className="w-7 h-7" />
-                            </div>
-                        )}
+                        ) : null}
+                        <div className={`modal-avatar-fallback w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-orange-100 border-2 border-brand-orange items-center justify-center text-brand-orange shrink-0 ${doctor.avatarUrl ? 'hidden' : 'flex'}`}>
+                            <User className="w-7 h-7" />
+                        </div>
                         <div>
                             <span className="text-[11px] font-black uppercase tracking-wider text-brand-orange">
                                 Agendamento de Teleconsulta Geriátrica
