@@ -66,11 +66,11 @@ gantt
     dateFormat  YYYY-MM-DD
     section Entregue
     Release v0.1.0 (Fundação & Auth)        :done, r1, 2026-10-15, 2026-10-21
+    Release v0.2.0 (Dashboards & Admin)     :done, r2, 2026-10-22, 2026-10-28
+    Release v0.3.0 (Vitrine & Agendamento)  :done, r3, 2026-10-28, 2026-10-29
     section Próximas Sprints
-    Release v0.2.0 (Dashboards & Admin)     :active, r2, 2026-10-22, 2026-11-04
-    Release v0.3.0 (Vitrine & Agendamento)  :r3, 2026-11-05, 2026-11-18
-    Release v0.4.0 (Prontuário & Documentos):r4, 2026-11-19, 2026-12-02
-    Release v0.5.0 (Teleconsulta & Pagamento):r5, 2026-12-03, 2026-12-16
+    Release v0.4.0 (Prontuário & Documentos):active, r4, 2026-10-30, 2026-11-12
+    Release v0.5.0 (Teleconsulta & Pagamento):r5, 2026-11-13, 2026-11-26
 ```
 
 ---
@@ -92,6 +92,8 @@ gantt
   2. [x] **Vitrine de Busca Inteligente e Catálogo Neutro de Médicos Geriatras (SPEC-07 / UC08 / RF005 / RN004) — [CONCLUÍDO ✅]:** Busca textual inteligente por nome/RQE/bio, filtros clínicos por foco geriátrico (AGA, Demências, Quedas, Polifarmácia), filtro por Estado (UF do CRM), ordenação neutra e transparente (Res. CFM nº 2.336/2023), cards informativos com foto oficial, RQE, duração e honorários, modal de detalhes com currículo Lattes e integração direta ao Dashboard do Paciente.
   3. [x] **Gestão da Agenda Médica & Grade de Disponibilidade (SPEC-09 / UC10 / RF006, RF007, RN001, RN008) — [CONCLUÍDO ✅]:** Entidade `DoctorScheduleSlot` no MongoDB Atlas com índice único anti-colisão, geração em lote de turnos com pausas técnicas (CFM/SBGG 50 min), slots avulsos, alternância de bloqueio e trava para médicos sem homologação de CRM.
   4. [x] **Agendamento Concorrente de Teleconsulta sem Double-Booking (SPEC-10 / UC09 / RN001, RN002) — [CONCLUÍDO ✅]:** Paciente seleciona slot livre na vitrine, reserva atômica na coleção `appointments` com congelamento de status `OCUPADO`, página de Minhas Consultas (`/paciente/consultas`) e política de cancelamento ético com antecedência de 24h com reciclagem do slot para `LIVRE`.
+  5. [x] **Médico Teste com Automação Bi-Diária de Horários e Expansão para 17 Pioneiros (SPEC-11B / UC01, UC08, UC09, UC10) — [CONCLUÍDO ✅]:** Médico padrão (`medico@teste.com` / `123456`) com geração automatizada de 14 horários livres hoje e amanhã via Spring `@Scheduled`, prevenção de duplicatas, higienização de slots expirados e catálogo ampliado com 17 especialistas para demonstração.
+  6. [x] **Rastreabilidade de Teleconsultas em Trilha de Auditoria & Métricas Admin (SPEC-11C / UC04, UC05, UC09) — [CONCLUÍDO ✅]:** Registro de eventos `APPOINTMENT_CREATED` e `APPOINTMENT_CANCELLED` na coleção imutável `audit_logs`, endpoint seguro `GET /api/admin/stats` e dashboard administrativo dinâmico com volumetria de teleconsultas em conformidade com CFM e LGPD.
 
 ---
 

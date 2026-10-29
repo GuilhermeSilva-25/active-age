@@ -22,7 +22,7 @@ O Back-End central (Spring Boot) segue o padrão arquitetural em camadas **MVC +
 ## 3. Arquitetura de Microsserviços (Integrações Externas)
 
 Para proteger o sistema principal (Monolito Core) contra *timeouts* e sobrecarga de processamento, integrações pesadas ou de terceiros serão isoladas:
-* **Módulo de Vídeo (Telemedicina):** A comunicação de áudio/vídeo pesada **não** passa pelo servidor do Railway. O Back-End apenas se comunica com uma API externa via Microsserviço/Adapter para gerar e autenticar os links das salas virtuais exclusivas.
+* **Módulo de Vídeo (Telemedicina):** A comunicação de áudio/vídeo pesada **não** passa pelo servidor do Render. O Back-End apenas se comunica com uma API externa via Microsserviço/Adapter para gerar e autenticar os links das salas virtuais exclusivas.
 * **Módulo de Geração de PDF e Assinatura:** O processamento pesado de transformar dados HTML/JSON em arquivos PDF (Receitas e Atestados) pode ser isolado para não bloquear o *Thread Pool* do Spring.
 * **Gateway de Pagamento:** Processamento financeiro (PCI-Compliance) delegado a *webhooks* e APIs de gateways consolidados.
 

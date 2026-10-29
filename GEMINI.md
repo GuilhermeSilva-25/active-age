@@ -76,8 +76,16 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Micro Tarefa 2.3 & UC05 [CONCLUÍDAS]: Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`) com moderação de status, trava de auto-bloqueio, bloqueio perimetral de login para contas inativas, revogação de sessão ativa em tempo real e testes unitários no `AuthServiceTest`.
   - Micro Tarefa 2.4 & 2.4B [CONCLUÍDAS]: Dashboards segregados de Paciente (`DashboardPaciente.tsx` com acessibilidade WCAG 2.1 AA) e Médico (`DashboardMedico.tsx` com banner regulatório Res. CFM nº 2.314/2022, métricas de consultório e degustação SaaS de 15 dias), roteamento inteligente pós-login, Navbar reativa e padronização universal de spinners táteis de carregamento.
   - Semeador de Médicos Pioneiros (SPEC-05C) [CONCLUÍDA]: 5 médicos geriatras pioneiros homologados semeados no `DataInitializer.java` em homenagem aos grandes nomes da tecnologia (Ada Lovelace, Alan Turing, Grace Hopper, Margaret Hamilton e Tim Berners-Lee com senha de testes `ActiveAge2026!`).
-- **Release v0.3.0 (Sprint 3) — [PRÓXIMA ETAPA]:**
-  - Vitrine de Horários Livres, Gestão de Agenda Médica e Agendamento Concorrente sem Double-Booking (UC08, UC09, UC10 / RN001, RN002).
+- **Release v0.3.0 (Sprint 3) — [CONCLUÍDA / EM PRODUÇÃO]:**
+  - Módulo de Gestão de Perfil de Usuário com fotos, biografia clínica e dados do cuidador familiar (SPEC-06 / UC18).
+  - Vitrine e Busca Inteligente de Médicos Geriatras com filtros clínicos e ordenação neutra (Res. CFM nº 2.336/2023) (SPEC-07 / UC08).
+  - Submissão e Cofre Digital de Exames Prévios pelo Paciente com MongoDB GridFS (SPEC-08 / UC11).
+  - Gestão da Agenda Médica com turnos em lote e slots avulsos (SPEC-09 / UC10).
+  - Agendamento Concorrente de Teleconsulta com reserva atômica sem double-booking, painel de "Minhas Consultas" e política ética de cancelamento com mais de 24 horas e reciclagem de horários (SPEC-10 / UC09).
+  - Semeador de Médico de Teste (`medico@teste.com` / `123456`) com automação bi-diária de grade via Spring `@Scheduled` e catálogo ampliado com 17 médicos pioneiros da tecnologia homologados (SPEC-11B).
+  - Rastreabilidade de Teleconsultas na Trilha de Auditoria Imutável (`audit_logs`) e Painel de Métricas Operacionais com sigilo LGPD no Dashboard do Administrador (SPEC-11C / UC04, UC05, UC09).
+- **Release v0.4.0 (Sprint 4) — [PRÓXIMA ETAPA]:**
+  - Prontuário Ético Eletrônico Geriátrico Imutável, Visualização Médica de Exames Anexados pelo Idoso, Avaliação Geriátrica Ampla (AGA), Hipóteses CID-11 e Emissão de Documentos Digitais com Validador/Assinatura ICP-Brasil (UC13, UC14, UC15, UC16 / RN003).
 
 ---
 

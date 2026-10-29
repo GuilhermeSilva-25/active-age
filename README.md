@@ -27,6 +27,8 @@ Este projeto está sendo construído de forma iterativa ao longo de 6 semestres 
 
 O desenvolvimento a partir do 3º Semestre adota a metodologia **Spec-Driven Development (SDD)** e governança assistida por IA:
 - 📋 [Regras & Contexto Operacional do Agente (GEMINI.md)](./GEMINI.md)
+- 📑 [Catálogo de Especificações Técnicas SDD (SPEC-01 a SPEC-11C)](./3-Semestre/docs_ia/specs)
+- ⚖️ [Matriz de Conformidade Legal & Regulatória (CFM & LGPD)](./3-Semestre/docs_ia/MATRIZ_CONFORMIDADE_LEGAL_E_REGULATORIA_CFM_LGPD.md)
 - 💻 [Guia de Desenvolvimento Multimáquinas & Onboarding](./3-Semestre/docs_ia/GUIA_DESENVOLVIMENTO_MULTIMAQUINAS.md)
 - 🚀 [Plano de Release & Roadmap de Sprints](./3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md)
 - 🧪 [Roteiro de Testes BDD (Modelo Fatec)](./3-Semestre/docs_ia/ROTEIRO_DE_TESTES_BDD_ACTIVE_AGE.md)

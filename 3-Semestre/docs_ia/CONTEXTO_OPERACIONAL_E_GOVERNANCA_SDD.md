@@ -132,10 +132,10 @@ Uma micro tarefa só é considerada **CONCLUÍDA** quando todos os itens abaixo 
 |---|---|---|---|
 | **M1: Fundação & Acesso** | UC01, UC02 | Cadastro de Paciente e Médico, Login Seguro, Rate Limit, Logout | **Concluído e Live** ✅ |
 | **M2: Credenciamento, Moderação & Gestão de Perfil** | UC03, UC04, UC05, UC18 | Dossiê Médico Completo (4 Pilares), Fila de Auditoria do Admin (`audit_logs`), Gestão de Usuários e Gestão/Edição de Perfil & Avatar (RF014 / UC18) | **Concluído e Live** ✅ |
-| **M3: Vitrine & Agendamento** | UC08, UC09, UC10 | Vitrine de horários livres, busca inteligente e reserva de consultas sem double-booking | Especificação Pendente ⏳ |
-| **M4: Prontuário & Documentos** | UC11, UC13, UC14, UC15, UC16 | Upload de exames prévios, prontuário imutável e emissão/download de receitas (PDF) | Especificação Pendente ⏳ |
-| **M5: Teleconsulta & Finanças** | UC06, UC07, UC12, UC17 | Sala de teleconsulta segura, pagamento integrado de consulta e assinatura do médico | Especificação Pendente ⏳ |
-| **M6: Deploy Avançado** | N/A | Monitoramento, testes integrados de carga e automação final | Em Andamento 🚧 |
+| **M3: Vitrine & Agendamento** | UC08, UC09, UC10 | Vitrine neutra de especialistas (Res. CFM nº 2.336/2023), gestão de turnos médicos, agendamento concorrente atômico (sem double-booking) e cancelamento ético com mais de 24h | **Concluído e Live** ✅ |
+| **M4: Prontuário & Documentos** | UC11, UC13, UC14, UC15, UC16 | Submissão de exames prévios no cofre GridFS (UC11 - Concluído ✅), visualização médica de exames, prontuário imutável (AGA/CID-11) e emissão de documentos com ICP-Brasil | Próxima Sprint (Sprint 4) ⏳ |
+| **M5: Teleconsulta & Finanças** | UC06, UC07, UC12, UC17 | Sala de teleconsulta segura (WebRTC), pagamento integrado com split direto sem dicotomia e assinatura SaaS do médico | Backlog Sprint 5 ⏳ |
+| **M6: Governança & Auditoria Global** | UC04, UC05, UC09, UC10 | Trilha de auditoria indelével em `audit_logs`, métricas em tempo real no Dashboard Admin e automação de horários | **Concluído e Live** ✅ |
 
 ---
 *Documento aprovado e em vigor a partir de 21 de Outubro de 2026.*  

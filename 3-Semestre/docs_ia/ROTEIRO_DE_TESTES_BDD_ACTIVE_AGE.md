@@ -670,6 +670,42 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 
 ---
 
+## 11. Funcionalidade: Governança Administrativa, Trilha de Auditoria e Sincronização de Grade Médica (SPEC-11B / SPEC-11C)
+
+### História de Usuário (User Story)
+* **Como** um administrador do sistema (`ROLE_ADMIN`)
+* **Eu quero** monitorar a volumetria de teleconsultas da plataforma e inspecionar a trilha de auditoria indelével de agendamentos e cancelamentos
+* **Para que** a plataforma mantenha conformidade regulatória rigorosa com as normas do CFM e SBIS (NGS1), sem violar o sigilo médico de saúde (LGPD Art. 11)
+
+---
+
+### Critérios de Aceite em Formato BDD (Gherkin)
+
+#### Cenário 11.1: Registro Indelével de Agendamento na Trilha de Auditoria (CFM & SBIS NGS1)
+* **Dado** que o paciente idoso confirma uma consulta na plataforma
+* **Quando** o agendamento é salvo com sucesso
+* **Então** o sistema cria imediatamente um registro na coleção `audit_logs` com a ação `APPOINTMENT_CREATED` contendo data, hora, médico e paciente
+* **E** o log aparece com tag estilizada na listagem do painel de auditoria do administrador (`/admin/auditoria`).
+
+#### Cenário 11.2: Registro Indelével de Cancelamento Ético
+* **Dado** que o paciente cancela uma consulta com mais de 24 horas de antecedência
+* **Quando** a operação de cancelamento é concluída com sucesso
+* **Então** o sistema gera um registro de auditoria com a ação `APPOINTMENT_CANCELLED` comprovando a desocupação do horário e liberação na agenda médica.
+
+#### Cenário 11.3: Visualização Segura de Indicadores no Dashboard do Administrador (LGPD Art. 11)
+* **Dado** que o administrador autenticado acessa o `/admin/dashboard`
+* **Quando** a página consulta o endpoint seguro `GET /api/admin/stats`
+* **Então** exibe os contadores agregados de consultas agendadas, médicos homologados e horários livres disponíveis
+* **E** não exibe nenhuma informação clínica confidencial (sintomas, diagnósticos ou prontuário).
+
+#### Cenário 11.4: Automação Bi-Diária da Grade do Médico Teste (SPEC-11B)
+* **Dado** que a rotina agendada Spring `@Scheduled` executa bi-diariamente
+* **Quando** verifica a disponibilidade do médico padrão (`medico@teste.com`)
+* **Então** assegura 14 horários livres para o dia atual e o próximo dia
+* **E** remove horários livres anteriores sem tocar em consultas já confirmadas.
+
+---
+
 ### Referências Bibliográficas
 
 * **PRESSMAN, Roger S.; MAXIM, Bruce R.** *Engenharia de Software: Uma Abordagem Profissional*. 9. ed. Porto Alegre: McGraw-Hill Brasil, 2021.
