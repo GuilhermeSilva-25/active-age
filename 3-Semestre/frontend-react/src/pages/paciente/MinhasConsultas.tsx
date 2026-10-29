@@ -360,9 +360,19 @@ export const MinhasConsultas: React.FC = () => {
 
                                 {/* Ações do Card */}
                                 <div className="pt-3 border-t border-brand-pot/20 flex flex-col sm:flex-row items-center justify-between gap-3">
-                                    <div className="flex items-center gap-2 text-xs text-brown-light">
-                                        <Video className="w-4 h-4 text-blue-600" />
-                                        <span>Link seguro gerado para sala virtual (disponível próximo ao horário)</span>
+                                    <div className="flex items-center gap-2 text-xs">
+                                        {app.status === 'AGENDADA' ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => navigate(`/teleconsulta/${app.id}`)}
+                                                className="px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer min-h-[44px]"
+                                            >
+                                                <Video className="w-4 h-4" />
+                                                <span>Entrar na Sala Virtual</span>
+                                            </button>
+                                        ) : (
+                                            <span className="text-brown-light italic text-xs">Atendimento finalizado</span>
+                                        )}
                                     </div>
 
                                     {app.status === 'AGENDADA' && (

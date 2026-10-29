@@ -84,8 +84,17 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Agendamento Concorrente de Teleconsulta com reserva atômica sem double-booking, painel de "Minhas Consultas" e política ética de cancelamento com mais de 24 horas e reciclagem de horários (SPEC-10 / UC09).
   - Semeador de Médico de Teste (`medico@teste.com` / `123456`) com automação bi-diária de grade via Spring `@Scheduled` e catálogo ampliado com 17 médicos pioneiros da tecnologia homologados (SPEC-11B).
   - Rastreabilidade de Teleconsultas na Trilha de Auditoria Imutável (`audit_logs`) e Painel de Métricas Operacionais com sigilo LGPD no Dashboard do Administrador (SPEC-11C / UC04, UC05, UC09).
-- **Release v0.4.0 (Sprint 4) — [PRÓXIMA ETAPA]:**
-  - Prontuário Ético Eletrônico Geriátrico Imutável, Visualização Médica de Exames Anexados pelo Idoso, Avaliação Geriátrica Ampla (AGA), Hipóteses CID-11 e Emissão de Documentos Digitais com Validador/Assinatura ICP-Brasil (UC13, UC14, UC15, UC16 / RN003).
+- **Release v0.4.0 (Conclusão do 3º Semestre) — [CONCLUÍDA / EM PRODUÇÃO]:**
+  - Cockpit Integrado de Teleconsulta com experiência responsiva computador/mobile (UC12-Demo).
+  - Prontuário Ético Eletrônico Geriátrico Imutável (Anamnese, AGA, CID-11, Conduta, Hash SHA-256 e trava irrevogável de integridade) (UC14 / RN003).
+  - Visualização Médica dos Exames e Laudos do Idoso dentro da chamada virtual (UC13).
+  - Módulo de Emissão de Receitas Médicas Digitais, Pedidos de Exames e Atestados com código seguro ICP-Brasil (UC15).
+  - Painel do Paciente para Consulta e Impressão Timbrada de Documentos Oficiais (UC16).
+  - Validador Público de Prescrições e Atestados perante o CRM e ICP-Brasil (`/validar-documento`).
+- **4º Semestre — [PRÓXIMA ETAPA]:**
+  - Microsserviços de Teleconsulta Real (WebRTC Nativo), Gateway de Pagamento com Split Direto e Mensageria Assíncrona para Notificações e Alertas.
+- **5º Semestre — [FUTURO]:**
+  - Aplicativo Mobile Multiplataforma (React Native) e Ingestão de Wearables de Saúde.
 
 ---
 

@@ -443,7 +443,11 @@ export function DashboardMedico() {
                                     handleFeatureNotice('Sala Bloqueada', 'A teleconsulta exige homologação formal do CRM antes de iniciar qualquer chamada.');
                                     return;
                                 }
-                                handleFeatureNotice('Sala de Teleconsulta', 'A sala de videoconferência com link exclusivo e criptografado estará disponível em breve!');
+                                if (todayAppointments.length > 0) {
+                                    navigate(`/teleconsulta/${todayAppointments[0].id}`);
+                                } else {
+                                    handleFeatureNotice('Sala de Teleconsulta', 'Você não possui consultas ativas no momento. As consultas do dia aparecem na tabela abaixo.');
+                                }
                             }}
                             role="button"
                             tabIndex={0}
@@ -472,7 +476,7 @@ export function DashboardMedico() {
                                 </p>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-blue-600">
-                                <span>Em breve</span>
+                                <span>Acessar Sala Virtual →</span>
                                 <span>Abrir Sala →</span>
                             </div>
                         </div>
@@ -513,7 +517,7 @@ export function DashboardMedico() {
                                 </p>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-emerald-700">
-                                <span>Em breve</span>
+                                <span>Acessar Sala Virtual →</span>
                                 <span>Acessar Prontuários →</span>
                             </div>
                         </div>
@@ -560,7 +564,7 @@ export function DashboardMedico() {
                                     </div>
                                     <button
                                         type="button"
-                                        onClick={() => handleFeatureNotice('Sala de Teleconsulta', 'A sala com conexão segura de videoconferência estará disponível no horário agendado.')}
+                                        onClick={() => navigate(`/teleconsulta/${app.id}`)}
                                         className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
                                     >
                                         Abrir Sala Virtual →

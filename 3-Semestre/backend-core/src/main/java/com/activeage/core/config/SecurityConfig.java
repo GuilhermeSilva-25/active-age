@@ -46,6 +46,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/auth/**", "/api/env").permitAll()
                         .requestMatchers("/api/doctors/**").permitAll()
+                        .requestMatchers("/api/medical-documents/validate/**").permitAll()
                         .requestMatchers("/api/users/profile/avatar/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/error").permitAll()

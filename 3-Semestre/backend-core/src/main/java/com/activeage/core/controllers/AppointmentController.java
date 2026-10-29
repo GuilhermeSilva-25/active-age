@@ -84,6 +84,16 @@ public class AppointmentController {
         return ResponseEntity.ok(list);
     }
 
+    /**
+     * Recupera os detalhes de uma teleconsulta para acesso à sala virtual.
+     */
+    @GetMapping("/api/appointments/{id}")
+    public ResponseEntity<AppointmentResponse> getAppointmentById(@PathVariable String id) {
+        String email = getAuthenticatedEmail();
+        AppointmentResponse response = appointmentService.getAppointmentById(email, id);
+        return ResponseEntity.ok(response);
+    }
+
     private String getAuthenticatedEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();

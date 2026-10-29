@@ -97,24 +97,29 @@ gantt
 
 ---
 
-#### 📅 Sprint 4 — Release v0.4.0: Prontuário Ético Eletrônico e Documentos Digitais (UC11, UC13, UC14, UC15, UC16)
-* **Objetivo:** Implementar o núcleo clínico da plataforma com conformidade legal do CFM e cofre digital vitalício de saúde.
-* **Entregas Previstas:**
+#### 📅 Sprint 4 — Release v0.4.0: Cockpit Integrado de Teleconsulta, Prontuário Ético Imutável, Exames e Prescrições Digitais (SPEC-12 / UC12, UC13, UC14, UC15, UC16) — [CONCLUÍDA ✅]
+* **Objetivo:** Concluir com chave de ouro as entregas do **3º Semestre**, implementando a sala de teleconsulta demonstrativa com cockpit clínico integrado para o médico (visualização de exames, prontuário com trava de imutabilidade e emissão de receitas/atestados) e área de documentos para o idoso.
+* **Entregas Realizadas:**
   1. [x] **Submissão e Gestão de Exames Prévios pelo Paciente no Cofre de Saúde (SPEC-08 / UC11 / RF008 / RN007) — [CONCLUÍDO ✅]:** Upload de laudos laboratoriais e exames de imagem em PDF/JPG/PNG com persistência em nuvem via MongoDB GridFS, categorização clínica, data do exame, anotações, visualização inline e exclusão segura.
-  2. Médico visualiza histórico de exames anexados pelo paciente durante o atendimento (UC13).
-  3. Registro de Prontuário Eletrônico (Anamnese, Diagnóstico e Conduta) com trava de **imutabilidade** após finalizado (UC14 / RN003).
-  4. Emissão de Receitas, Pedidos de Exames e Atestados em formato PDF assinado (UC15).
-  5. Download de documentos médicos gerados diretamente pelo painel do paciente (UC16).
+  2. [x] **Cockpit Integrado de Teleconsulta Responsivo (SPEC-12 / UC12-Demo) — [CONCLUÍDO ✅]:** Sala de atendimento em `/teleconsulta/:appointmentId` com split-screen no computador e layout vertical adaptado no celular, controles de microfone, câmera, timer e encerramento.
+  3. [x] **Visualização Médica de Exames do Idoso na Sala Virtual (SPEC-12 / UC13) — [CONCLUÍDO ✅]:** Aba do cockpit permitindo ao médico examinar laudos e arquivos anexados pelo paciente no GridFS em tempo real sem sair da chamada.
+  4. [x] **Prontuário Ético Eletrônico com Avaliação Geriátrica Ampla e Imutabilidade (SPEC-12 / UC14 / RN003) — [CONCLUÍDO ✅]:** Anamnese clínica, AGA (estado cognitivo, risco de quedas, independência funcional, suporte familiar), CID-11 e conduta com assinatura digital, geração de hash SHA-256 e bloqueio definitivo contra alterações pós-finalização.
+  5. [x] **Emissão e Impressão Timbrada de Receitas e Atestados ICP-Brasil (SPEC-12 / UC15 / RN006) — [CONCLUÍDO ✅]:** Emissão médica de Receitas, Pedidos de Exames e Atestados com código de validação único `AA-2026-XXXXXX` e modal oficial para impressão e exportação em PDF.
+  6. [x] **Painel de Documentos do Paciente e Validador Público (SPEC-12 / UC16) — [CONCLUÍDO ✅]:** Página `/paciente/documentos` para o idoso e cuidador acessarem suas receitas e página pública `/validar-documento` para farmácias e laboratórios conferirem a autenticidade documental perante o CRM.
 
 ---
 
-#### 📅 Sprint 5 — Release v0.5.0: Teleconsulta Integrada e Fluxo Financeiro (UC06, UC07, UC12, UC17)
-* **Objetivo:** Integrar a sala de videoconferência nativa para a consulta médica e acoplar a gestão de pagamentos por consulta e assinatura recorrente do médico.
-* **Entregas Previstas:**
-  1. Sala de teleconsulta integrada no navegador com áudio/vídeo seguro e link exclusivo (UC12).
-  2. Processamento de pagamento da consulta no momento da confirmação do agendamento (UC06 / RN005).
-  3. Gestão de cobrança de mensalidade SaaS para manutenção do consultório virtual do médico (UC07 / RN004).
-  4. Módulo de avaliação pós-consulta e feedback do paciente (UC17).
+#### 📅 4º Semestre — Arquitetura de Microsserviços e Tempo Real (UC06, UC07, UC12, UC17) — [PRÓXIMA ETAPA]
+* **Objetivo:** Migração e implementação de microsserviços distribuídos:
+  1. Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (UC12).
+  2. Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN sem retenção de honorários (UC06 / RN005).
+  3. Microsserviço Assíncrono de Mensageria (RabbitMQ / Kafka) para notificações, SMS e recuperação de senha.
+  4. Módulo de avaliação pós-consulta e feedback neutro do paciente (UC17).
+
+---
+
+#### 📅 5º Semestre — Aplicativo Mobile Multiplataforma e Saúde 4.0 — [FUTURO]
+* **Objetivo:** Desenvolvimento do Aplicativo Mobile Nativo/Multiplataforma (React Native) para idosos e cuidadores, com ingestão de dados de wearables de saúde (smartwatches, sensores de queda e glicemia contínua).
 
 ---
 

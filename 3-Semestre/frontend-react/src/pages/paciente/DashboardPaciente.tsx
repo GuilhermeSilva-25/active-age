@@ -4,7 +4,6 @@ import {
     CalendarPlus,
     Calendar,
     FileHeart,
-    HelpCircle,
     User,
     HeartPulse,
     Clock,
@@ -12,7 +11,9 @@ import {
     PhoneCall,
     LogOut,
     CheckCircle2,
-    Loader2
+    Loader2,
+    Video,
+    FileSignature
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { Footer } from '../../components/home/Footer';
@@ -329,32 +330,32 @@ export function DashboardPaciente() {
                             </div>
                         </div>
 
-                        {/* Card 4: Ajuda & Conexão com Cuidador */}
+                        {/* Card 4: Minhas Receitas & Atestados Digitais */}
                         <div
-                            onClick={() => handleFeatureNotice('Ajuda e Cuidador Familiar', 'Nossos canais de suporte contam com atendimento humanizado para esclarecer dúvidas sobre áudio, vídeo e agendamentos.')}
+                            onClick={() => navigate('/paciente/documentos')}
                             role="button"
                             tabIndex={0}
                             className="group p-4 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl bg-white border-2 border-brand-pot/60 hover:border-brand-orange shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
                         >
                             <div className="flex items-start gap-3 sm:gap-4">
                                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0 group-hover:scale-105 transition-transform">
-                                    <HelpCircle className="w-6 h-6 sm:w-8 sm:h-8" />
+                                    <FileSignature className="w-6 h-6 sm:w-8 sm:h-8" />
                                 </div>
                                 <div>
                                     <h4 className="text-lg sm:text-xl font-black text-brown-dark group-hover:text-brand-orange transition-colors">
-                                        Suporte & Cuidador Familiar
+                                        Minhas Receitas & Atestados
                                     </h4>
                                     <p className="text-brown-light text-xs sm:text-base mt-1 sm:mt-1.5 leading-snug">
-                                        Orientações passo a passo para conectar seu cuidador, testar câmera e microfone e tirar dúvidas frequentes.
+                                        Acesse suas prescrições médicas, pedidos de exames e atestados com código de verificação ICP-Brasil para impressão.
                                     </p>
                                 </div>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between">
-                                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700">
-                                    Acessibilidade Geriátrica
+                                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800">
+                                    Prescrição Digital
                                 </span>
                                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-brown-dark group-hover:text-brand-orange group-hover:translate-x-1 transition-transform">
-                                    Obter Ajuda →
+                                    Ver Documentos →
                                 </span>
                             </div>
                         </div>
@@ -412,13 +413,23 @@ export function DashboardPaciente() {
                                 </div>
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={() => navigate('/paciente/consultas')}
-                                className="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 self-start md:self-auto cursor-pointer min-h-[44px]"
-                            >
-                                <span>Ver Detalhes da Consulta →</span>
-                            </button>
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 self-start md:self-auto">
+                                <button
+                                    type="button"
+                                    onClick={() => navigate(`/teleconsulta/${nextAppointment.id}`)}
+                                    className="px-5 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
+                                >
+                                    <Video className="w-4 h-4" />
+                                    <span>Entrar na Sala Virtual</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/paciente/consultas')}
+                                    className="px-4 py-2.5 rounded-xl border border-emerald-300 text-emerald-800 hover:bg-emerald-100 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
+                                >
+                                    <span>Ver Detalhes →</span>
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         /* Empty State Acolhedor */

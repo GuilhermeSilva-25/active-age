@@ -245,6 +245,27 @@ public class AppointmentService {
         return user;
     }
 
+    /**
+     * Recupera os dados detalhados de uma teleconsulta garantindo autorização do paciente, médico ou admin.
+     */
+    public AppointmentResponse getAppointmentById(String userEmail, String appointmentId) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado: " + userEmail));
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada: " + appointmentId));
+
+        boolean isPatient = appointment.getPatientId() != null && appointment.getPatientId().equals(user.getId());
+        boolean isDoctor = appointment.getDoctorId() != null && appointment.getDoctorId().equals(user.getId());
+        boolean isAdmin = user.getRole() == Role.ROLE_ADMIN;
+
+        if (!isPatient && !isDoctor && !isAdmin) {
+            throw new SecurityException("Acesso negado aos dados desta consulta.");
+        }
+
+        return mapToResponse(appointment);
+    }
+
     private AppointmentResponse mapToResponse(Appointment appointment) {
         boolean canCancel = appointment.getStatus() == AppointmentStatus.AGENDADA &&
                 appointment.getStartDateTime().isAfter(LocalDateTime.now().plusHours(24));

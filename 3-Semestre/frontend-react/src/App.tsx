@@ -28,6 +28,9 @@ import { PerfilPaciente } from './pages/paciente/PerfilPaciente';
 import { BuscaMedicos } from './pages/paciente/BuscaMedicos';
 import { MeusExames } from './pages/paciente/MeusExames';
 import { MinhasConsultas } from './pages/paciente/MinhasConsultas';
+import { MeusDocumentos } from './pages/paciente/MeusDocumentos';
+import { TeleconsultaRoom } from './pages/teleconsulta/TeleconsultaRoom';
+import { ValidarDocumento } from './pages/public/ValidarDocumento';
 import { ScrollToTop } from './components/common/ScrollToTop';
 
 function App() {
@@ -42,6 +45,8 @@ function App() {
                     <Route path="/servicos" element={<Servicos />} />
                     <Route path="/termos" element={<TermosUso />} />
                     <Route path="/privacidade" element={<Privacidade />} />
+                    <Route path="/validar-documento" element={<ValidarDocumento />} />
+                    <Route path="/validar-documento/:code" element={<ValidarDocumento />} />
                 </Route>
 
                 {/* === Grupo 2: Autenticação (Usa o AuthLayout com tela dividida) === */}
@@ -60,6 +65,7 @@ function App() {
                     <Route path="/paciente/busca-medicos" element={<BuscaMedicos />} />
                     <Route path="/paciente/exames" element={<MeusExames />} />
                     <Route path="/paciente/consultas" element={<MinhasConsultas />} />
+                    <Route path="/paciente/documentos" element={<MeusDocumentos />} />
                 </Route>
 
                 {/* === Grupo 4: Área Médica (Blindada por RBAC: ROLE_MEDICO) === */}
@@ -70,7 +76,12 @@ function App() {
                     <Route path="/medico/agenda" element={<MinhaAgenda />} />
                 </Route>
 
-                {/* === Grupo 5: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}
+                {/* === Grupo 5: Sala de Teleconsulta Integrada (Autenticado: Paciente ou Médico) === */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/teleconsulta/:appointmentId" element={<TeleconsultaRoom />} />
+                </Route>
+
+                {/* === Grupo 6: Painel Administrativo (Blindado por RBAC: ROLE_ADMIN) === */}
                 <Route element={<ProtectedRoute requiredRole="ROLE_ADMIN" />}>
                     <Route element={<AdminLayout />}>
                         <Route path="/admin" element={<AdminDashboard />} />
