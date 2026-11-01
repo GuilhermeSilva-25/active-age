@@ -48,6 +48,7 @@ public class DoctorScheduleAutomationService {
 
     public static final String TEST_DOCTOR_EMAIL = "medico@teste.com";
     public static final String TEST_PATIENT_EMAIL = "paciente@teste.com";
+    public static final String TEST_PATIENT_AVATAR_URL = "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&auto=format&fit=crop&q=80";
 
     // Grade ampla matutina, vespertina e noturna para testes a qualquer hora do dia
     private static final int[] APPOINTMENT_HOURS = {8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
@@ -282,26 +283,36 @@ public class DoctorScheduleAutomationService {
     }
 
     /**
-     * Semeia o paciente de teste padrão se ainda não existir.
+     * Semeia o paciente de teste padrão se ainda não existir, ou atualiza a foto de perfil se estiver ausente.
      */
     private User ensureTestPatient() {
-        return userRepository.findByEmail(TEST_PATIENT_EMAIL).orElseGet(() -> {
-            User p = new User();
-            p.setFullName("Dona Maria de Lourdes Silva (Paciente Teste)");
-            p.setEmail(TEST_PATIENT_EMAIL);
-            p.setPassword(passwordEncoder.encode("123456"));
-            p.setCpf("123.456.789-00");
-            p.setPhone("(11) 98765-4321");
-            p.setBirthDate("1948-03-12");
-            p.setRole(Role.ROLE_PACIENTE);
-            p.setTermsAccepted(true);
-            p.setActive(true);
-            p.setCreatedAt(LocalDateTime.now());
+        Optional<User> patientOpt = userRepository.findByEmail(TEST_PATIENT_EMAIL);
+        if (patientOpt.isPresent()) {
+            User p = patientOpt.get();
+            if (p.getAvatarUrl() == null || p.getAvatarUrl().isBlank()) {
+                p.setAvatarUrl(TEST_PATIENT_AVATAR_URL);
+                userRepository.save(p);
+                logger.info(">>> [AUTOMAÇÃO] Foto de perfil atribuída à paciente de teste já existente: {}", TEST_PATIENT_EMAIL);
+            }
+            return p;
+        }
 
-            User saved = userRepository.save(p);
-            logger.info(">>> [AUTOMAÇÃO] Paciente de teste criado com sucesso: {} (Senha: 123456)", TEST_PATIENT_EMAIL);
-            return saved;
-        });
+        User p = new User();
+        p.setFullName("Dona Maria de Lourdes Silva (Paciente Teste)");
+        p.setEmail(TEST_PATIENT_EMAIL);
+        p.setPassword(passwordEncoder.encode("123456"));
+        p.setCpf("123.456.789-00");
+        p.setPhone("(11) 98765-4321");
+        p.setBirthDate("1948-03-12");
+        p.setRole(Role.ROLE_PACIENTE);
+        p.setTermsAccepted(true);
+        p.setActive(true);
+        p.setAvatarUrl(TEST_PATIENT_AVATAR_URL);
+        p.setCreatedAt(LocalDateTime.now());
+
+        User saved = userRepository.save(p);
+        logger.info(">>> [AUTOMAÇÃO] Paciente de teste criado com sucesso com foto de perfil: {} (Senha: 123456)", TEST_PATIENT_EMAIL);
+        return saved;
     }
 
     /**

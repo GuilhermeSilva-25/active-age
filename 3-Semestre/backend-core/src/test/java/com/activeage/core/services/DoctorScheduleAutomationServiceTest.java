@@ -72,6 +72,7 @@ class DoctorScheduleAutomationServiceTest {
         testPatient.setEmail("paciente@teste.com");
         testPatient.setFullName("Dona Maria de Lourdes Silva (Paciente Teste)");
         testPatient.setRole(Role.ROLE_PACIENTE);
+        testPatient.setAvatarUrl(DoctorScheduleAutomationService.TEST_PATIENT_AVATAR_URL);
     }
 
     @Test
@@ -190,6 +191,43 @@ class DoctorScheduleAutomationServiceTest {
         verify(appointmentRepository, times(1)).save(pastTodayAppt);
         assertTrue(pastTodayAppt.getStartDateTime().isAfter(LocalDateTime.now().minusMinutes(1)));
         verify(doctorScheduleSlotRepository).save(pastSlot);
+    }
+
+    @Test
+    @DisplayName("Deve atribuir foto de perfil para paciente de teste existente sem avatar")
+    void ensureTestDoctorSchedule_assignsAvatarUrlToExistingPatientWithoutAvatar() {
+        testPatient.setAvatarUrl(null);
+        when(userRepository.findByEmail("medico@teste.com")).thenReturn(Optional.of(testDoctor));
+        when(userRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.of(testPatient));
+        when(patientExamRepository.countByPatientId("pac-teste-456")).thenReturn(2L);
+
+        when(doctorScheduleSlotRepository.existsByDoctorIdAndStartDateTime(eq("doc-teste-123"), any(LocalDateTime.class)))
+                .thenReturn(true);
+
+        Appointment futureTodayAppt = Appointment.builder()
+                .id("appt-today")
+                .doctorId("doc-teste-123")
+                .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().plusHours(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        Appointment futureTomorrowAppt = Appointment.builder()
+                .id("appt-tomorrow")
+                .doctorId("doc-teste-123")
+                .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().plusDays(1).plusHours(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
+                eq("doc-teste-123"), eq(AppointmentStatus.AGENDADA), any(LocalDateTime.class), any(LocalDateTime.class)
+        )).thenReturn(List.of(futureTodayAppt), List.of(futureTomorrowAppt));
+
+        automationService.ensureTestDoctorSchedule();
+
+        assertEquals(DoctorScheduleAutomationService.TEST_PATIENT_AVATAR_URL, testPatient.getAvatarUrl());
+        verify(userRepository).save(testPatient);
     }
 
     @Test
