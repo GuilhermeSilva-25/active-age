@@ -10,13 +10,13 @@ import {
     Sparkles,
     PhoneCall,
     LogOut,
-    CheckCircle2,
     Loader2,
     Video,
     FileSignature
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { Footer } from '../../components/home/Footer';
+import { CardDicaLongevidade } from '../../components/paciente/CardDicaLongevidade';
 import logoImg from '../../assets/logo-active-age.png';
 
 interface PatientProfile {
@@ -455,23 +455,8 @@ export function DashboardPaciente() {
                     )}
                 </div>
 
-                {/* Card de Dica de Saúde Geriátrica & Longevidade */}
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-amber-200/80 flex items-start gap-3 sm:gap-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
-                        <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                    </div>
-                    <div>
-                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-800 block">
-                            Dica de Longevidade Ativa • Equipe Multidisciplinar Active Age
-                        </span>
-                        <h4 className="text-base sm:text-lg font-bold text-brown-dark mt-0.5">
-                            Hidratação diária e rotina de sono
-                        </h4>
-                        <p className="text-brown-dark/80 text-xs sm:text-sm mt-1 leading-relaxed">
-                            A percepção de sede pode diminuir com o passar dos anos. Mantenha uma garrafinha de água fresca por perto ao longo do dia e evite telas luminosas pelo menos 1 hora antes de dormir para melhorar a qualidade do seu repouso.
-                        </p>
-                    </div>
-                </div>
+                {/* Card de Dica de Saúde Geriátrica & Longevidade Dinâmica */}
+                <CardDicaLongevidade />
             </main>
 
             {/* Modal de Feedback Acessível */}

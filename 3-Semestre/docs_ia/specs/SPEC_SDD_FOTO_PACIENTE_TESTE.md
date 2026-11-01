@@ -42,3 +42,4 @@ Anteriormente, o semeador não definia uma URL de avatar (`avatarUrl`), fazendo 
 - [x] Paciente de teste criada recebe a foto de perfil.
 - [x] Paciente de teste já existente no banco de dados tem sua foto atualizada caso esteja sem avatar.
 - [x] Testes unitários do `DoctorScheduleAutomationServiceTest` homologados com 100% de sucesso.
+
