@@ -34,9 +34,11 @@ import java.util.UUID;
  * do médico de teste (medico@teste.com) e do paciente de teste (paciente@teste.com).
  * 
  * Garante que:
- * 1. O médico de teste sempre possua horários livres para agendamento (hoje e amanhã).
- * 2. O médico de teste e o paciente de teste sempre tenham pelo menos uma consulta ativa agendada
- *    para o DIA ATUAL (HOJE), viabilizando o teste imediato da sala virtual de teleconsulta.
+ * 1. O médico de teste sempre possua horários livres para agendamento (hoje e amanhã),
+ *    cobrindo do turno matutino ao noturno (08:00 às 22:00).
+ * 2. O médico de teste e o paciente de teste sempre tenham consultas ativas agendadas
+ *    para o DIA ATUAL (HOJE) e para o DIA SEGUINTE (AMANHÃ), viabilizando o teste imediato
+ *    da sala virtual de teleconsulta.
  * 3. O paciente de teste possua exames prévios no cofre digital GridFS para consulta médica.
  */
 @Service
@@ -47,7 +49,8 @@ public class DoctorScheduleAutomationService {
     public static final String TEST_DOCTOR_EMAIL = "medico@teste.com";
     public static final String TEST_PATIENT_EMAIL = "paciente@teste.com";
 
-    private static final int[] APPOINTMENT_HOURS = {9, 10, 11, 14, 15, 16, 17};
+    // Grade ampla matutina, vespertina e noturna para testes a qualquer hora do dia
+    private static final int[] APPOINTMENT_HOURS = {8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
     private static final int DURATION_MINUTES = 50;
 
     private final UserRepository userRepository;
@@ -75,16 +78,16 @@ public class DoctorScheduleAutomationService {
 
     /**
      * Executa a cada hora para garantir que, independentemente da virada de dia ou fuso horário,
-     * o dia atual sempre contenha horários livres e uma consulta agendada para testes.
+     * o dia atual e o seguinte sempre contenham horários livres e consultas agendadas para testes.
      */
     @Scheduled(cron = "0 0 * * * *")
     public void runContinuousScheduleSync() {
-        logger.info(">>> [AUTOMAÇÃO] Sincronizando grade e consultas do dia atual para o médico de teste...");
+        logger.info(">>> [AUTOMAÇÃO] Sincronizando grade e consultas de hoje e amanhã para o médico de teste...");
         ensureTestDoctorSchedule();
     }
 
     /**
-     * Garante a existência de slots livres e de uma consulta ativa agendada para o dia atual.
+     * Garante a existência de slots livres e consultas ativas agendadas para hoje e amanhã.
      */
     public void ensureTestDoctorSchedule() {
         Optional<User> doctorOpt = userRepository.findByEmail(TEST_DOCTOR_EMAIL);
@@ -102,7 +105,7 @@ public class DoctorScheduleAutomationService {
         // 2. Garante exames prévios no cofre de saúde do paciente de teste
         ensureTestPatientExams(testPatient);
 
-        // 3. Gera slots para o dia atual (offset 0) e próximo dia (offset 1)
+        // 3. Gera slots livres para o dia atual (offset 0) e próximo dia (offset 1)
         int createdCount = 0;
         for (int dayOffset = 0; dayOffset <= 1; dayOffset++) {
             LocalDate targetDate = LocalDate.now().plusDays(dayOffset);
@@ -129,17 +132,23 @@ public class DoctorScheduleAutomationService {
             }
         }
 
-        // 4. Garante que exista pelo menos uma consulta ativa AGENDADA para o DIA DE HOJE
+        // 4. Garante consulta ativa AGENDADA para o DIA DE HOJE
         ensureTodayActiveAppointment(doctor, testPatient);
 
-        // 5. Higieniza horários livres que já ficaram no passado
+        // 5. Garante consulta ativa AGENDADA para o DIA SEGUINTE (AMANHÃ)
+        ensureTomorrowActiveAppointment(doctor, testPatient);
+
+        // 6. Higieniza horários livres que já ficaram no passado anterior ao início do dia atual
         purgeExpiredFreeSlots(doctorId);
 
         logger.info(">>> [AUTOMAÇÃO] Grade e teleconsultas do médico de teste atualizadas. {} novos slots livres criados.", createdCount);
     }
 
     /**
-     * Assegura que haja uma consulta confirmada (Appointment) para o dia atual entre o médico e o paciente de teste.
+     * Assegura que haja uma consulta confirmada (Appointment) no DIA ATUAL entre o médico e o paciente de teste.
+     * Se a consulta existente já tiver ficado no passado em relação à hora atual,
+     * readequamos o horário para um momento futuro no dia de hoje,
+     * garantindo que continue visível em "Próxima Consulta" no Dashboard do Paciente e do Médico.
      */
     private void ensureTodayActiveAppointment(User doctor, User patient) {
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
@@ -149,57 +158,127 @@ public class DoctorScheduleAutomationService {
                 doctor.getId(), AppointmentStatus.AGENDADA, startOfToday, endOfToday
         );
 
+        // Define um horário estratégico para hoje: sempre futuro se possível
+        LocalDateTime targetTime;
+        LocalTime nowTime = LocalTime.now();
+        if (nowTime.isBefore(LocalTime.of(14, 0))) {
+            targetTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
+        } else if (nowTime.isBefore(LocalTime.of(21, 0))) {
+            // Se já passou das 14h mas é antes das 21h, agenda para a próxima hora cheia
+            targetTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(Math.min(nowTime.getHour() + 1, 22), 0));
+        } else {
+            targetTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 0));
+        }
+
         if (todayAppointments.isEmpty()) {
             logger.info(">>> [AUTOMAÇÃO] Nenhuma consulta encontrada para o médico de teste no dia atual. Criando atendimento para testes...");
-
-            // Seleciona um horário para hoje (preferencialmente 14:00 ou o primeiro slot livre de hoje)
-            LocalDateTime targetTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
-
-            DoctorScheduleSlot slot = doctorScheduleSlotRepository.findByDoctorIdAndStartDateTime(doctor.getId(), targetTime)
-                    .orElseGet(() -> DoctorScheduleSlot.builder()
-                            .doctorId(doctor.getId())
-                            .startDateTime(targetTime)
-                            .endDateTime(targetTime.plusMinutes(DURATION_MINUTES))
-                            .durationMinutes(DURATION_MINUTES)
-                            .status(SlotStatus.OCUPADO)
-                            .notes("Teleconsulta Geriátrica do Dia")
-                            .createdAt(LocalDateTime.now())
-                            .updatedAt(LocalDateTime.now())
-                            .build()
-                    );
-
-            slot.setStatus(SlotStatus.OCUPADO);
-            slot.setUpdatedAt(LocalDateTime.now());
-            DoctorScheduleSlot savedSlot = doctorScheduleSlotRepository.save(slot);
-            String slotId = (savedSlot != null && savedSlot.getId() != null) ? savedSlot.getId() : (slot.getId() != null ? slot.getId() : "slot-" + UUID.randomUUID());
-
-            Appointment appt = Appointment.builder()
-                    .doctorId(doctor.getId())
-                    .doctorName(doctor.getFullName())
-                    .doctorCrm(doctor.getCrm())
-                    .doctorUfCrm(doctor.getUfCrm())
-                    .doctorSpecialty("Geriatria e Gerontologia")
-                    .patientId(patient.getId())
-                    .patientName(patient.getFullName())
-                    .patientEmail(patient.getEmail())
-                    .patientPhone(patient.getPhone())
-                    .slotId(slotId)
-                    .startDateTime(slot.getStartDateTime())
-                    .endDateTime(slot.getEndDateTime())
-                    .durationMinutes(DURATION_MINUTES)
-                    .consultationFee(BigDecimal.valueOf(250.00))
-                    .status(AppointmentStatus.AGENDADA)
-                    .patientNotes("Paciente relata tonturas matinais e perda de apetite leve nas últimas duas semanas. Acompanhada pelo filho cuidador.")
-                    .meetRoomId("room-" + slotId)
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build();
-
-            appointmentRepository.save(appt);
-            logger.info(">>> [AUTOMAÇÃO] Consulta para o dia atual gerada com sucesso! ID: {} às {}", appt.getId(), appt.getStartDateTime());
+            createAppointmentForSlot(doctor, patient, targetTime, "Teleconsulta Geriátrica do Dia (Hoje)");
         } else {
-            logger.info(">>> [AUTOMAÇÃO] Médico de teste já possui {} consulta(s) agendada(s) para o dia atual.", todayAppointments.size());
+            // Se já existe consulta hoje, verifica se ela ficou no passado
+            Appointment existing = todayAppointments.get(0);
+            if (existing.getStartDateTime().isBefore(LocalDateTime.now())) {
+                logger.info(">>> [AUTOMAÇÃO] Consulta de hoje ({}) já estava no passado. Readequando para {} para testes imediatos...",
+                        existing.getStartDateTime(), targetTime);
+
+                existing.setStartDateTime(targetTime);
+                existing.setEndDateTime(targetTime.plusMinutes(DURATION_MINUTES));
+                existing.setUpdatedAt(LocalDateTime.now());
+                appointmentRepository.save(existing);
+
+                // Sincroniza o slot correspondente
+                if (existing.getSlotId() != null) {
+                    doctorScheduleSlotRepository.findById(existing.getSlotId()).ifPresent(slot -> {
+                        slot.setStartDateTime(targetTime);
+                        slot.setEndDateTime(targetTime.plusMinutes(DURATION_MINUTES));
+                        slot.setStatus(SlotStatus.OCUPADO);
+                        slot.setUpdatedAt(LocalDateTime.now());
+                        doctorScheduleSlotRepository.save(slot);
+                    });
+                }
+            } else {
+                logger.info(">>> [AUTOMAÇÃO] Médico de teste já possui {} consulta(s) agendada(s) válida(s) para o dia atual.", todayAppointments.size());
+            }
         }
+    }
+
+    /**
+     * Assegura que haja uma consulta confirmada (Appointment) para o DIA SEGUINTE (AMANHÃ)
+     * entre o médico e o paciente de teste.
+     */
+    private void ensureTomorrowActiveAppointment(User doctor, User patient) {
+        LocalDate tomorrowDate = LocalDate.now().plusDays(1);
+        LocalDateTime startOfTomorrow = tomorrowDate.atStartOfDay();
+        LocalDateTime endOfTomorrow = tomorrowDate.atTime(23, 59, 59);
+
+        List<Appointment> tomorrowAppointments = appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
+                doctor.getId(), AppointmentStatus.AGENDADA, startOfTomorrow, endOfTomorrow
+        );
+
+        if (tomorrowAppointments.isEmpty()) {
+            logger.info(">>> [AUTOMAÇÃO] Nenhuma consulta encontrada para o médico de teste para o dia seguinte. Criando atendimento para testes...");
+            LocalDateTime targetTime = LocalDateTime.of(tomorrowDate, LocalTime.of(14, 0));
+            createAppointmentForSlot(doctor, patient, targetTime, "Teleconsulta Geriátrica do Dia Seguinte (Amanhã)");
+        } else {
+            logger.info(">>> [AUTOMAÇÃO] Médico de teste já possui {} consulta(s) agendada(s) para o dia seguinte.", tomorrowAppointments.size());
+        }
+    }
+
+    /**
+     * Cria atomicamente um slot com status OCUPADO e a consulta correspondente com status AGENDADA.
+     */
+    private Appointment createAppointmentForSlot(User doctor, User patient, LocalDateTime targetTime, String notes) {
+        DoctorScheduleSlot slot = doctorScheduleSlotRepository.findByDoctorIdAndStartDateTime(doctor.getId(), targetTime)
+                .orElseGet(() -> DoctorScheduleSlot.builder()
+                        .doctorId(doctor.getId())
+                        .startDateTime(targetTime)
+                        .endDateTime(targetTime.plusMinutes(DURATION_MINUTES))
+                        .durationMinutes(DURATION_MINUTES)
+                        .status(SlotStatus.OCUPADO)
+                        .notes(notes)
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build()
+                );
+
+        slot.setStatus(SlotStatus.OCUPADO);
+        slot.setPatientId(patient.getId());
+        slot.setPatientName(patient.getFullName());
+        slot.setUpdatedAt(LocalDateTime.now());
+        DoctorScheduleSlot savedSlot = doctorScheduleSlotRepository.save(slot);
+        String slotId = (savedSlot != null && savedSlot.getId() != null)
+                ? savedSlot.getId()
+                : (slot.getId() != null ? slot.getId() : "slot-" + UUID.randomUUID());
+
+        Appointment appt = Appointment.builder()
+                .doctorId(doctor.getId())
+                .doctorName(doctor.getFullName())
+                .doctorCrm(doctor.getCrm())
+                .doctorUfCrm(doctor.getUfCrm())
+                .doctorSpecialty("Geriatria e Gerontologia")
+                .patientId(patient.getId())
+                .patientName(patient.getFullName())
+                .patientEmail(patient.getEmail())
+                .patientPhone(patient.getPhone())
+                .slotId(slotId)
+                .startDateTime(slot.getStartDateTime())
+                .endDateTime(slot.getEndDateTime())
+                .durationMinutes(DURATION_MINUTES)
+                .consultationFee(BigDecimal.valueOf(250.00))
+                .status(AppointmentStatus.AGENDADA)
+                .patientNotes("Paciente relata tonturas matinais e perda de apetite leve nas últimas duas semanas. Acompanhada pelo filho cuidador.")
+                .meetRoomId("room-" + slotId)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        Appointment savedAppt = appointmentRepository.save(appt);
+
+        // Vincula o ID da consulta no slot
+        slot.setAppointmentId(savedAppt.getId());
+        doctorScheduleSlotRepository.save(slot);
+
+        logger.info(">>> [AUTOMAÇÃO] Consulta agendada gerada com sucesso! ID: {} às {}", savedAppt.getId(), savedAppt.getStartDateTime());
+        return savedAppt;
     }
 
     /**

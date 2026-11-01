@@ -75,8 +75,8 @@ class DoctorScheduleAutomationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve gerar 14 horários livres e criar consulta para hoje quando não existirem dados prévios")
-    void ensureTestDoctorSchedule_createsSlotsAndAppointmentForTodayWhenNoneExist() {
+    @DisplayName("Deve gerar grade ampla e criar consultas ativas para hoje e amanhã quando não existirem dados prévios")
+    void ensureTestDoctorSchedule_createsSlotsAndAppointmentForTodayAndTomorrowWhenNoneExist() {
         when(userRepository.findByEmail("medico@teste.com")).thenReturn(Optional.of(testDoctor));
         when(userRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.of(testPatient));
         when(patientExamRepository.countByPatientId("pac-teste-456")).thenReturn(2L);
@@ -92,20 +92,22 @@ class DoctorScheduleAutomationServiceTest {
                 .thenReturn(Optional.empty());
 
         when(doctorScheduleSlotRepository.save(any(DoctorScheduleSlot.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(appointmentRepository.save(any(Appointment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         automationService.ensureTestDoctorSchedule();
 
-        // 14 turnos livres gerados + 1 slot gerado/atualizado para a consulta de hoje
-        verify(doctorScheduleSlotRepository, atLeast(14)).save(any(DoctorScheduleSlot.class));
-        verify(appointmentRepository, times(1)).save(any(Appointment.class));
+        // Grade ampla gerada (28 turnos livres) + slots para as consultas de hoje e amanhã
+        verify(doctorScheduleSlotRepository, atLeast(28)).save(any(DoctorScheduleSlot.class));
+        // Duas consultas criadas: uma para hoje e uma para amanhã
+        verify(appointmentRepository, times(2)).save(any(Appointment.class));
         verify(doctorScheduleSlotRepository).deleteByDoctorIdAndStatusAndStartDateTimeBefore(
                 eq("doc-teste-123"), eq(SlotStatus.LIVRE), any(LocalDateTime.class)
         );
     }
 
     @Test
-    @DisplayName("Não deve duplicar consulta quando o médico já possuir atendimento hoje")
-    void ensureTestDoctorSchedule_doesNotDuplicateExistingAppointment() {
+    @DisplayName("Não deve duplicar consultas quando o médico já possuir atendimentos futuros válidos hoje e amanhã")
+    void ensureTestDoctorSchedule_doesNotDuplicateExistingFutureAppointments() {
         when(userRepository.findByEmail("medico@teste.com")).thenReturn(Optional.of(testDoctor));
         when(userRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.of(testPatient));
         when(patientExamRepository.countByPatientId("pac-teste-456")).thenReturn(2L);
@@ -113,16 +115,25 @@ class DoctorScheduleAutomationServiceTest {
         when(doctorScheduleSlotRepository.existsByDoctorIdAndStartDateTime(eq("doc-teste-123"), any(LocalDateTime.class)))
                 .thenReturn(true);
 
-        Appointment existingAppointment = Appointment.builder()
-                .id("appt-1")
+        Appointment futureTodayAppt = Appointment.builder()
+                .id("appt-today")
                 .doctorId("doc-teste-123")
                 .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().plusHours(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        Appointment futureTomorrowAppt = Appointment.builder()
+                .id("appt-tomorrow")
+                .doctorId("doc-teste-123")
+                .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().plusDays(1).plusHours(2))
                 .status(AppointmentStatus.AGENDADA)
                 .build();
 
         when(appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
                 eq("doc-teste-123"), eq(AppointmentStatus.AGENDADA), any(LocalDateTime.class), any(LocalDateTime.class)
-        )).thenReturn(List.of(existingAppointment));
+        )).thenReturn(List.of(futureTodayAppt), List.of(futureTomorrowAppt));
 
         automationService.ensureTestDoctorSchedule();
 
@@ -130,6 +141,55 @@ class DoctorScheduleAutomationServiceTest {
         verify(doctorScheduleSlotRepository).deleteByDoctorIdAndStatusAndStartDateTimeBefore(
                 eq("doc-teste-123"), eq(SlotStatus.LIVRE), any(LocalDateTime.class)
         );
+    }
+
+    @Test
+    @DisplayName("Deve readequar consulta de hoje quando seu horário já tiver ficado no passado")
+    void ensureTestDoctorSchedule_readjustsPastAppointmentForToday() {
+        when(userRepository.findByEmail("medico@teste.com")).thenReturn(Optional.of(testDoctor));
+        when(userRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.of(testPatient));
+        when(patientExamRepository.countByPatientId("pac-teste-456")).thenReturn(2L);
+
+        when(doctorScheduleSlotRepository.existsByDoctorIdAndStartDateTime(eq("doc-teste-123"), any(LocalDateTime.class)))
+                .thenReturn(true);
+
+        // Consulta de hoje que já ficou no passado
+        Appointment pastTodayAppt = Appointment.builder()
+                .id("appt-past")
+                .slotId("slot-past")
+                .doctorId("doc-teste-123")
+                .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().minusHours(3))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        Appointment futureTomorrowAppt = Appointment.builder()
+                .id("appt-tomorrow")
+                .doctorId("doc-teste-123")
+                .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().plusDays(1).plusHours(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
+                eq("doc-teste-123"), eq(AppointmentStatus.AGENDADA), any(LocalDateTime.class), any(LocalDateTime.class)
+        )).thenReturn(List.of(pastTodayAppt), List.of(futureTomorrowAppt));
+
+        DoctorScheduleSlot pastSlot = DoctorScheduleSlot.builder()
+                .id("slot-past")
+                .doctorId("doc-teste-123")
+                .startDateTime(LocalDateTime.now().minusHours(3))
+                .status(SlotStatus.OCUPADO)
+                .build();
+
+        when(doctorScheduleSlotRepository.findById("slot-past")).thenReturn(Optional.of(pastSlot));
+
+        automationService.ensureTestDoctorSchedule();
+
+        // Deve salvar a consulta readequada de hoje
+        verify(appointmentRepository, times(1)).save(pastTodayAppt);
+        assertTrue(pastTodayAppt.getStartDateTime().isAfter(LocalDateTime.now().minusMinutes(1)));
+        verify(doctorScheduleSlotRepository).save(pastSlot);
     }
 
     @Test
@@ -151,16 +211,25 @@ class DoctorScheduleAutomationServiceTest {
         when(userRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.of(testPatient));
         when(patientExamRepository.countByPatientId("pac-teste-456")).thenReturn(2L);
 
-        Appointment existingAppointment = Appointment.builder()
-                .id("appt-1")
+        Appointment futureTodayAppt = Appointment.builder()
+                .id("appt-today")
                 .doctorId("doc-teste-123")
                 .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().plusHours(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        Appointment futureTomorrowAppt = Appointment.builder()
+                .id("appt-tomorrow")
+                .doctorId("doc-teste-123")
+                .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().plusDays(1).plusHours(2))
                 .status(AppointmentStatus.AGENDADA)
                 .build();
 
         when(appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
                 eq("doc-teste-123"), eq(AppointmentStatus.AGENDADA), any(LocalDateTime.class), any(LocalDateTime.class)
-        )).thenReturn(List.of(existingAppointment));
+        )).thenReturn(List.of(futureTodayAppt), List.of(futureTomorrowAppt));
 
         automationService.runContinuousScheduleSync();
 
