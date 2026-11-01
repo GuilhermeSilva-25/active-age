@@ -119,3 +119,4 @@ export function obterDicaAleatoria(excluirId?: string): DicaLongevidade {
     const indice = Math.floor(Math.random() * lista.length);
     return lista[indice];
 }
+

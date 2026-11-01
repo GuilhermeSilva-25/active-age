@@ -698,14 +698,22 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 * **Então** exibe os contadores agregados de consultas agendadas, médicos homologados e horários livres disponíveis
 * **E** não exibe nenhuma informação clínica confidencial (sintomas, diagnósticos ou prontuário).
 
-#### Cenário 11.4: Automação Contínua da Grade e Teleconsultas do Dia Atual (SPEC-11B)
-* **Dado** que a rotina agendada Spring `@Scheduled` executa de hora em hora
-* **Quando** verifica a disponibilidade do médico padrão (`medico@teste.com`)
-* **Então** assegura horários livres para o dia de hoje e o dia de amanhã
-* **E** assegura uma consulta ativa confirmada (`AppointmentStatus.AGENDADA`) no dia de hoje com a paciente de teste (`paciente@teste.com`)
+#### Cenário 11.4: Automação Contínua da Grade, Consultas de Hoje e Amanhã e Perfil da Paciente Teste (SPEC-11B / SPEC-11E / SPEC-11F)
+* **Dado** que a rotina agendada Spring `@Scheduled` executa de hora em hora sob fuso horário de Brasília (`America/Sao_Paulo`)
+* **Quando** sincroniza a disponibilidade do médico padrão (`medico@teste.com`) e da paciente padrão Dona Maria (`paciente@teste.com`)
+* **Então** assegura grade ampla de horários livres matutina a noturna (08:00 às 22:00) para o dia de hoje e o dia de amanhã
+* **E** assegura uma consulta ativa confirmada (`AppointmentStatus.AGENDADA`) para o dia de hoje com horário dinâmico (não expira prematuramente)
+* **E** assegura uma consulta ativa confirmada para o dia de amanhã às 14:00 com respectivo slot ocupado
+* **E** assegura foto de perfil humanizada (`avatarUrl`) para a paciente de teste Dona Maria
 * **E** disponibiliza 2 exames prévios no cofre GridFS da paciente para teste no cockpit clínico
-* **E** higieniza horários livres que ficaram no passado sem tocar em consultas já confirmadas.
+* **E** higieniza horários livres anteriores ao início do dia atual sem tocar em consultas já confirmadas.
 
+#### Cenário 11.5: Banco Dinâmico de Dicas de Longevidade Ativa no Painel do Paciente (SPEC-11G)
+* **Dado** que a paciente autenticada acessa seu painel inicial (`/paciente/dashboard`)
+* **Quando** o card de longevidade ativa é carregado na tela
+* **Então** uma dica clínica fundamentada em evidências médicas oficiais (SBGG, OMS, Harvard, The Lancet, EWGSOP2) é selecionada aleatoriamente
+* **E** exibe explicitamente a fonte científica, tema, título e texto explicativo acessível
+* **E** ao clicar em "Ver outra dica", o componente alterna suavemente para uma nova orientação sem repetição imediata e sem recarregar a página inteira.
 ---
 
 ## 12. Funcionalidade: Cockpit Integrado de Teleconsulta, Prontuário Ético Imutável, Exames e Prescrições Digitais (SPEC-12)
@@ -758,7 +766,7 @@ Os cenários foram elaborados na sintaxe natural **Gherkin** (*Dado que... Quand
 | :--- | :--- | :--- | :--- |
 | **Administrador** | `admin@activeage.com` | `AdminPassword2026!` | Painel Geral, Fila de Credenciamento Médico, Gestão de Usuários, Moderação, Trilha de Auditoria CFM/SBIS e Métricas Operacionais |
 | **Médico de Teste** | `medico@teste.com` | `123456` | Dashboard Médico, Dossiê Homologado, Gestão de Grade, Consultas do Dia, Cockpit de Teleconsulta, Prontuário e Emissão de Receitas |
-| **Paciente de Teste** | `paciente@teste.com` | `123456` | Dashboard Paciente, Próxima Consulta Hoje, Sala Virtual, Cofre de Exames Prévios e Impressão de Documentos Emitidos |
+| **Paciente de Teste** | `paciente@teste.com` | `123456` | Dashboard Paciente, Foto Humanizada, Dicas de Longevidade Dinâmicas, Consultas Hoje e Amanhã, Sala Virtual, Cofre de Exames Prévios e Documentos Oficiais |
 | **Médicos Pioneiros** | `ada.lovelace@activeage.com`<br>`alan.turing@activeage.com`<br>*(17 especialistas)* | `ActiveAge2026!` | Vitrine de Médicos, Busca Avançada com Filtros por Foco Geriátrico e Estado, e Agendamento Concorrente com Reserva Atômica |
 
 ---

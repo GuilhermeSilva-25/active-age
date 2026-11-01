@@ -66,3 +66,4 @@ Para enriquecer a experiência do idoso e do cuidador familiar com conteúdo mé
 - [x] O botão "Ver outra dica" permite navegar pelas orientações interativamente.
 - [x] Cada dica exibe explicitamente a fonte científica/médica responsável.
 - [x] Build do frontend (`npm run build`) validado com zero erros de compilação.
+

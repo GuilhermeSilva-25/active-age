@@ -71,7 +71,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Linha conectora de etapas no `ProgressBar` e ícone `AlertCircle` em todas as mensagens de erro (IHC/WCAG).
   - Deploy no Render e Vercel funcionando em produção.
 - **Release v0.2.0 (Sprint 2) — [CONCLUÍDA / EM PRODUÇÃO]:**
-  - Micro Tarefa 2.1 [CONCLUÍDA]: Blindagem RBAC com `ProtectedRoute.tsx`, `AdminLayout.tsx`, `AdminDashboard.tsx` e Seeding de Administrador (`admin@activeage.com` / `AdminPassword2026!`).
+  - Micro Tarefa 2.1 [CONCLUÍDA]: Blindagem RBAC com `ProtectedRoute.tsx`, `AdminLayout.tsx`, `AdminDashboard.tsx` e Seeding de Administrador (`admin@activeage.com` / `AdminPassword2026!` via SPEC-02).
   - Micro Tarefa 2.2 & 2.2B [CONCLUÍDAS]: Módulo de Credenciamento Médico Integral (Dossiê em 4 Pilares: Habilitação, Regularidade Ética, Telemedicina ICP-Brasil Res. CFM nº 2.314/2022 e Dados Financeiros; Upload seguro privado, suporte a frente/verso, máscaras bancárias reativas, catálogo de bancos com código COMPE e Fila de Auditoria do Admin com aprovação/rejeição com justificativa obrigatória).
   - Micro Tarefa 2.3 & UC05 [CONCLUÍDAS]: Gestão de Usuários & Trilha de Auditoria Global (`audit_logs`) com moderação de status, trava de auto-bloqueio, bloqueio perimetral de login para contas inativas, revogação de sessão ativa em tempo real e testes unitários no `AuthServiceTest`.
   - Micro Tarefa 2.4 & 2.4B [CONCLUÍDAS]: Dashboards segregados de Paciente (`DashboardPaciente.tsx` com acessibilidade WCAG 2.1 AA) e Médico (`DashboardMedico.tsx` com banner regulatório Res. CFM nº 2.314/2022, métricas de consultório e degustação SaaS de 15 dias), roteamento inteligente pós-login, Navbar reativa e padronização universal de spinners táteis de carregamento.
@@ -82,9 +82,10 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Submissão e Cofre Digital de Exames Prévios pelo Paciente com MongoDB GridFS (SPEC-08 / UC11).
   - Gestão da Agenda Médica com turnos em lote e slots avulsos (SPEC-09 / UC10).
   - Agendamento Concorrente de Teleconsulta com reserva atômica sem double-booking, painel de "Minhas Consultas" e política ética de cancelamento com mais de 24 horas e reciclagem de horários (SPEC-10 / UC09).
-  - Semeador de Médico de Teste (`medico@teste.com` / `123456`) e Paciente de Teste (`paciente@teste.com` / `123456`) com consulta garantida para o dia de hoje, exames prévios no GridFS e automação horária contínua via Spring `@Scheduled` (SPEC-11B).
+  - Semeador de Médico de Teste (`medico@teste.com` / `123456`) e Paciente de Teste Dona Maria (`paciente@teste.com` / `123456`) com foto de perfil humanizada (`avatarUrl`), grade ampla matutina a noturna (08h às 22h), consultas ativas confirmadas para hoje (sem expiração dinâmica) e amanhã às 14h, fuso horário oficial de Brasília (`America/Sao_Paulo`), 2 exames prévios no GridFS e sincronização horária contínua via Spring `@Scheduled` (SPEC-11B, SPEC-11E, SPEC-11F).
   - Rastreabilidade de Teleconsultas na Trilha de Auditoria Imutável (`audit_logs`) e Painel de Métricas Operacionais com sigilo LGPD no Dashboard do Administrador (SPEC-11C / UC04, UC05, UC09).
   - Padronização Universal das Fotos dos 17 Médicos Pioneiros com Retratos Históricos Reais de domínio público / Wikimedia Commons e proteção anti-hotlink no frontend (SPEC-11D).
+  - Banco Dinâmico de Dicas de Longevidade Ativa no Dashboard do Paciente com 12 intervenções baseadas em literatura médica (SBGG, OMS, Harvard, The Lancet, EWGSOP2) e alternância interativa (SPEC-11G).
 - **Release v0.4.0 (Conclusão do 3º Semestre) — [CONCLUÍDA / EM PRODUÇÃO]:**
   - Cockpit Integrado de Teleconsulta com experiência responsiva computador/mobile (UC12-Demo).
   - Prontuário Ético Eletrônico Geriátrico Imutável (Anamnese, AGA, CID-11, Conduta, Hash SHA-256 e trava irrevogável de integridade) (UC14 / RN003).
@@ -105,8 +106,8 @@ Ao iniciar qualquer interação neste repositório:
 2. Verifique o arquivo `3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md` para identificar exatamente onde paramos.
 3. Lembre-se que as credenciais universais para testes imediatos são:
    - Administrador: `admin@activeage.com` / `AdminPassword2026!`
-   - Médico Teste: `medico@teste.com` / `123456` (sempre possui consulta confirmada para hoje)
-   - Paciente Teste: `paciente@teste.com` / `123456` (possui exames prévios no cofre e consulta hoje)
+   - Médico Teste: `medico@teste.com` / `123456` (sempre possui consulta confirmada para hoje e amanhã)
+   - Paciente Teste: `paciente@teste.com` / `123456` (possui foto de perfil, exames prévios no cofre e consulta agendada para hoje e amanhã)
 4. Não inicie implementação de código antes de:
    - Apresentar a Spec Técnica detalhada da próxima micro tarefa/ajuste;
    - Obter a aprovação formal e explícita do Guilherme.
