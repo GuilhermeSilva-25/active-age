@@ -30,3 +30,4 @@ flowchart LR
     FORK --> BACK["Job: Backend Core<br>• Runner: Ubuntu Latest<br>• JDK 21 Temurin + Cache Maven<br>• Service: MongoDB 7.0<br>• Execução: ./mvnw test"]
     FORK --> FRONT["Job: Frontend SPA<br>• Runner: Ubuntu Latest<br>• Node 22 + Cache npm<br>• Execução: npm run build"]
 ```
+

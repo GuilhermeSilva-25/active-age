@@ -17,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -31,6 +33,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DoctorScheduleAutomationServiceTest {
 
     @Mock
@@ -275,4 +278,39 @@ class DoctorScheduleAutomationServiceTest {
                 eq("doc-teste-123"), eq(SlotStatus.LIVRE), any(LocalDateTime.class)
         );
     }
+
+    @Test
+    @DisplayName("Não deve recriar consulta de hoje quando já existir uma consulta com status REALIZADA (SPEC-13)")
+    void ensureTestDoctorSchedule_doesNotRecreateWhenAppointmentAlreadyCompletedToday() {
+        when(userRepository.findByEmail("medico@teste.com")).thenReturn(Optional.of(testDoctor));
+        when(userRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.of(testPatient));
+        when(patientExamRepository.countByPatientId("pac-teste-456")).thenReturn(2L);
+
+        when(doctorScheduleSlotRepository.existsByDoctorIdAndStartDateTime(eq("doc-teste-123"), any(LocalDateTime.class)))
+                .thenReturn(true);
+
+        Appointment completedTodayAppt = Appointment.builder()
+                .id("appt-completed-today")
+                .doctorId("doc-teste-123")
+                .patientId("pac-teste-456")
+                .startDateTime(LocalDateTime.now().minusHours(1))
+                .status(AppointmentStatus.REALIZADA)
+                .build();
+
+        when(appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
+                eq("doc-teste-123"), eq(AppointmentStatus.REALIZADA), any(LocalDateTime.class), any(LocalDateTime.class)
+        )).thenReturn(List.of(completedTodayAppt));
+
+        when(appointmentRepository.save(any(Appointment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(doctorScheduleSlotRepository.save(any(DoctorScheduleSlot.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        automationService.ensureTestDoctorSchedule();
+
+        // Não deve salvar nova consulta para hoje
+        verify(appointmentRepository, never()).save(argThat(appt -> 
+                appt.getStatus() == AppointmentStatus.AGENDADA && 
+                appt.getStartDateTime().toLocalDate().equals(LocalDateTime.now().toLocalDate())
+        ));
+    }
+
 }
