@@ -177,14 +177,21 @@ public class DoctorScheduleAutomationService {
         } else {
             // Se já existe consulta hoje, verifica se ela ficou no passado
             Appointment existing = todayAppointments.get(0);
+            boolean updated = false;
+
+            // SPEC-11I: Limpa sintomas pré-informados para que a queixa seja relatada apenas na teleconsulta
+            if (existing.getPatientNotes() != null) {
+                existing.setPatientNotes(null);
+                updated = true;
+            }
+
             if (existing.getStartDateTime().isBefore(LocalDateTime.now())) {
                 logger.info(">>> [AUTOMAÇÃO] Consulta de hoje ({}) já estava no passado. Readequando para {} para testes imediatos...",
                         existing.getStartDateTime(), targetTime);
 
                 existing.setStartDateTime(targetTime);
                 existing.setEndDateTime(targetTime.plusMinutes(DURATION_MINUTES));
-                existing.setUpdatedAt(LocalDateTime.now());
-                appointmentRepository.save(existing);
+                updated = true;
 
                 // Sincroniza o slot correspondente
                 if (existing.getSlotId() != null) {
@@ -198,6 +205,11 @@ public class DoctorScheduleAutomationService {
                 }
             } else {
                 logger.info(">>> [AUTOMAÇÃO] Médico de teste já possui {} consulta(s) agendada(s) válida(s) para o dia atual.", todayAppointments.size());
+            }
+
+            if (updated) {
+                existing.setUpdatedAt(LocalDateTime.now());
+                appointmentRepository.save(existing);
             }
         }
     }
@@ -220,6 +232,13 @@ public class DoctorScheduleAutomationService {
             LocalDateTime targetTime = LocalDateTime.of(tomorrowDate, LocalTime.of(14, 0));
             createAppointmentForSlot(doctor, patient, targetTime, "Teleconsulta Geriátrica do Dia Seguinte (Amanhã)");
         } else {
+            // SPEC-11I: Limpa sintomas pré-informados se existirem
+            Appointment existing = tomorrowAppointments.get(0);
+            if (existing.getPatientNotes() != null) {
+                existing.setPatientNotes(null);
+                existing.setUpdatedAt(LocalDateTime.now());
+                appointmentRepository.save(existing);
+            }
             logger.info(">>> [AUTOMAÇÃO] Médico de teste já possui {} consulta(s) agendada(s) para o dia seguinte.", tomorrowAppointments.size());
         }
     }
@@ -266,7 +285,7 @@ public class DoctorScheduleAutomationService {
                 .durationMinutes(DURATION_MINUTES)
                 .consultationFee(BigDecimal.valueOf(250.00))
                 .status(AppointmentStatus.AGENDADA)
-                .patientNotes("Paciente relata tonturas matinais e perda de apetite leve nas últimas duas semanas. Acompanhada pelo filho cuidador.")
+                .patientNotes(null) // SPEC-11I: Anamnese e sintomas pertencem exclusivamente à teleconsulta
                 .meetRoomId("room-" + slotId)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())

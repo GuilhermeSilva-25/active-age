@@ -93,3 +93,4 @@ Cenário B: Sem Consultas Hoje (todayAppointments.length === 0)
 
 ## 4. Registro de Auditoria e Commits
 - Commit: `feat(ux): prioriza consultas agendadas no topo dos dashboards (spec-11h)`
+

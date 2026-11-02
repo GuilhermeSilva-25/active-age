@@ -46,7 +46,6 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     const [slots, setSlots] = useState<DoctorScheduleSlot[]>([]);
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-    const [patientNotes, setPatientNotes] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
     // Feedback Modal
@@ -65,7 +64,6 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     useEffect(() => {
         if (isOpen && doctor) {
             setSelectedSlotId(null);
-            setPatientNotes('');
             fetchDoctorAvailability();
         }
     }, [isOpen, doctor]);
@@ -137,7 +135,6 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                 },
                 body: JSON.stringify({
                     slotId: selectedSlotId,
-                    patientNotes: patientNotes.trim() || undefined,
                 }),
             });
 
@@ -308,26 +305,6 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                             </div>
                         )}
                     </div>
-
-                    {/* Campo Opcional: Motivo da Consulta / Sintomas */}
-                    {selectedSlotId && (
-                        <div className="space-y-2 animate-in fade-in duration-200">
-                            <label className="block text-xs font-bold text-brown-dark uppercase tracking-wider">
-                                Motivo da Consulta ou Principais Sintomas (Opcional)
-                            </label>
-                            <textarea
-                                rows={3}
-                                maxLength={500}
-                                value={patientNotes}
-                                onChange={e => setPatientNotes(e.target.value)}
-                                placeholder="Ex: Avaliação de esquecimentos recentes, tonturas frequentes e ajuste da receita de pressão..."
-                                className="w-full px-4 py-3 rounded-xl border border-brand-pot/60 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 text-xs sm:text-sm text-brown-dark outline-none resize-none"
-                            />
-                            <p className="text-[11px] text-brown-light">
-                                Estas informações serão encaminhadas com sigilo ao médico para preparo da teleconsulta.
-                            </p>
-                        </div>
-                    )}
                 </div>
 
                 {/* Rodapé com Ações */}
