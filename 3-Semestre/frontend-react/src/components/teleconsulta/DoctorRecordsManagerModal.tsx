@@ -425,3 +425,4 @@ export const DoctorRecordsManagerModal: React.FC<DoctorRecordsManagerModalProps>
         </div>
     );
 };
+

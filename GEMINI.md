@@ -7,7 +7,7 @@
 ## 1. Visão Geral & Papéis
 - **Projeto:** Active Age — Plataforma Integral de Telessaúde Geriátrica.
 - **Contexto Acadêmico:** Graduação em Desenvolvimento de Software Multiplataforma (DSM) — Fatec Diadema (São Paulo).
-- **Semestre Atual de Foco:** **3º Semestre** (APIs RESTful, Banco NoSQL, Prontuário Flexível, Acessibilidade IHC e Segurança).
+- **Semestre Atual de Foco:** **Transição para o 4º Semestre** (3º Semestre 100% Concluído e Homologado em Produção com Releases v0.1.0 a v0.4.0 e Specs SPEC-01 a SPEC-14).
 - **Product Owner & Tech Lead:** Guilherme Silva (Usuário).
 - **Seu Papel:** Antigravity Pair Programmer Sênior (Especialista em Spring Boot 3, React 19, TypeScript, Arquitetura de Software e SDD).
 
