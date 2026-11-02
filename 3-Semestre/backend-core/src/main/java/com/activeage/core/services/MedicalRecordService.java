@@ -1,5 +1,6 @@
 package com.activeage.core.services;
 
+import com.activeage.core.domain.enums.AppointmentStatus;
 import com.activeage.core.domain.enums.Role;
 import com.activeage.core.domain.models.Appointment;
 import com.activeage.core.domain.models.MedicalRecord;
@@ -167,6 +168,14 @@ public class MedicalRecordService {
         record.setUpdatedAt(now);
 
         MedicalRecord finalized = medicalRecordRepository.save(record);
+
+        // Encerramento oficial da teleconsulta: altera status da consulta para REALIZADA (SPEC-12B)
+        appointmentRepository.findById(record.getAppointmentId()).ifPresent(appt -> {
+            appt.setStatus(AppointmentStatus.REALIZADA);
+            appt.setUpdatedAt(now);
+            appointmentRepository.save(appt);
+            log.info("Consulta {} marcada como REALIZADA após finalização e assinatura do prontuário.", appt.getId());
+        });
 
         // Registro indelével na trilha de auditoria para fins de compliance CFM e SBIS
         auditService.log(

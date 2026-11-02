@@ -72,3 +72,4 @@
 
 ## 4. Registro de Auditoria e Commits
 - Commit: `feat(medico): corrige janela temporal da agenda e dinamiza contadores (spec-11j)`
+

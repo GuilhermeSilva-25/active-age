@@ -39,6 +39,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-11I** | **Remoção de Sintomas Prévios no Agendamento e Centralização da Anamnese na Teleconsulta** | UC01, UC09, UC10, UC12, UC14 | **Concluída / Live ✅** | [SPEC_SDD_REMOCAO_SINTOMAS_PREVIOS_AGENDAMENTO.md](./SPEC_SDD_REMOCAO_SINTOMAS_PREVIOS_AGENDAMENTO.md) |
 | **SPEC-11J** | **Correção da Janela Temporal da Agenda Médica e Dinamização Universal de Contadores** | UC01, UC09, UC10, UC12 | **Concluída / Live ✅** | [SPEC_SDD_JANELA_TEMPORAL_AGENDA_E_CONTADORES.md](./SPEC_SDD_JANELA_TEMPORAL_AGENDA_E_CONTADORES.md) |
 | **SPEC-12** | **Cockpit de Teleconsulta Integrado, Prontuário Ético Imutável, Exames e Prescrições Digitais** | UC12, UC13, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md](./SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md) |
+| **SPEC-12B** | **Reformulação da Teleconsulta: Card Único de Prontuário para IA, Template Clean P&B e Fluxo Seguro de Encerramento** | UC12, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_REFORMULACAO_TELECONSULTA_PRONTUARIO_E_RECEITAS.md](./SPEC_SDD_REFORMULACAO_TELECONSULTA_PRONTUARIO_E_RECEITAS.md) |
 
 ---
 

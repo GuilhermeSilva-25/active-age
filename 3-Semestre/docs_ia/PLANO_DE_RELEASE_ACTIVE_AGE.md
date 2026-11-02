@@ -111,6 +111,15 @@ gantt
   4. [x] **Prontuário Ético Eletrônico com Avaliação Geriátrica Ampla e Imutabilidade (SPEC-12 / UC14 / RN003) — [CONCLUÍDO ✅]:** Anamnese clínica, AGA (estado cognitivo, risco de quedas, independência funcional, suporte familiar), CID-11 e conduta com assinatura digital, geração de hash SHA-256 e bloqueio definitivo contra alterações pós-finalização.
   5. [x] **Emissão e Impressão Timbrada de Receitas e Atestados ICP-Brasil (SPEC-12 / UC15 / RN006) — [CONCLUÍDO ✅]:** Emissão médica de Receitas, Pedidos de Exames e Atestados com código de validação único `AA-2026-XXXXXX` e modal oficial para impressão e exportação em PDF.
   6. [x] **Painel de Documentos do Paciente e Validador Público (SPEC-12 / UC16) — [CONCLUÍDO ✅]:** Página `/paciente/documentos` para o idoso e cuidador acessarem suas receitas e página pública `/validar-documento` para farmácias e laboratórios conferirem a autenticidade documental perante o CRM.
+  7. [x] **Reformulação da Teleconsulta: Card Único de Prontuário para IA, Template Clean P&B e Fluxo Seguro de Encerramento (SPEC-12B / UC12, UC14, UC15, UC16) — [CONCLUÍDO ✅]:**
+     - Sincronização em tempo real (polling de 4s) de receitas e atestados emitidos na própria sala para o paciente;
+     - Seção dedicada de documentos na visão do idoso com empty state amigável ("Nenhum documento emitido até o momento nesta sessão");
+     - Remoção do botão de encerrar do paciente, substituído por "Sair da Sala" com navegação segura para o dashboard sem desativar a teleconsulta;
+     - Encerramento oficial da consulta (`AppointmentStatus.REALIZADA`) vinculado exclusivamente à finalização e assinatura digital do prontuário pelo médico;
+     - Card Único de Prontuário no cockpit médico com dados do paciente no topo, espaço amplo para relatório clínico unificado, banner preparatório para IA (Copiloto Active Age) e mini-seletores da AGA;
+     - Formulário de prescrição limpo sem textos mockados pré-preenchidos, utilizando placeholders contextuais;
+     - Redesenho do template de impressão de documentos em Preto e Branco puro e clean (`DocumentPrintModal.tsx`) preparado para Gov.br e ICP-Brasil;
+     - Acesso e impressão de receitas e atestados diretamente a partir do card de consulta no histórico de atendimentos do paciente (`MinhasConsultas.tsx`).
 
 ---
 

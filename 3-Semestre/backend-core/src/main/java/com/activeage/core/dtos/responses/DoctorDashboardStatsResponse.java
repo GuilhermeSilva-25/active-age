@@ -20,3 +20,4 @@ public class DoctorDashboardStatsResponse {
     private long freeSlots;
     private int trialDaysRemaining;
 }
+

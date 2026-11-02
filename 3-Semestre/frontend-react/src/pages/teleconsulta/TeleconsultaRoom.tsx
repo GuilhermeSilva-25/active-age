@@ -5,14 +5,12 @@ import {
     MicOff,
     Video,
     VideoOff,
-    PhoneOff,
     FileText,
     FolderOpen,
     FileSignature,
     ShieldCheck,
     Lock,
     Save,
-    CheckCircle2,
     Clock,
     AlertCircle,
     User,
@@ -21,6 +19,7 @@ import {
     ExternalLink,
     PlusCircle,
     Sparkles,
+    LogOut,
 } from 'lucide-react';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
@@ -40,14 +39,6 @@ interface AppointmentDetails {
     durationMinutes: number;
     status: string;
 }
-
-const COMMON_GERIATRIC_CIDS = [
-    { code: 'MB40', desc: 'Sintomas ou sinais relativos à cognição e percepção' },
-    { code: 'BA00', desc: 'Hipertensão essencial (primária)' },
-    { code: '8A00', desc: 'Doença de Alzheimer' },
-    { code: 'FA00', desc: 'Osteoartrose de grandes e pequenas articulações' },
-    { code: '5A11', desc: 'Diabetes mellitus tipo 2' },
-];
 
 export const TeleconsultaRoom: React.FC = () => {
     const { appointmentId } = useParams<{ appointmentId: string }>();
@@ -88,18 +79,18 @@ export const TeleconsultaRoom: React.FC = () => {
     const [patientExams, setPatientExams] = useState<PatientExamItem[]>([]);
     const [loadingExams, setLoadingExams] = useState(false);
 
-    // Estado de Documentos / Receitas Emitidas (UC15)
+    // Estado de Documentos / Receitas Emitidas (UC15 / SPEC-12B)
     const [documents, setDocuments] = useState<MedicalDocument[]>([]);
     const [loadingDocs, setLoadingDocs] = useState(false);
     const [issuingDoc, setIssuingDoc] = useState(false);
 
-    // Formulário de Novo Documento
+    // Formulário de Novo Documento (sem texto mockado)
     const [docType, setDocType] = useState<MedicalDocumentType>('RECEITA_MEDICA');
-    const [docTitle, setDocTitle] = useState('Prescrição Médica Geriátrica');
+    const [docTitle, setDocTitle] = useState('Prescrição de Medicamentos');
     const [docContent, setDocContent] = useState('');
     const [docRecommendations, setDocRecommendations] = useState('');
 
-    // Modal de Impressão do Documento
+    // Modal de Impressão do Documento (P&B Clean)
     const [selectedDocForPrint, setSelectedDocForPrint] = useState<MedicalDocument | null>(null);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
@@ -182,7 +173,31 @@ export const TeleconsultaRoom: React.FC = () => {
         fetchAppointmentData();
     }, [appointmentId]);
 
-    // Carrega Prontuário, Exames e Documentos se for Médico
+    // Sincronização e Polling de Documentos para Paciente e Médico (SPEC-12B)
+    useEffect(() => {
+        if (!appointmentId) return;
+
+        const fetchDocuments = async () => {
+            try {
+                const res = await fetch(`/api/medical-documents/appointment/${appointmentId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setDocuments(data);
+                }
+            } catch {
+                // Silencioso no polling
+            }
+        };
+
+        setLoadingDocs(true);
+        fetchDocuments().finally(() => setLoadingDocs(false));
+
+        // Polling a cada 4 segundos para refletir novas receitas na tela do idoso
+        const interval = setInterval(fetchDocuments, 4000);
+        return () => clearInterval(interval);
+    }, [appointmentId]);
+
+    // Carrega Prontuário e Exames se for Médico
     useEffect(() => {
         if (!appointmentId || !isDoctor) return;
 
@@ -215,25 +230,8 @@ export const TeleconsultaRoom: React.FC = () => {
             }
         };
 
-        // 3. Carrega Documentos Emitidos
-        const loadDocuments = async () => {
-            setLoadingDocs(true);
-            try {
-                const res = await fetch(`/api/medical-documents/appointment/${appointmentId}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    setDocuments(data);
-                }
-            } catch {
-                // Mantém lista vazia
-            } finally {
-                setLoadingDocs(false);
-            }
-        };
-
         loadRecord();
         loadExams();
-        loadDocuments();
     }, [appointmentId, isDoctor]);
 
     // Manipula Salvar Rascunho do Prontuário
@@ -248,14 +246,14 @@ export const TeleconsultaRoom: React.FC = () => {
                     appointmentId,
                     chiefComplaint: medicalRecord.chiefComplaint,
                     historyOfPresentIllness: medicalRecord.historyOfPresentIllness,
-                    clinicalEvolution: medicalRecord.clinicalEvolution,
+                    clinicalEvolution: medicalRecord.clinicalEvolution || medicalRecord.clinicalConduct,
                     cognitiveStatus: medicalRecord.cognitiveStatus,
                     mobilityRisk: medicalRecord.mobilityRisk,
                     functionalIndependence: medicalRecord.functionalIndependence,
                     familySupport: medicalRecord.familySupport,
                     cid11Code: medicalRecord.cid11Code,
                     cid11Description: medicalRecord.cid11Description,
-                    clinicalConduct: medicalRecord.clinicalConduct,
+                    clinicalConduct: medicalRecord.clinicalConduct || medicalRecord.clinicalEvolution,
                 }),
             });
 
@@ -266,7 +264,7 @@ export const TeleconsultaRoom: React.FC = () => {
                     isOpen: true,
                     type: 'success',
                     title: 'Rascunho Salvo com Sucesso',
-                    message: 'As anotações clínicas e a avaliação do idoso foram salvas e permanecem editáveis até a assinatura final.',
+                    message: 'O relatório clínico da consulta foi registrado e permanece editável até a assinatura final.',
                 });
             } else {
                 const err = await res.json().catch(() => ({}));
@@ -289,7 +287,7 @@ export const TeleconsultaRoom: React.FC = () => {
         }
     };
 
-    // Confirmação para Finalizar & Assinar Prontuário
+    // Confirmação para Finalizar & Assinar Prontuário (Encerra oficialmente a consulta)
     const promptFinalizeRecord = () => {
         if (!medicalRecord.id) {
             setFeedback({
@@ -304,13 +302,13 @@ export const TeleconsultaRoom: React.FC = () => {
         setFeedback({
             isOpen: true,
             type: 'warning',
-            title: 'Assinar e Finalizar Prontuário?',
-            message: 'Atenção: em conformidade com as normas do CFM, após a assinatura digital o prontuário se tornará estritamente IMUTÁVEL e não poderá mais ser alterado ou excluído.',
+            title: 'Finalizar Consulta e Assinar Prontuário?',
+            message: 'Atenção: ao finalizar e assinar digitalmente este prontuário, a teleconsulta será oficialmente marcada como REALIZADA e o documento se tornará estritamente IMUTÁVEL perante as normas do CFM.',
             actionToConfirm: executeFinalizeRecord,
         });
     };
 
-    // Executa Finalização & Assinatura Digital
+    // Executa Finalização & Assinatura Digital do Prontuário
     const executeFinalizeRecord = async () => {
         if (!medicalRecord.id) return;
         setFinalizingRecord(true);
@@ -322,11 +320,14 @@ export const TeleconsultaRoom: React.FC = () => {
             if (res.ok) {
                 const finalized = await res.json();
                 setMedicalRecord(finalized);
+                if (appointment) {
+                    setAppointment({ ...appointment, status: 'REALIZADA' });
+                }
                 setFeedback({
                     isOpen: true,
                     type: 'success',
-                    title: 'Prontuário Assinado e Finalizado!',
-                    message: `O prontuário foi gravado com sucesso e recebeu o selo de imutabilidade com hash SHA-256: ${finalized.hashSignature?.substring(0, 16)}...`,
+                    title: 'Teleconsulta Finalizada com Sucesso!',
+                    message: `O prontuário foi assinado digitalmente com hash SHA-256: ${finalized.hashSignature?.substring(0, 16)}... e a consulta foi oficialmente concluída no sistema.`,
                 });
             } else {
                 const err = await res.json().catch(() => ({}));
@@ -349,40 +350,22 @@ export const TeleconsultaRoom: React.FC = () => {
         }
     };
 
-    // Aplica Template Rápido de Documento
+    // Aplica Template Limpo de Documento (Sem texto mockado / SPEC-12B)
     const applyDocumentTemplate = (type: MedicalDocumentType) => {
         setDocType(type);
+        setDocContent('');
+        setDocRecommendations('');
+
         if (type === 'RECEITA_MEDICA') {
-            setDocTitle('Prescrição de Medicamentos de Uso Contínuo');
-            setDocContent(
-                '1. Losartana Potássica 50mg ------------------ Tomar 1 comprimido pela manhã em jejum\n' +
-                '2. Carbonato de Cálcio + Vitamina D3 --------- Tomar 1 comprimido mastigável após o almoço\n' +
-                '3. Hidroclorotiazida 25mg -------------------- Tomar 1 comprimido pela manhã'
-            );
-            setDocRecommendations('Manter hidratação regular (mínimo de 1,5L de água diários) e aferir a pressão arterial três vezes por semana.');
+            setDocTitle('Prescrição de Medicamentos');
         } else if (type === 'PEDIDO_EXAME') {
-            setDocTitle('Solicitação de Exames Laboratoriais Preventivos');
-            setDocContent(
-                'Solicito os seguintes exames de controle geriátrico:\n' +
-                '- Hemograma Completo com Plaquetas\n' +
-                '- Glicemia de Jejum e Hemoglobina Glicada (HbA1c)\n' +
-                '- Perfil Lipídico Completo (Colesterol Total, HDL, LDL, Triglicerídeos)\n' +
-                '- Dosagem de Vitamina B12 e Vitamina D (25-hidroxi)\n' +
-                '- Função Renal: Ureia e Creatinina com TFG'
-            );
-            setDocRecommendations('Realizar os exames com jejum prévio de 8 a 10 horas em laboratório habilitado de sua preferência.');
+            setDocTitle('Solicitação de Exames Complementares');
         } else if (type === 'ATESTADO_MEDICO') {
-            setDocTitle('Atestado Médico de Acompanhamento Clínico');
-            setDocContent(
-                `Atesto para os devidos fins que o(a) paciente ${appointment?.patientName || 'atendido(a)'} ` +
-                'esteve sob consulta médica nesta data via teleconsulta na plataforma Active Age, necessitando de repouso ' +
-                'e cuidados de saúde pelo período de 3 (três) dias.'
-            );
-            setDocRecommendations('Repouso relativo, evitar esforços físicos e manter acompanhamento com a equipe multiprofissional.');
+            setDocTitle('Atestado Médico Geriátrico');
         }
     };
 
-    // Emissão de Novo Documento
+    // Emissão de Novo Documento Oficial
     const handleIssueDocument = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!appointmentId || !docContent.trim()) return;
@@ -410,15 +393,15 @@ export const TeleconsultaRoom: React.FC = () => {
                     isOpen: true,
                     type: 'success',
                     title: 'Documento Emitido com Sucesso!',
-                    message: `Documento gerado com código de validação ${newDoc.validationCode}. O paciente já tem acesso para visualização e impressão.`,
+                    message: `O documento "${newDoc.title}" foi assinado digitalmente e já está visível para o paciente nesta sessão com o código de validação ${newDoc.validationCode}.`,
                 });
             } else {
                 const err = await res.json().catch(() => ({}));
                 setFeedback({
                     isOpen: true,
                     type: 'error',
-                    title: 'Falha ao Emitir Documento',
-                    message: err.message || 'Erro ao gerar prescrição.',
+                    title: 'Não foi possível emitir',
+                    message: err.message || 'Erro ao gerar o documento médico.',
                 });
             }
         } catch {
@@ -426,28 +409,46 @@ export const TeleconsultaRoom: React.FC = () => {
                 isOpen: true,
                 type: 'error',
                 title: 'Erro de Conexão',
-                message: 'Não foi possível emitir o documento clínico.',
+                message: 'Falha ao conectar com o servidor para emitir a prescrição.',
             });
         } finally {
             setIssuingDoc(false);
         }
     };
 
-    // Abre Modal de Impressão
+    // Abertura do Modal de Impressão
     const handleOpenPrintModal = (doc: MedicalDocument) => {
         setSelectedDocForPrint(doc);
         setIsPrintModalOpen(true);
     };
 
-    // Confirmação para Encerrar Chamada
-    const handleHangUp = () => {
+    // Saída Segura do Paciente (Volta ao dashboard sem encerrar a teleconsulta)
+    const handlePatientLeave = () => {
+        setFeedback({
+            isOpen: true,
+            type: 'info',
+            title: 'Sair da Sala Virtual?',
+            message: 'Você voltará ao seu painel principal, mas sua chamada continuará ativa e você poderá retornar quando desejar.',
+            actionToConfirm: () => {
+                navigate('/paciente/dashboard');
+            },
+        });
+    };
+
+    // Saída do Médico
+    const handleDoctorLeave = () => {
+        if (medicalRecord.status === 'FINALIZED') {
+            navigate('/medico/dashboard');
+            return;
+        }
+
         setFeedback({
             isOpen: true,
             type: 'warning',
-            title: 'Encerrar Teleconsulta?',
-            message: 'Deseja realmente encerrar a sessão de atendimento e sair da sala virtual?',
+            title: 'Sair da Sala sem Finalizar?',
+            message: 'A consulta permanecerá em andamento até que o prontuário seja finalizado e assinado digitalmente. Deseja retornar ao seu painel?',
             actionToConfirm: () => {
-                navigate(isDoctor ? '/medico/dashboard' : '/paciente/minhas-consultas');
+                navigate('/medico/dashboard');
             },
         });
     };
@@ -500,14 +501,26 @@ export const TeleconsultaRoom: React.FC = () => {
                         <span>{formatTimer(elapsedSeconds)}</span>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={handleHangUp}
-                        className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-black rounded-xl shadow transition-colors cursor-pointer min-h-[44px]"
-                    >
-                        <PhoneOff className="w-4 h-4" />
-                        <span className="hidden sm:inline">Encerrar Chamada</span>
-                    </button>
+                    {/* Botão de Saída Segura Diferenciado por Perfil (SPEC-12B) */}
+                    {isDoctor ? (
+                        <button
+                            type="button"
+                            onClick={handleDoctorLeave}
+                            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs sm:text-sm font-bold rounded-xl border border-gray-700 transition-colors cursor-pointer min-h-[44px]"
+                        >
+                            <LogOut className="w-4 h-4 text-brand-orange" />
+                            <span className="hidden sm:inline">Sair da Sala</span>
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={handlePatientLeave}
+                            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs sm:text-sm font-bold rounded-xl border border-gray-700 transition-colors cursor-pointer min-h-[44px]"
+                        >
+                            <LogOut className="w-4 h-4 text-brand-orange" />
+                            <span className="hidden sm:inline">Sair da Sala</span>
+                        </button>
+                    )}
                 </div>
             </header>
 
@@ -517,7 +530,6 @@ export const TeleconsultaRoom: React.FC = () => {
                 <div className={`p-3 sm:p-5 flex flex-col justify-between bg-black relative ${isDoctor ? 'lg:col-span-6 xl:col-span-7' : 'lg:col-span-12'}`}>
                     {/* Área da Tela de Vídeo Principal */}
                     <div className="flex-1 w-full bg-gray-900 rounded-3xl border border-gray-800 relative overflow-hidden flex items-center justify-center min-h-[220px] sm:min-h-[340px] shadow-2xl">
-                        {/* Feed de Vídeo Simulado / Avatar em Alta Definição */}
                         {!isVideoOff ? (
                             <div className="w-full h-full flex flex-col items-center justify-center relative bg-gradient-to-b from-gray-900 to-gray-950 p-6">
                                 <div className="relative">
@@ -558,7 +570,7 @@ export const TeleconsultaRoom: React.FC = () => {
                         )}
 
                         {/* Miniatura Picture-in-Picture do Usuário Local */}
-                        <div className="absolute bottom-4 right-4 w-28 sm:w-36 h-20 sm:h-24 bg-gray-800/90 backdrop-blur rounded-2xl border border-gray-700/80 shadow-lg overflow-hidden flex items-center justify-center">
+                        <div className="absolute bottom-4 right-4 w-28 sm:w-36 h-20 sm:h-24 bg-gray-800/90 backdrop-blur-xs rounded-2xl border border-gray-700/80 shadow-lg overflow-hidden flex items-center justify-center">
                             <div className="text-center p-2">
                                 <div className="w-7 h-7 mx-auto rounded-full bg-brand-orange/20 text-brand-orange flex items-center justify-center text-xs font-black mb-1">
                                     Você
@@ -570,8 +582,8 @@ export const TeleconsultaRoom: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Barra Flutuante de Comandos de Chamada (Acessível / Alvos Táteis de 50px) */}
-                    <div className="mt-3 sm:mt-4 py-2 px-4 bg-gray-900/90 backdrop-blur border border-gray-800 rounded-2xl flex items-center justify-center gap-3 sm:gap-4 shrink-0">
+                    {/* Barra Flutuante de Comandos de Chamada (Acessível) */}
+                    <div className="mt-3 sm:mt-4 py-2 px-4 bg-gray-900/90 backdrop-blur-xs border border-gray-800 rounded-2xl flex items-center justify-center gap-3 sm:gap-4 shrink-0">
                         {/* Botão Microfone */}
                         <button
                             type="button"
@@ -602,44 +614,93 @@ export const TeleconsultaRoom: React.FC = () => {
                             {isVideoOff ? <VideoOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Video className="w-5 h-5 sm:w-6 sm:h-6" />}
                         </button>
 
-                        {/* Botão Encerrar */}
-                        <button
-                            type="button"
-                            onClick={handleHangUp}
-                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer"
-                            title="Encerrar Consulta"
-                            aria-label="Encerrar Consulta"
-                        >
-                            <PhoneOff className="w-5 h-5 sm:w-6 sm:h-6" />
-                        </button>
-                    </div>
-
-                    {/* Visão do Paciente Idoso: Instruções e Botão para Acessar Prescrições */}
-                    {!isDoctor && (
-                        <div className="mt-4 p-4 sm:p-5 bg-gradient-to-r from-brand-pot/20 to-brand-orange/10 border border-brand-orange/30 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div className="text-center sm:text-left">
-                                <h4 className="text-sm sm:text-base font-black text-brand-orange flex items-center justify-center sm:justify-start gap-2">
-                                    <Sparkles className="w-4 h-4" />
-                                    Atendimento Geriátrico Ativo
-                                </h4>
-                                <p className="text-xs text-gray-300 mt-0.5">
-                                    Suas receitas, atestados e pedidos emitidos pelo médico nesta sessão ficam gravados em sua conta.
-                                </p>
-                            </div>
-
+                        {/* Botão Sair da Sala (Paciente não encerra consulta / Prerrogativa médica) */}
+                        {isDoctor ? (
                             <button
                                 type="button"
-                                onClick={() => navigate('/paciente/documentos')}
-                                className="px-4 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs sm:text-sm font-black flex items-center gap-2 shadow cursor-pointer whitespace-nowrap min-h-[44px]"
+                                onClick={handleDoctorLeave}
+                                className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer"
+                                title="Sair da Sala"
+                                aria-label="Sair da Sala"
                             >
-                                <FileSignature className="w-4 h-4" />
-                                <span>Ver Minhas Receitas</span>
+                                <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-brand-orange" />
                             </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handlePatientLeave}
+                                className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer"
+                                title="Sair da Sala (Você pode retornar quando desejar)"
+                                aria-label="Sair da Sala"
+                            >
+                                <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-brand-orange" />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Visão do Paciente: Documentos Emitidos nesta Sessão em Tempo Real (SPEC-12B) */}
+                    {!isDoctor && (
+                        <div className="mt-4 bg-gray-900 border border-gray-800 rounded-3xl p-4 sm:p-5 space-y-3">
+                            <div className="flex items-center justify-between">
+                                <h4 className="text-xs sm:text-sm font-black text-brand-orange uppercase tracking-wider flex items-center gap-2">
+                                    <FileSignature className="w-4 h-4" />
+                                    Documentos Emitidos Nesta Sessão ({documents.length})
+                                </h4>
+                                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
+                                    Sincronização em Tempo Real
+                                </span>
+                            </div>
+
+                            {loadingDocs && documents.length === 0 ? (
+                                <div className="py-8 text-center text-gray-400">
+                                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-brand-orange" />
+                                </div>
+                            ) : documents.length === 0 ? (
+                                <div className="p-6 bg-gray-950/60 rounded-2xl border border-dashed border-gray-800 text-center space-y-1.5">
+                                    <FileText className="w-8 h-8 text-gray-600 mx-auto" />
+                                    <p className="text-xs sm:text-sm font-bold text-gray-300">
+                                        Nenhum documento emitido até o momento nesta sessão.
+                                    </p>
+                                    <p className="text-[11px] text-gray-500 max-w-md mx-auto">
+                                        Assim que o médico prescrever uma receita, atestado ou pedido de exame, ele aparecerá aqui automaticamente para visualização e impressão.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {documents.map((doc) => (
+                                        <div
+                                            key={doc.id}
+                                            className="bg-gray-950 p-4 rounded-2xl border border-gray-800 hover:border-brand-orange/60 transition-all flex items-center justify-between gap-3"
+                                        >
+                                            <div className="min-w-0">
+                                                <span className="text-[10px] font-black uppercase text-brand-orange block">
+                                                    {doc.documentType === 'RECEITA_MEDICA' ? 'Receita Médica' : doc.documentType === 'PEDIDO_EXAME' ? 'Pedido de Exame' : 'Atestado'}
+                                                </span>
+                                                <h5 className="text-xs sm:text-sm font-bold text-white truncate">
+                                                    {doc.title}
+                                                </h5>
+                                                <p className="text-[11px] text-gray-400 font-mono mt-0.5">
+                                                    {doc.validationCode}
+                                                </p>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => handleOpenPrintModal(doc)}
+                                                className="px-3.5 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer min-h-[40px]"
+                                            >
+                                                <Printer className="w-3.5 h-3.5" />
+                                                <span>Imprimir</span>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
 
-                {/* COLUNA DIREITA: Cockpit Clínico do Médico Durante a Chamada (Apenas para Médico) */}
+                {/* COLUNA DIREITA: Cockpit Clínico do Médico Durante a Chamada */}
                 {isDoctor && (
                     <div className="lg:col-span-6 xl:col-span-5 bg-brand-ice text-brown-dark flex flex-col border-t lg:border-t-0 lg:border-l border-brand-pot/30 overflow-hidden min-h-[450px]">
                         {/* Seletor de Abas Clínicas com Alvos Táteis */}
@@ -654,7 +715,7 @@ export const TeleconsultaRoom: React.FC = () => {
                                 }`}
                             >
                                 <FileText className="w-4 h-4 shrink-0" />
-                                <span>Prontuário (AGA)</span>
+                                <span>Prontuário da Consulta</span>
                             </button>
 
                             <button
@@ -687,262 +748,179 @@ export const TeleconsultaRoom: React.FC = () => {
                         {/* Conteúdo com Scroll da Aba Selecionada */}
                         <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-5">
                             {/* ============================================================== */}
-                            {/* ABA 1: PRONTUÁRIO CLÍNICO (UC14 / RN003)                      */}
+                            {/* ABA 1: CARD ÚNICO DE PRONTUÁRIO CLÍNICO (SPEC-12B / UC14)       */}
                             {/* ============================================================== */}
                             {activeTab === 'prontuario' && (
-                                <div className="space-y-5">
-                                    {/* Banner de Status de Imutabilidade */}
-                                    {medicalRecord.status === 'FINALIZED' ? (
-                                        <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-start gap-3 text-xs text-emerald-950">
-                                            <Lock className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-                                            <div>
-                                                <h4 className="font-black text-sm text-emerald-900">
-                                                    Prontuário Assinado & Imutável
-                                                </h4>
-                                                <p className="text-emerald-800 font-medium mt-0.5">
-                                                    Este prontuário foi finalizado com assinatura digital válida perante o CFM. Novas alterações foram bloqueadas.
-                                                </p>
-                                                <p className="font-mono text-[11px] text-emerald-900 mt-1 break-all">
-                                                    Hash SHA-256: {medicalRecord.hashSignature}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-2xl flex items-center justify-between gap-3 text-xs text-amber-900">
-                                            <span className="flex items-center gap-2 font-medium">
-                                                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                                                Modo Rascunho: Edite livremente antes de assinar.
+                                <div className="bg-white rounded-3xl border border-brand-pot/30 p-5 sm:p-6 shadow-xs space-y-5">
+                                    {/* Cabeçalho do Card Único com Dados do Paciente */}
+                                    <div className="border-b border-brand-pot/30 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                        <div>
+                                            <span className="text-[10px] font-black uppercase tracking-wider text-brand-orange block">
+                                                Prontuário Ético Eletrônico
                                             </span>
-                                            <span className="px-2 py-0.5 bg-amber-200/70 text-amber-900 font-black rounded-md text-[10px] uppercase">
-                                                DRAFT
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {/* Seção 1: Anamnese Clínica */}
-                                    <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-pot/30 shadow-xs space-y-3">
-                                        <h3 className="text-xs uppercase tracking-wider font-black text-brand-orange flex items-center gap-2">
-                                            <FileText className="w-4 h-4" />
-                                            1. Anamnese Clínica & Queixas
-                                        </h3>
-
-                                        <div>
-                                            <label className="block text-xs font-bold text-brown-dark mb-1">
-                                                Queixa Principal Relatada:
-                                            </label>
-                                            <textarea
-                                                rows={2}
-                                                disabled={medicalRecord.status === 'FINALIZED'}
-                                                value={medicalRecord.chiefComplaint}
-                                                onChange={(e) => setMedicalRecord({ ...medicalRecord, chiefComplaint: e.target.value })}
-                                                placeholder="Ex: Tonturas esporádicas ao se levantar, fraqueza nas pernas..."
-                                                className="w-full p-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100 disabled:text-gray-500"
-                                            />
+                                            <h3 className="text-base sm:text-lg font-black text-brown-dark">
+                                                {appointment?.patientName || 'Paciente'}
+                                            </h3>
+                                            <p className="text-xs text-brown-light mt-0.5">
+                                                Dr(a). {appointment?.doctorName} • CRM {appointment?.doctorCrm}/{appointment?.doctorUfCrm}
+                                            </p>
                                         </div>
 
-                                        <div>
-                                            <label className="block text-xs font-bold text-brown-dark mb-1">
-                                                História da Doença Atual (HDA):
-                                            </label>
-                                            <textarea
-                                                rows={2}
-                                                disabled={medicalRecord.status === 'FINALIZED'}
-                                                value={medicalRecord.historyOfPresentIllness}
-                                                onChange={(e) => setMedicalRecord({ ...medicalRecord, historyOfPresentIllness: e.target.value })}
-                                                placeholder="Início dos sintomas, frequência, fatores de alívio ou piora..."
-                                                className="w-full p-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100 disabled:text-gray-500"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-xs font-bold text-brown-dark mb-1">
-                                                Evolução / Observações da Sessão:
-                                            </label>
-                                            <textarea
-                                                rows={2}
-                                                disabled={medicalRecord.status === 'FINALIZED'}
-                                                value={medicalRecord.clinicalEvolution}
-                                                onChange={(e) => setMedicalRecord({ ...medicalRecord, clinicalEvolution: e.target.value })}
-                                                placeholder="Aparência geral, comunicabilidade, relatos do cuidador..."
-                                                className="w-full p-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100 disabled:text-gray-500"
-                                            />
+                                        <div className="self-start sm:self-auto">
+                                            {medicalRecord.status === 'FINALIZED' ? (
+                                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold">
+                                                    <Lock className="w-3.5 h-3.5 text-emerald-700" />
+                                                    <span>Finalizado & Assinado</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold">
+                                                    <AlertCircle className="w-3.5 h-3.5 text-amber-700" />
+                                                    <span>Rascunho Ativo</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
-                                    {/* Seção 2: Avaliação Geriátrica Ampla (AGA) */}
-                                    <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-pot/30 shadow-xs space-y-3">
-                                        <h3 className="text-xs uppercase tracking-wider font-black text-brand-orange flex items-center gap-2">
-                                            <ShieldCheck className="w-4 h-4" />
-                                            2. Avaliação Geriátrica Ampla (AGA)
-                                        </h3>
+                                    {/* Banner Preparatório para IA (Copiloto Active Age / SPEC-12B) */}
+                                    <div className="p-4 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border border-orange-200/80 rounded-2xl flex items-start gap-3 text-xs">
+                                        <Sparkles className="w-5 h-5 text-brand-orange shrink-0 mt-0.5" />
+                                        <div>
+                                            <h4 className="font-black text-brown-dark text-xs sm:text-sm">
+                                                Copiloto Clínico Active Age (Área Preparada para IA)
+                                            </h4>
+                                            <p className="text-brown-light mt-0.5 leading-relaxed">
+                                                Durante a teleconsulta, a inteligência artificial transcreverá o diálogo médico-paciente e estruturará o relatório clínico em tempo real. O médico revisa, complementa as orientações e assina digitalmente.
+                                            </p>
+                                        </div>
+                                    </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {/* Espaço Único Amplo de Relatório Clínico da Consulta */}
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="text-xs font-black text-brown-dark uppercase tracking-wider flex items-center gap-1.5">
+                                                <FileText className="w-4 h-4 text-brand-orange" />
+                                                Relatório da Consulta & Evolução Médica
+                                            </label>
+                                            <span className="text-[11px] text-brown-light italic">
+                                                {medicalRecord.status === 'FINALIZED' ? 'Documento Bloqueado' : 'Campo editável pelo médico'}
+                                            </span>
+                                        </div>
+                                        <textarea
+                                            rows={12}
+                                            disabled={medicalRecord.status === 'FINALIZED'}
+                                            value={medicalRecord.clinicalConduct || medicalRecord.clinicalEvolution || ''}
+                                            onChange={(e) => {
+                                                setMedicalRecord({
+                                                    ...medicalRecord,
+                                                    clinicalConduct: e.target.value,
+                                                    clinicalEvolution: e.target.value,
+                                                });
+                                            }}
+                                            placeholder={`1. Anamnese & Queixas Principais:\n   (Descreva os sintomas relatados pelo paciente ou cuidador familiar)\n\n2. Avaliação Clínica & Estado Geral:\n   (Aspectos cognitivos, mobilidade, comunicabilidade e suporte social)\n\n3. Diagnóstico / CID-11:\n   (Hipóteses diagnósticas ou impressão clínica)\n\n4. Conduta Terapêutica & Plano de Cuidado:\n   (Orientações gerais, ajustes de medicamentos e data sugerida para retorno)`}
+                                            className="w-full p-4 rounded-2xl border border-gray-200 text-xs sm:text-sm leading-relaxed font-sans focus:ring-2 focus:ring-brand-orange focus:border-brand-orange disabled:bg-gray-100 disabled:text-gray-500 shadow-inner"
+                                        />
+                                    </div>
+
+                                    {/* Seletores Compactos de Parâmetros da AGA (Preservando modelo de dados) */}
+                                    <div className="pt-2 border-t border-brand-pot/20">
+                                        <h4 className="text-[11px] font-black uppercase tracking-wider text-brown-light mb-2">
+                                            Parâmetros Geriátricos Rápidos (AGA)
+                                        </h4>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                                             <div>
-                                                <label className="block text-[11px] font-bold text-brown-dark mb-1">
-                                                    Estado Cognitivo:
+                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
+                                                    Cognição:
                                                 </label>
                                                 <select
                                                     disabled={medicalRecord.status === 'FINALIZED'}
                                                     value={medicalRecord.cognitiveStatus}
                                                     onChange={(e) => setMedicalRecord({ ...medicalRecord, cognitiveStatus: e.target.value })}
-                                                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
+                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
                                                 >
                                                     <option value="Preservado">Preservado</option>
-                                                    <option value="Declínio Cognitivo Leve">Declínio Cognitivo Leve</option>
-                                                    <option value="Demência em Investigação">Demência em Investigação</option>
+                                                    <option value="Declínio Cognitivo Leve">Declínio Leve</option>
+                                                    <option value="Demência em Investigação">Em Investigação</option>
                                                 </select>
                                             </div>
 
                                             <div>
-                                                <label className="block text-[11px] font-bold text-brown-dark mb-1">
-                                                    Risco de Quedas / Mobilidade:
+                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
+                                                    Risco de Quedas:
                                                 </label>
                                                 <select
                                                     disabled={medicalRecord.status === 'FINALIZED'}
                                                     value={medicalRecord.mobilityRisk}
                                                     onChange={(e) => setMedicalRecord({ ...medicalRecord, mobilityRisk: e.target.value })}
-                                                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
+                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
                                                 >
                                                     <option value="Baixo Risco de Quedas">Baixo Risco</option>
-                                                    <option value="Risco Moderado de Quedas">Risco Moderado</option>
-                                                    <option value="Marcha Instável / Alto Risco">Marcha Instável / Alto Risco</option>
+                                                    <option value="Risco Moderado de Quedas">Moderado</option>
+                                                    <option value="Marcha Instável / Alto Risco">Alto Risco</option>
                                                 </select>
                                             </div>
 
                                             <div>
-                                                <label className="block text-[11px] font-bold text-brown-dark mb-1">
-                                                    Independência Funcional:
+                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
+                                                    Independência:
                                                 </label>
                                                 <select
                                                     disabled={medicalRecord.status === 'FINALIZED'}
                                                     value={medicalRecord.functionalIndependence}
                                                     onChange={(e) => setMedicalRecord({ ...medicalRecord, functionalIndependence: e.target.value })}
-                                                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
+                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
                                                 >
-                                                    <option value="Totalmente Independente">Totalmente Independente</option>
-                                                    <option value="Dependência Parcial (AIVD)">Dependência Parcial (AIVD)</option>
-                                                    <option value="Dependência Total (AVD)">Dependência Total (AVD)</option>
+                                                    <option value="Totalmente Independente">Independente</option>
+                                                    <option value="Dependência Parcial (AIVD)">Parcial (AIVD)</option>
+                                                    <option value="Dependência Total (AVD)">Total (AVD)</option>
                                                 </select>
                                             </div>
 
                                             <div>
-                                                <label className="block text-[11px] font-bold text-brown-dark mb-1">
-                                                    Suporte Familiar / Cuidador:
+                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
+                                                    Apoio Familiar:
                                                 </label>
                                                 <select
                                                     disabled={medicalRecord.status === 'FINALIZED'}
                                                     value={medicalRecord.familySupport}
                                                     onChange={(e) => setMedicalRecord({ ...medicalRecord, familySupport: e.target.value })}
-                                                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
+                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
                                                 >
-                                                    <option value="Cuidador Presente na Sessão">Cuidador Presente</option>
-                                                    <option value="Apoio Familiar Regular">Apoio Familiar Regular</option>
+                                                    <option value="Apoio Familiar Regular">Regular</option>
+                                                    <option value="Cuidador Presente na Sessão">Presente na Sessão</option>
                                                     <option value="Idoso Vive Só">Idoso Vive Só</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Seção 3: Hipótese Diagnóstica (CID-11) e Conduta */}
-                                    <div className="bg-white p-4 sm:p-5 rounded-2xl border border-brand-pot/30 shadow-xs space-y-3">
-                                        <h3 className="text-xs uppercase tracking-wider font-black text-brand-orange flex items-center gap-2">
-                                            <CheckCircle2 className="w-4 h-4" />
-                                            3. Diagnóstico (CID-11) & Plano de Cuidados
-                                        </h3>
-
-                                        {/* Atalhos Rápidos de CID-11 */}
-                                        {medicalRecord.status !== 'FINALIZED' && (
-                                            <div>
-                                                <span className="text-[10px] font-bold text-brown-light uppercase block mb-1.5">
-                                                    Atalhos Rápidos de CID-11 Geriátrico:
-                                                </span>
-                                                <div className="flex flex-wrap gap-1.5">
-                                                    {COMMON_GERIATRIC_CIDS.map((c) => (
-                                                        <button
-                                                            key={c.code}
-                                                            type="button"
-                                                            onClick={() => setMedicalRecord({ ...medicalRecord, cid11Code: c.code, cid11Description: c.desc })}
-                                                            className="px-2.5 py-1 rounded-lg bg-brand-ice hover:bg-orange-100 text-brown-dark border border-brand-pot/30 text-[11px] font-bold transition-all cursor-pointer"
-                                                        >
-                                                            <strong className="text-brand-orange">{c.code}</strong> - {c.desc.substring(0, 24)}...
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                            <div>
-                                                <label className="block text-xs font-bold text-brown-dark mb-1">
-                                                    Código CID-11:
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    disabled={medicalRecord.status === 'FINALIZED'}
-                                                    value={medicalRecord.cid11Code}
-                                                    onChange={(e) => setMedicalRecord({ ...medicalRecord, cid11Code: e.target.value.toUpperCase() })}
-                                                    placeholder="Ex: MB40"
-                                                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
-                                                />
-                                            </div>
-                                            <div className="sm:col-span-2">
-                                                <label className="block text-xs font-bold text-brown-dark mb-1">
-                                                    Descrição da Afecção:
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    disabled={medicalRecord.status === 'FINALIZED'}
-                                                    value={medicalRecord.cid11Description}
-                                                    onChange={(e) => setMedicalRecord({ ...medicalRecord, cid11Description: e.target.value })}
-                                                    placeholder="Ex: Sintomas ou sinais relativos à cognição e percepção"
-                                                    className="w-full p-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
-                                                />
-                                            </div>
+                                    {/* Exibição do Hash de Integridade se Finalizado */}
+                                    {medicalRecord.status === 'FINALIZED' && (
+                                        <div className="p-3 bg-gray-50 border border-gray-200 rounded-2xl text-[11px] font-mono text-gray-700 break-all">
+                                            <strong>Selo de Integridade CFM (SHA-256): </strong>
+                                            {medicalRecord.hashSignature}
                                         </div>
+                                    )}
 
-                                        <div>
-                                            <label className="block text-xs font-bold text-brown-dark mb-1">
-                                                Conduta Médica & Plano de Cuidados:
-                                            </label>
-                                            <textarea
-                                                rows={3}
-                                                disabled={medicalRecord.status === 'FINALIZED'}
-                                                value={medicalRecord.clinicalConduct}
-                                                onChange={(e) => setMedicalRecord({ ...medicalRecord, clinicalConduct: e.target.value })}
-                                                placeholder="Ajustes medicamentosos, orientações de dieta, pedidos de exames complementares e retorno..."
-                                                className="w-full p-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Botões de Ação do Prontuário */}
+                                    {/* Botões de Ação do Card Único */}
                                     {medicalRecord.status !== 'FINALIZED' && (
-                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-2">
+                                        <div className="pt-2 border-t border-brand-pot/20 flex flex-col sm:flex-row items-center justify-end gap-3">
                                             <button
                                                 type="button"
-                                                disabled={savingRecord}
                                                 onClick={handleSaveDraft}
-                                                className="px-5 py-3 rounded-xl border border-brand-pot bg-white hover:bg-gray-100 text-brown-dark font-black text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                                                disabled={savingRecord}
+                                                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-brand-pot/40 hover:bg-brand-ice text-brown-dark font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px]"
                                             >
-                                                {savingRecord ? (
-                                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                                ) : (
-                                                    <Save className="w-4 h-4 text-brand-orange" />
-                                                )}
+                                                {savingRecord ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                                                 <span>Salvar Rascunho</span>
                                             </button>
 
                                             <button
                                                 type="button"
-                                                disabled={finalizingRecord}
                                                 onClick={promptFinalizeRecord}
-                                                className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                                                disabled={finalizingRecord}
+                                                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px]"
                                             >
-                                                {finalizingRecord ? (
-                                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                                ) : (
-                                                    <Lock className="w-4 h-4" />
-                                                )}
+                                                {finalizingRecord ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                                                 <span>Finalizar & Assinar Prontuário</span>
                                             </button>
                                         </div>
@@ -1023,11 +1001,11 @@ export const TeleconsultaRoom: React.FC = () => {
                             )}
 
                             {/* ============================================================== */}
-                            {/* ABA 3: EMISSÃO DE PRESCRIÇÕES E DOCUMENTOS (UC15)              */}
+                            {/* ABA 3: EMISSÃO DE PRESCRIÇÕES E DOCUMENTOS (UC15 / SPEC-12B)   */}
                             {/* ============================================================== */}
                             {activeTab === 'receitas' && (
                                 <div className="space-y-5">
-                                    {/* Formulário de Nova Emissão */}
+                                    {/* Formulário de Nova Emissão Limpo */}
                                     <form onSubmit={handleIssueDocument} className="bg-white p-4 sm:p-5 rounded-3xl border border-brand-pot/30 shadow-xs space-y-4">
                                         <div className="flex items-center justify-between">
                                             <h3 className="text-xs uppercase tracking-wider font-black text-brand-orange flex items-center gap-2">
@@ -1035,7 +1013,7 @@ export const TeleconsultaRoom: React.FC = () => {
                                                 Emitir Novo Documento Clínico
                                             </h3>
                                             <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                                                Padrão ICP-Brasil
+                                                Padrão ICP-Brasil / Gov.br
                                             </span>
                                         </div>
 
@@ -1094,11 +1072,17 @@ export const TeleconsultaRoom: React.FC = () => {
                                                 Prescrição / Medicamentos / Conteúdo:
                                             </label>
                                             <textarea
-                                                rows={4}
+                                                rows={5}
                                                 required
                                                 value={docContent}
                                                 onChange={(e) => setDocContent(e.target.value)}
-                                                placeholder="Descreva os medicamentos, doses diárias, horários ou termos do atestado..."
+                                                placeholder={
+                                                    docType === 'RECEITA_MEDICA'
+                                                        ? '1. [Nome do Medicamento e Dosagem] - Tomar 1 comprimido pela manhã\n2. [Nome do Medicamento e Dosagem] - Tomar 1 cápsula à noite'
+                                                        : docType === 'PEDIDO_EXAME'
+                                                        ? 'Solicito os seguintes exames:\n- Hemograma Completo\n- Glicemia de Jejum e HbA1c\n- Perfil Lipídico Completo'
+                                                        : `Atesto para os devidos fins que o(a) paciente ${appointment?.patientName || ''} esteve sob atendimento médico nesta data...`
+                                                }
                                                 className="w-full p-3 rounded-xl border border-gray-200 text-xs sm:text-sm font-mono focus:ring-2 focus:ring-brand-orange"
                                             />
                                         </div>
@@ -1111,7 +1095,13 @@ export const TeleconsultaRoom: React.FC = () => {
                                                 rows={2}
                                                 value={docRecommendations}
                                                 onChange={(e) => setDocRecommendations(e.target.value)}
-                                                placeholder="Cuidados alimentares, posologia com água, repouso..."
+                                                placeholder={
+                                                    docType === 'RECEITA_MEDICA'
+                                                        ? 'Ex: Manter boa hidratação ao longo do dia e ingerir medicamentos após refeições...'
+                                                        : docType === 'PEDIDO_EXAME'
+                                                        ? 'Ex: Jejum de 8 a 10 horas em laboratório habilitado...'
+                                                        : 'Ex: Repouso relativo de 3 dias e hidratação regular...'
+                                                }
                                                 className="w-full p-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange"
                                             />
                                         </div>
@@ -1160,7 +1150,7 @@ export const TeleconsultaRoom: React.FC = () => {
                                                             {doc.title}
                                                         </h5>
                                                         <span className="text-[10px] text-emerald-800 font-bold block mt-0.5">
-                                                            Emitido às {new Date(doc.issuedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                            Emitido às {new Date(doc.issuedAt || doc.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                         </span>
                                                     </div>
 
@@ -1183,7 +1173,7 @@ export const TeleconsultaRoom: React.FC = () => {
                 )}
             </main>
 
-            {/* Modal de Impressão Oficial de Documento */}
+            {/* Modal de Impressão Oficial de Documento em Preto e Branco */}
             <DocumentPrintModal
                 isOpen={isPrintModalOpen}
                 onClose={() => setIsPrintModalOpen(false)}

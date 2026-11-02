@@ -4,16 +4,19 @@ import {
     Calendar,
     Clock,
     ArrowLeft,
-    Stethoscope,
     CalendarCheck,
     XCircle,
     Video,
-    ShieldCheck,
     Loader2,
-    CalendarX
+    CalendarX,
+    FileText,
+    Printer,
+    X,
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
+import { DocumentPrintModal } from '../../components/teleconsulta/DocumentPrintModal';
 import { Footer } from '../../components/home/Footer';
+import type { MedicalDocument } from '../../types/teleconsulta';
 
 interface AppointmentItem {
     id: string;
@@ -46,6 +49,20 @@ export const MinhasConsultas: React.FC = () => {
     // Cancelamento
     const [targetCancelId, setTargetCancelId] = useState<string | null>(null);
     const [cancelling, setCancelling] = useState(false);
+
+    // Documentos da Consulta (SPEC-12B)
+    const [selectedDocForPrint, setSelectedDocForPrint] = useState<MedicalDocument | null>(null);
+    const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+    const [loadingDocApptId, setLoadingDocApptId] = useState<string | null>(null);
+    const [appointmentDocsModal, setAppointmentDocsModal] = useState<{
+        isOpen: boolean;
+        doctorName: string;
+        docs: MedicalDocument[];
+    }>({
+        isOpen: false,
+        doctorName: '',
+        docs: [],
+    });
 
     // Feedback Modal
     const [feedback, setFeedback] = useState<{
@@ -111,6 +128,50 @@ export const MinhasConsultas: React.FC = () => {
         }
     };
 
+    // Busca e visualização de documentos da consulta (SPEC-12B)
+    const handleViewDocuments = async (app: AppointmentItem) => {
+        setLoadingDocApptId(app.id);
+        try {
+            const res = await fetch(`/api/medical-documents/appointment/${app.id}`);
+            if (res.ok) {
+                const docs: MedicalDocument[] = await res.json();
+                if (docs.length === 0) {
+                    setFeedback({
+                        isOpen: true,
+                        type: 'info',
+                        title: 'Nenhum Documento Emitido',
+                        message: `Nenhum documento médico (receita, pedido de exame ou atestado) foi emitido nesta consulta com Dr(a). ${app.doctorName}.`,
+                    });
+                } else if (docs.length === 1) {
+                    setSelectedDocForPrint(docs[0]);
+                    setIsPrintModalOpen(true);
+                } else {
+                    setAppointmentDocsModal({
+                        isOpen: true,
+                        doctorName: app.doctorName,
+                        docs,
+                    });
+                }
+            } else {
+                setFeedback({
+                    isOpen: true,
+                    type: 'error',
+                    title: 'Não foi possível carregar',
+                    message: 'Erro ao buscar os documentos emitidos nesta consulta.',
+                });
+            }
+        } catch {
+            setFeedback({
+                isOpen: true,
+                type: 'error',
+                title: 'Erro de Conexão',
+                message: 'Falha de comunicação ao buscar documentos.',
+            });
+        } finally {
+            setLoadingDocApptId(null);
+        }
+    };
+
     const handleConfirmCancel = async () => {
         if (!targetCancelId) return;
 
@@ -158,92 +219,77 @@ export const MinhasConsultas: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                     <button
                         onClick={() => navigate('/paciente/dashboard')}
-                        className="flex items-center gap-2 text-brown-dark hover:text-brand-orange text-xs sm:text-sm font-bold transition-all cursor-pointer min-h-[44px]"
+                        className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-brown-dark hover:text-brand-orange transition-colors cursor-pointer"
                     >
-                        <ArrowLeft className="w-5 h-5 text-brand-orange" />
-                        <span>Voltar ao Dashboard</span>
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Voltar ao Meu Painel</span>
                     </button>
 
-                    <button
-                        onClick={() => navigate('/paciente/busca-medicos')}
-                        className="px-4 sm:px-5 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs sm:text-sm font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer min-h-[44px]"
-                    >
-                        <Calendar className="w-4 h-4" />
-                        <span>Agendar Nova Consulta</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-xs font-bold text-brown-light">
+                            Agenda & Histórico em Tempo Real
+                        </span>
+                    </div>
                 </div>
             </header>
 
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-16 space-y-6 flex-1 w-full">
-                {/* Banner de Apresentação */}
-                <div className="bg-white rounded-3xl border border-brand-pot/30 p-6 sm:p-8 shadow-xs">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="space-y-1">
-                            <div className="flex items-center gap-2 text-xs font-black text-brand-orange uppercase tracking-wider">
-                                <Stethoscope className="w-4 h-4" />
-                                <span>Acompanhamento Clínico Geriátrico</span>
-                            </div>
-                            <h1 className="text-2xl sm:text-3xl font-black text-brown-dark tracking-tight">
-                                Minhas Teleconsultas
-                            </h1>
-                            <p className="text-xs sm:text-sm text-brown-light leading-relaxed max-w-2xl">
-                                Acompanhe seus horários agendados, links de chamada e histórico de atendimentos com total zelo ético conforme a Resolução CFM nº 2.314/2022.
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200/80 rounded-2xl text-xs font-semibold text-amber-900 self-start md:self-auto">
-                            <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0" />
-                            <span>Cancelamento sem custos com mais de 24h de antecedência</span>
-                        </div>
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+                {/* Título da Página e Navegação de Abas */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span className="text-xs uppercase font-black text-brand-orange tracking-wider block mb-1">
+                            Acompanhamento de Consultas
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl font-black text-brown-dark">
+                            Minhas Consultas & Histórico
+                        </h1>
+                        <p className="text-sm text-brown-light mt-1">
+                            Acompanhe suas teleconsultas agendadas e consulte documentos médicos emitidos.
+                        </p>
                     </div>
 
-                    {/* Alternador de Abas */}
-                    <div className="grid grid-cols-2 gap-2 p-1.5 bg-gray-100 rounded-2xl mt-6">
+                    {/* Abas */}
+                    <div className="flex items-center bg-white p-1 rounded-2xl border border-brand-pot/30 shadow-xs">
                         <button
                             type="button"
                             onClick={() => setTab('upcoming')}
-                            className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[44px] ${
                                 tab === 'upcoming'
-                                    ? 'bg-white text-brown-dark shadow-xs'
+                                    ? 'bg-brand-orange text-white shadow-xs'
                                     : 'text-brown-light hover:text-brown-dark'
                             }`}
                         >
-                            <CalendarCheck className="w-4 h-4 text-emerald-600" />
-                            <span>Próximas Consultas ({upcomingAppointments.length})</span>
+                            Consultas Marcadas ({upcomingAppointments.length})
                         </button>
                         <button
                             type="button"
                             onClick={() => setTab('history')}
-                            className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[44px] ${
                                 tab === 'history'
-                                    ? 'bg-white text-brown-dark shadow-xs'
+                                    ? 'bg-brand-orange text-white shadow-xs'
                                     : 'text-brown-light hover:text-brown-dark'
                             }`}
                         >
-                            <CalendarX className="w-4 h-4 text-brown-light" />
-                            <span>Histórico & Encerradas ({historyAppointments.length})</span>
+                            Histórico de Atendimentos ({historyAppointments.length})
                         </button>
                     </div>
                 </div>
 
-                {/* Listagem de Consultas */}
+                {/* Conteúdo das Consultas */}
                 {loading ? (
-                    <div className="py-20 text-center space-y-3">
-                        <Loader2 className="w-10 h-10 text-brand-orange animate-spin mx-auto" />
-                        <p className="text-sm font-bold text-brown-dark">
-                            Buscando suas consultas agendadas...
-                        </p>
+                    <div className="py-20 text-center">
+                        <Loader2 className="w-10 h-10 text-brand-orange animate-spin mx-auto mb-3" />
+                        <p className="text-sm font-bold text-brown-dark">Carregando seus horários...</p>
                     </div>
                 ) : (tab === 'upcoming' ? upcomingAppointments : historyAppointments).length === 0 ? (
                     /* Empty State */
-                    <div className="bg-white rounded-3xl border border-brand-pot/30 p-10 sm:p-14 text-center shadow-xs max-w-lg mx-auto space-y-4">
-                        <div className="w-16 h-16 rounded-2xl bg-orange-100/70 text-brand-orange flex items-center justify-center mx-auto">
-                            <Calendar className="w-8 h-8" />
+                    <div className="bg-white rounded-3xl border border-brand-pot/30 p-8 sm:p-12 text-center max-w-lg mx-auto space-y-4 shadow-xs">
+                        <div className="w-16 h-16 rounded-2xl bg-brand-orange/10 text-brand-orange flex items-center justify-center mx-auto">
+                            <CalendarX className="w-8 h-8" />
                         </div>
-                        <h3 className="text-lg sm:text-xl font-black text-brown-dark">
-                            {tab === 'upcoming'
-                                ? 'Nenhuma consulta futura agendada'
-                                : 'Nenhum histórico de consulta anterior'}
+                        <h3 className="text-lg font-black text-brown-dark">
+                            {tab === 'upcoming' ? 'Nenhuma teleconsulta agendada' : 'Nenhuma consulta no histórico'}
                         </h3>
                         <p className="text-xs sm:text-sm text-brown-light leading-relaxed">
                             {tab === 'upcoming'
@@ -351,17 +397,10 @@ export const MinhasConsultas: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {app.patientNotes && (
-                                    <div className="p-3 bg-gray-50 rounded-xl border border-brand-pot/20 text-xs">
-                                        <strong className="text-brown-dark">Sintomas informados: </strong>
-                                        <span className="text-brown-light italic">"{app.patientNotes}"</span>
-                                    </div>
-                                )}
-
                                 {/* Ações do Card */}
                                 <div className="pt-3 border-t border-brand-pot/20 flex flex-col sm:flex-row items-center justify-between gap-3">
-                                    <div className="flex items-center gap-2 text-xs">
-                                        {app.status === 'AGENDADA' ? (
+                                    <div className="flex flex-wrap items-center gap-2 text-xs w-full sm:w-auto">
+                                        {app.status === 'AGENDADA' && (
                                             <button
                                                 type="button"
                                                 onClick={() => navigate(`/teleconsulta/${app.id}`)}
@@ -370,9 +409,22 @@ export const MinhasConsultas: React.FC = () => {
                                                 <Video className="w-4 h-4" />
                                                 <span>Entrar na Sala Virtual</span>
                                             </button>
-                                        ) : (
-                                            <span className="text-brown-light italic text-xs">Atendimento finalizado</span>
                                         )}
+
+                                        {/* Botão para Visualizar Documentos e Receitas Emitidos (SPEC-12B) */}
+                                        <button
+                                            type="button"
+                                            onClick={() => handleViewDocuments(app)}
+                                            disabled={loadingDocApptId === app.id}
+                                            className="px-4 py-2.5 rounded-xl border border-brand-pot/40 hover:bg-brand-ice text-brown-dark font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer min-h-[44px]"
+                                        >
+                                            {loadingDocApptId === app.id ? (
+                                                <Loader2 className="w-4 h-4 animate-spin text-brand-orange" />
+                                            ) : (
+                                                <FileText className="w-4 h-4 text-brand-orange" />
+                                            )}
+                                            <span>Documentos & Receitas</span>
+                                        </button>
                                     </div>
 
                                     {app.status === 'AGENDADA' && (
@@ -403,6 +455,76 @@ export const MinhasConsultas: React.FC = () => {
                     </div>
                 )}
             </main>
+
+            {/* Modal de Múltiplos Documentos da Consulta */}
+            {appointmentDocsModal.isOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-brand-pot/30 space-y-4">
+                        <div className="flex items-center justify-between pb-3 border-b border-brand-pot/20">
+                            <div>
+                                <span className="text-[10px] font-black uppercase tracking-wider text-brand-orange block">
+                                    Documentos Emitidos
+                                </span>
+                                <h3 className="text-base font-black text-brown-dark">
+                                    Dr(a). {appointmentDocsModal.doctorName}
+                                </h3>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setAppointmentDocsModal(prev => ({ ...prev, isOpen: false }))}
+                                className="w-8 h-8 rounded-full bg-brand-ice hover:bg-gray-100 text-brown-light flex items-center justify-center transition-colors cursor-pointer"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                            {appointmentDocsModal.docs.map(doc => (
+                                <div
+                                    key={doc.id}
+                                    className="p-4 rounded-2xl border border-brand-pot/30 bg-brand-ice/50 hover:border-brand-orange transition-all flex items-center justify-between gap-3"
+                                >
+                                    <div className="min-w-0">
+                                        <span className="text-[10px] font-black uppercase text-brand-orange block">
+                                            {doc.documentType === 'RECEITA_MEDICA' ? 'Receita Médica' : doc.documentType === 'PEDIDO_EXAME' ? 'Pedido de Exame' : 'Atestado'}
+                                        </span>
+                                        <h4 className="text-xs sm:text-sm font-bold text-brown-dark truncate">
+                                            {doc.title}
+                                        </h4>
+                                        <p className="text-[11px] text-brown-light font-mono mt-0.5">
+                                            {doc.validationCode}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setSelectedDocForPrint(doc);
+                                            setIsPrintModalOpen(true);
+                                            setAppointmentDocsModal(prev => ({ ...prev, isOpen: false }));
+                                        }}
+                                        className="px-3.5 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer min-h-[40px]"
+                                    >
+                                        <Printer className="w-3.5 h-3.5" />
+                                        <span>Imprimir</span>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de Impressão de Documento em Preto e Branco */}
+            <DocumentPrintModal
+                isOpen={isPrintModalOpen}
+                onClose={() => setIsPrintModalOpen(false)}
+                document={selectedDocForPrint}
+            />
 
             {/* Modal Acessível de Confirmação de Cancelamento */}
             {targetCancelId && (

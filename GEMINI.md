@@ -96,6 +96,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Módulo de Emissão de Receitas Médicas Digitais, Pedidos de Exames e Atestados com código seguro ICP-Brasil `AA-2026-XXXXXX` (UC15).
   - Painel do Paciente para Consulta e Impressão Timbrada de Documentos Oficiais (UC16).
   - Validador Público de Prescrições e Atestados perante o CRM e ICP-Brasil (`/validar-documento`).
+  - Reformulação da Sala de Teleconsulta (SPEC-12B): Card Único de Prontuário preparado para IA, sincronização em tempo real de receitas emitidas para o idoso, fluxo de saída seguro sem encerramento acidental, template de prescrição limpo sem mock e receituário timbrado em Preto e Branco puro para impressão/PDF Gov.br.
 - **4º Semestre — [PRÓXIMA ETAPA]:**
   - Microsserviços de Teleconsulta Real (WebRTC Nativo), Gateway de Pagamento com Split Direto e Mensageria Assíncrona para Notificações e Alertas.
 - **5º Semestre — [FUTURO]:**

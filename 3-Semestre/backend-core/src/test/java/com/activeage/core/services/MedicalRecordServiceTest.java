@@ -1,5 +1,6 @@
 package com.activeage.core.services;
 
+import com.activeage.core.domain.enums.AppointmentStatus;
 import com.activeage.core.domain.enums.Role;
 import com.activeage.core.domain.models.Appointment;
 import com.activeage.core.domain.models.MedicalRecord;
@@ -144,6 +145,7 @@ class MedicalRecordServiceTest {
     void shouldFinalizeRecordSuccessfully() {
         when(userRepository.findByEmail(doctorUser.getEmail())).thenReturn(Optional.of(doctorUser));
         when(medicalRecordRepository.findById(draftRecord.getId())).thenReturn(Optional.of(draftRecord));
+        when(appointmentRepository.findById(draftRecord.getAppointmentId())).thenReturn(Optional.of(appointment));
         when(medicalRecordRepository.save(any(MedicalRecord.class))).thenAnswer(i -> i.getArgument(0));
 
         MedicalRecordResponse response = medicalRecordService.finalizeRecord(doctorUser.getEmail(), draftRecord.getId());
@@ -153,6 +155,8 @@ class MedicalRecordServiceTest {
         assertNotNull(response.getFinalizedAt());
         assertNotNull(response.getHashSignature());
         assertTrue(response.getHashSignature().length() >= 32);
+        assertEquals(AppointmentStatus.REALIZADA, appointment.getStatus());
+        verify(appointmentRepository, times(1)).save(appointment);
 
         verify(auditService, times(1)).log(
                 eq(doctorUser.getId()),
