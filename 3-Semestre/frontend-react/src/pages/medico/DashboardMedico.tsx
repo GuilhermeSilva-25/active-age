@@ -19,6 +19,8 @@ import {
     Loader2
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
+import { MedicalRecordViewModal } from '../../components/teleconsulta/MedicalRecordViewModal';
+import { FileText } from 'lucide-react';
 import { Footer } from '../../components/home/Footer';
 import logoImg from '../../assets/logo-active-age.png';
 
@@ -61,6 +63,8 @@ export function DashboardMedico() {
     const [stats, setStats] = useState<DoctorStats | null>(null);
     const navigate = useNavigate();
     const [profile, setProfile] = useState<DoctorProfile | null>(null);
+    const [selectedApptForRecord, setSelectedApptForRecord] = useState<DoctorTodayAppointment | null>(null);
+    const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -428,8 +432,13 @@ export function DashboardMedico() {
                                 <div key={app.id} className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-xs font-black px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
+                                            <span className={`text-xs font-black px-2 py-0.5 rounded-md ${
+                                                app.status === 'REALIZADA'
+                                                    ? 'bg-blue-100 text-blue-800'
+                                                    : 'bg-emerald-100 text-emerald-800'
+                                            }`}>
                                                 {app.startDateTime.split('T')[1].substring(0, 5)} - {app.endDateTime.split('T')[1].substring(0, 5)}
+                                                {app.status === 'REALIZADA' && ' • Realizada'}
                                             </span>
                                             <span className="text-xs font-bold text-brown-light">
                                                 Teleconsulta ({app.durationMinutes} min)
@@ -444,13 +453,28 @@ export function DashboardMedico() {
                                             </p>
                                         )}
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => navigate(`/teleconsulta/${app.id}`)}
-                                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
-                                    >
-                                        Abrir Sala Virtual →
-                                    </button>
+                                    {app.status === 'REALIZADA' ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setSelectedApptForRecord(app);
+                                                setIsRecordModalOpen(true);
+                                            }}
+                                            className="px-4 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer flex items-center gap-1.5 min-h-[40px]"
+                                        >
+                                            <FileText className="w-3.5 h-3.5" />
+                                            <span>Ver Prontuário & Documentos</span>
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate(`/teleconsulta/${app.id}`)}
+                                            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer flex items-center gap-1.5 min-h-[40px]"
+                                        >
+                                            <Video className="w-3.5 h-3.5" />
+                                            <span>Abrir Sala Virtual →</span>
+                                        </button>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -636,6 +660,19 @@ export function DashboardMedico() {
             />
 
             <Footer />
+
+            {/* Modal de Prontuário Médico & Documentos (SPEC-13) */}
+            <MedicalRecordViewModal
+                isOpen={isRecordModalOpen}
+                onClose={() => {
+                    setIsRecordModalOpen(false);
+                    setSelectedApptForRecord(null);
+                }}
+                appointmentId={selectedApptForRecord?.id || null}
+                patientName={selectedApptForRecord?.patientName}
+                doctorName={profile?.fullName}
+                startDateTime={selectedApptForRecord?.startDateTime}
+            />
         </div>
     );
 }

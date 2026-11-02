@@ -155,6 +155,16 @@ public class DoctorScheduleAutomationService {
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
         LocalDateTime endOfToday = LocalDate.now().atTime(23, 59, 59);
 
+        // SPEC-13: Se já existe consulta REALIZADA hoje com o paciente de teste, respeita o término do atendimento
+        boolean hasCompletedToday = appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
+                doctor.getId(), AppointmentStatus.REALIZADA, startOfToday, endOfToday
+        ).stream().anyMatch(a -> a.getPatientId() != null && a.getPatientId().equals(patient.getId()));
+
+        if (hasCompletedToday) {
+            logger.info(">>> [AUTOMAÇÃO] Consulta de hoje com paciente {} já foi REALIZADA e finalizada. Nenhuma consulta adicional será gerada hoje.", patient.getFullName());
+            return;
+        }
+
         List<Appointment> todayAppointments = appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
                 doctor.getId(), AppointmentStatus.AGENDADA, startOfToday, endOfToday
         );

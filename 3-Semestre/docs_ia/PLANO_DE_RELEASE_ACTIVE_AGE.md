@@ -126,6 +126,12 @@ gantt
      - Preservação dos valores padrão do prontuário no estado interno sem quebrar a validação dos DTOs do backend;
      - Especificação detalhada da Assinatura Digital Avançada (Gov.br níveis Prata/Ouro e Certificados ICP-Brasil em Nuvem/PSC com carimbo do tempo ACT) no `BACKLOG_FUNCIONALIDADES_FUTURAS.md`;
      - Especificação detalhada do Copiloto de Inteligência Artificial no Prontuário Clínico (Speech-to-Text em tempo real via WebRTC, modelo SOAP, sugestão de CID-11 e salvaguardas éticas do CFM) no `BACKLOG_FUNCIONALIDADES_FUTURAS.md`.
+  9. [x] **Baixa Automática de Consultas Finalizadas, Bloqueio de Reingresso e Acesso aos Prontuários pelo Médico (SPEC-13 / UC12, UC14, UC15, UC16) — [CONCLUÍDO ✅]:**
+     - Baixa definitiva da consulta no Dashboard do Paciente assim que finalizada pelo médico, removendo do topo e impedindo retorno para vídeo chamada ativa;
+     - Ajuste no semeador de testes (`DoctorScheduleAutomationService.java`) para respeitar consultas `REALIZADA` hoje, evitando recriação em loop de consultas de hoje;
+     - Tela de "Teleconsulta Concluída" em `TeleconsultaRoom.tsx` quando o atendimento estiver realizado, com bloqueio de câmera/microfone, dados da consulta e documentos para download/impressão;
+     - Exibição de consultas realizadas na fila do dia do médico (`DashboardMedico.tsx`) com badge azul "Realizada";
+     - Novo componente `MedicalRecordViewModal.tsx` permitindo ao médico consultar o prontuário finalizado, relatório clínico, hash SHA-256 e reimprimir receitas.
 
 ---
 

@@ -81,7 +81,11 @@ export function DashboardPaciente() {
 
                 if (nextAppRes.ok && nextAppRes.status === 200) {
                     const appData = await nextAppRes.json();
-                    setNextAppointment(appData);
+                    if (appData && appData.status === 'AGENDADA') {
+                        setNextAppointment(appData);
+                    } else {
+                        setNextAppointment(null);
+                    }
                 } else {
                     setNextAppointment(null);
                 }

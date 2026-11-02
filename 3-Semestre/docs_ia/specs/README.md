@@ -41,6 +41,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-12** | **Cockpit de Teleconsulta Integrado, Prontuário Ético Imutável, Exames e Prescrições Digitais** | UC12, UC13, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md](./SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md) |
 | **SPEC-12B** | **Reformulação da Teleconsulta: Card Único de Prontuário para IA, Template Clean P&B e Fluxo Seguro de Encerramento** | UC12, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_REFORMULACAO_TELECONSULTA_PRONTUARIO_E_RECEITAS.md](./SPEC_SDD_REFORMULACAO_TELECONSULTA_PRONTUARIO_E_RECEITAS.md) |
 | **SPEC-12C** | **Simplificação do Prontuário Clínico & Detalhamento Arquitetural de IA e Assinatura Digital no Backlog Futuro** | UC12, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_SIMPLIFICACAO_PRONTUARIO_E_BACKLOG_FUTURO.md](./SPEC_SDD_SIMPLIFICACAO_PRONTUARIO_E_BACKLOG_FUTURO.md) |
+| **SPEC-13** | **Baixa de Consultas Finalizadas, Bloqueio de Reingresso e Acesso aos Prontuários pelo Médico** | UC12, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_BAIXA_CONSULTA_E_ACESSO_PRONTUARIO_MEDICO.md](./SPEC_SDD_BAIXA_CONSULTA_E_ACESSO_PRONTUARIO_MEDICO.md) |
 
 ---
 
