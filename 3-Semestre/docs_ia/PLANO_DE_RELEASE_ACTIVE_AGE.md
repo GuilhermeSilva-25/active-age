@@ -132,6 +132,11 @@ gantt
      - Tela de "Teleconsulta Concluída" em `TeleconsultaRoom.tsx` quando o atendimento estiver realizado, com bloqueio de câmera/microfone, dados da consulta e documentos para download/impressão;
      - Exibição de consultas realizadas na fila do dia do médico (`DashboardMedico.tsx`) com badge azul "Realizada";
      - Novo componente `MedicalRecordViewModal.tsx` permitindo ao médico consultar o prontuário finalizado, relatório clínico, hash SHA-256 e reimprimir receitas.
+   10. [x] **Central de Prontuários & Prescrições Digitais no Dashboard do Médico (SPEC-14 / UC14, UC15, UC16) — [CONCLUÍDO ✅]:**
+      - Ativação do Card 3 ('Prontuário & ICP-Brasil') no `DashboardMedico.tsx`, substituindo o aviso estático por modal funcional de gerenciamento;
+      - Novo componente `DoctorRecordsManagerModal.tsx` com busca reativa por paciente/data, filtros de status ('Todas', 'Realizadas', 'Agendadas');
+      - Visualização do Prontuário Clínico auditado (`MedicalRecordViewModal`) e reimpressão de receitas oficiais em modelo limpo P&B (`DocumentPrintModal`);
+      - Endpoint backend `GET /api/doctor/appointments` ordenado cronologicamente decrescente para histórico integral do médico.
 
 ---
 

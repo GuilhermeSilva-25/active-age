@@ -90,6 +90,17 @@ public class AppointmentController {
         return ResponseEntity.ok(stats);
     }
 
+    /**
+     * Lista todos os atendimentos e histórico de consultas do médico autenticado (SPEC-14).
+     */
+    @GetMapping("/api/doctor/appointments")
+    @PreAuthorize("hasRole('MEDICO')")
+    public ResponseEntity<List<AppointmentResponse>> listDoctorAppointments() {
+        String email = getAuthenticatedEmail();
+        List<AppointmentResponse> list = appointmentService.listDoctorAppointments(email);
+        return ResponseEntity.ok(list);
+    }
+
     @GetMapping("/api/doctor/appointments/today")
     @PreAuthorize("hasRole('MEDICO')")
     public ResponseEntity<List<AppointmentResponse>> listDoctorTodayAppointments() {

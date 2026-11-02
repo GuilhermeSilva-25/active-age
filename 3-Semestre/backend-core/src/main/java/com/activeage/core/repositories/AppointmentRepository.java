@@ -24,6 +24,8 @@ public interface AppointmentRepository extends MongoRepository<Appointment, Stri
 
     List<Appointment> findByDoctorIdOrderByStartDateTimeAsc(String doctorId);
 
+    List<Appointment> findByDoctorIdOrderByStartDateTimeDesc(String doctorId);
+
     List<Appointment> findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
         String doctorId, AppointmentStatus status, LocalDateTime start, LocalDateTime end
     );

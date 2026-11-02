@@ -221,6 +221,15 @@ public class AppointmentService {
         return list.stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
+    /**
+     * Lista todas as teleconsultas e histórico do médico autenticado (SPEC-14).
+     */
+    public List<AppointmentResponse> listDoctorAppointments(String doctorEmail) {
+        User doctor = getAuthenticatedDoctor(doctorEmail);
+        List<Appointment> list = appointmentRepository.findByDoctorIdOrderByStartDateTimeDesc(doctor.getId());
+        return list.stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
     // --- Métodos Auxiliares ---
 
     private User getAuthenticatedPatient(String email) {

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { MedicalRecordViewModal } from '../../components/teleconsulta/MedicalRecordViewModal';
+import { DoctorRecordsManagerModal } from '../../components/teleconsulta/DoctorRecordsManagerModal';
 import { FileText } from 'lucide-react';
 import { Footer } from '../../components/home/Footer';
 import logoImg from '../../assets/logo-active-age.png';
@@ -65,6 +66,7 @@ export function DashboardMedico() {
     const [profile, setProfile] = useState<DoctorProfile | null>(null);
     const [selectedApptForRecord, setSelectedApptForRecord] = useState<DoctorTodayAppointment | null>(null);
     const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
+    const [isRecordsManagerOpen, setIsRecordsManagerOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -582,7 +584,7 @@ export function DashboardMedico() {
                                     handleFeatureNotice('Módulo Bloqueado', 'A emissão de documentos médicos exige validação de regularidade junto ao conselho de medicina.');
                                     return;
                                 }
-                                handleFeatureNotice('Prontuário & Prescrição Digital', 'O prontuário eletrônico e a emissão de receitas com assinatura digital ICP-Brasil estarão disponíveis em breve!');
+                                setIsRecordsManagerOpen(true);
                             }}
                             role="button"
                             tabIndex={0}
@@ -672,6 +674,13 @@ export function DashboardMedico() {
                 patientName={selectedApptForRecord?.patientName}
                 doctorName={profile?.fullName}
                 startDateTime={selectedApptForRecord?.startDateTime}
+            />
+
+            {/* Central de Prontuários & Prescrições Digitais (SPEC-14) */}
+            <DoctorRecordsManagerModal
+                isOpen={isRecordsManagerOpen}
+                onClose={() => setIsRecordsManagerOpen(false)}
+                doctorName={profile?.fullName}
             />
         </div>
     );
