@@ -81,3 +81,4 @@ Isso assegura que a consulta só transiciona para o status concluído quando a o
 
 ## 5. Registro de Auditoria e Commits
 - Commit: `feat(teleconsulta): unifica prontuario para IA, template clean peb e fluxo seguro de encerramento (spec-12b)`
+

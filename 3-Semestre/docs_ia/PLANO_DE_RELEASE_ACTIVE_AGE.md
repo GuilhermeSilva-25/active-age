@@ -121,6 +121,12 @@ gantt
      - Redesenho do template de impressão de documentos em Preto e Branco puro e clean (`DocumentPrintModal.tsx`) preparado para Gov.br e ICP-Brasil;
      - Acesso e impressão de receitas e atestados diretamente a partir do card de consulta no histórico de atendimentos do paciente (`MinhasConsultas.tsx`).
 
+  8. [x] **Simplificação do Prontuário Clínico & Detalhamento Arquitetural de IA e Assinatura Digital no Backlog Futuro (SPEC-12C / UC12, UC14, UC15, UC16) — [CONCLUÍDO ✅]:**
+     - Remoção do card de IA e da seção de parâmetros geriátricos (AGA) da interface do médico em `TeleconsultaRoom.tsx`, promovendo um Card Único de Prontuário super limpo e focado no relatório da consulta;
+     - Preservação dos valores padrão do prontuário no estado interno sem quebrar a validação dos DTOs do backend;
+     - Especificação detalhada da Assinatura Digital Avançada (Gov.br níveis Prata/Ouro e Certificados ICP-Brasil em Nuvem/PSC com carimbo do tempo ACT) no `BACKLOG_FUNCIONALIDADES_FUTURAS.md`;
+     - Especificação detalhada do Copiloto de Inteligência Artificial no Prontuário Clínico (Speech-to-Text em tempo real via WebRTC, modelo SOAP, sugestão de CID-11 e salvaguardas éticas do CFM) no `BACKLOG_FUNCIONALIDADES_FUTURAS.md`.
+
 ---
 
 #### 📅 4º Semestre — Arquitetura de Microsserviços e Tempo Real (UC06, UC07, UC12, UC17) — [PRÓXIMA ETAPA]

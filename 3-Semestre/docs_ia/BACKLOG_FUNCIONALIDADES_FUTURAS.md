@@ -128,5 +128,89 @@ Interface dedicada ou painel integrado de atendimento ao cliente:
 
 ---
 
+---
+## 6. Destaque: Assinatura Digital Avançada & Qualificada (Gov.br & ICP-Brasil)
+
+### 6.1. Contexto e Diretriz do Tech Lead (Guilherme Silva)
+> **Diretiva do PO:**  
+> A plataforma Active Age já emite documentos clínicos com código de validação institucional `AA-2026-XXXXXX` e hash criptográfico SHA-256. Para as próximas etapas (4º e 5º semestres), a arquitetura deve evoluir para integração com **Assinatura Eletrônica Avançada e Qualificada**, permitindo a assinatura direta via conta **Gov.br (níveis Prata e Ouro)** e suporte a certificados digitais **ICP-Brasil (A1, A3 e Nuvem/PSC)**.
+
+### 6.2. Arquitetura da Solução de Assinatura Digital
+
+```mermaid
+flowchart TD
+    A["1. Médico finaliza prescrição ou prontuário no Cockpit"] --> B["2. Backend Core gera documento PDF/A-1b canônico"]
+    B --> C{"3. Modalidade de Assinatura Escolhida"}
+    C -->|"Assinatura Gov.br"| D["4. OAuth2 + API Oficial de Assinatura Gov.br"]
+    C -->|"Certificado em Nuvem"| E["5. Provedor de Assinatura PSC (BirdID / SAFEID / VIDaaS)"]
+    C -->|"Certificado A1 / Token A3"| F["6. Módulo Local de Assinatura Criptográfica PKCS#11"]
+    D --> G["7. Injeção de Assinatura PAdES + Carimbo do Tempo ICP-Brasil"]
+    E --> G
+    F --> G
+    G --> H[("MongoDB GridFS: PDF Assinado")]
+    G --> I["8. Validação Pública Nacional (validar.iti.gov.br e Validador Active Age)"]
+```
+
+### 6.3. Especificações Técnicas e Requisitos de Conformidade
+1. **Padrão PAdES (PDF Advanced Electronic Signatures):**
+   - Assinatura embutida no próprio arquivo PDF em conformidade com a ISO 32000-1 e padrão ICP-Brasil (DOC-ICP-15).
+   - O documento torna-se auto-verificável: ao ser aberto no Adobe Acrobat Reader ou qualquer visualizador de PDF, os dados da assinatura, certificado do médico e integridade do carimbo aparecem validados com o selo verde.
+2. **Integração com Assinador Gov.br:**
+   - Autenticação e autorização via Single Sign-On (SSO) do Gov.br (`Brasil Cidadão`).
+   - Verificação obrigatória de que a conta do médico possui selo **Prata** ou **Ouro**.
+   - Chamada à API de Assinatura Digital do Gov.br enviando o hash SHA-256 do documento gerado e recebendo o pacote assinado com carimbo oficial do Governo Federal (Lei Federal nº 14.063/2020).
+3. **Certificados ICP-Brasil em Nuvem (PSC):**
+   - Suporte aos principais Provedores de Serviço de Confiança (PSCs) do Brasil: BirdID (Soluti), SAFEID (Certisign) e VIDaaS (Valid).
+   - O médico autoriza a assinatura diretamente pelo aplicativo no celular via biometria ou OTP, sem depender de leitoras de cartão físicas ou pendrives USB.
+4. **Carimbo do Tempo (Timestamping):**
+   - Integração com Autoridade de Carimbo do Tempo (ACT) credenciada pelo ITI, garantindo a prova cronológica inalterável de quando o documento foi emitido e assinado, mesmo após a expiração do certificado do emissor.
+5. **Interoperabilidade Total perante Farmácias e Laboratórios:**
+   - QR Code timbrado direcionando tanto para o validador do Active Age (`/validar-documento`) quanto para o **Validador Nacional de Documentos Digitais do ITI / Conselho Federal de Farmácia (CFF) / CFM** (`https://validar.iti.gov.br`).
+
+---
+
+## 7. Destaque: Copiloto de Inteligência Artificial no Prontuário Clínico (IA Generativa & Assistente)
+
+### 7.1. Contexto e Diretriz do Tech Lead (Guilherme Silva)
+> **Diretiva do PO:**  
+> A evolução da teleconsulta geriátrica contará com um **Copiloto Clínico baseado em IA**, encarregado de ouvir a consulta virtual em tempo real, transcrever o diálogo e estruturar automaticamente o relatório clínico no prontuário. No entanto, em conformidade com as normas ético-médicas do CFM, **a IA jamais substituirá a decisão humana**: o médico sempre terá a palavra final para revisar, editar e assinar o prontuário.
+
+### 7.2. Arquitetura da Solução do Copiloto de IA
+
+```mermaid
+flowchart TD
+    A["1. Fluxo de Áudio da Teleconsulta (WebRTC)"] --> B["2. Microsserviço de Streaming de Áudio"]
+    B --> C["3. Transcrição Contínua Speech-to-Text (Whisper / Gemini Live Audio)"]
+    C --> D["4. Pipeline de Processamento de Linguagem Natural (LLM Médico)"]
+    D --> E["5. Estruturação Clínica Automática em Modelo SOAP / AGA"]
+    E --> F["6. Sugestão Contextual de CID-11 e Alertas de Interações Medicamentosas"]
+    F --> G["7. Rascunho Pré-Preenchido no Prontuário Clínico do Médico"]
+    G --> H{"8. Revisão Médica Obrigatória (CFM)"}
+    H -->|"Médico Edita e Complementa"| I["9. Assinatura Digital e Trava de Imutabilidade"]
+```
+
+### 7.3. Componentes e Funcionalidades do Copiloto Clínico
+1. **Ingestão de Áudio & Transcrição Inteligente (Speech-to-Text):**
+   - Captura do fluxo de áudio WebRTC de forma isolada (canal médico e canal paciente).
+   - Transcrição precisa do diálogo com vocabulário clínico geriátrico, reconhecendo termos de polifarmácia, histórico cirúrgico, sinais vitais e relatos dos cuidadores familiares.
+2. **Sumarização Clínica Estruturada (Modelo SOAP / AGA Geriátrica):**
+   - A LLM processa o diálogo e divide o resumo nas dimensões clínicas consagradas:
+     - **S (Subjetivo):** Queixas relatadas pelo idoso, início de sintomas e relatos do acompanhante;
+     - **O (Objetivo):** Exame visual sumário, comunicabilidade, estado de alerta e dados vitais informados;
+     - **A (Avaliação):** Hipóteses diagnósticas e correlação com a Avaliação Geriátrica Ampla (AGA);
+     - **P (Plano):** Conduta terapêutica, prescrições de medicamentos, solicitações de exames e data sugerida de retorno.
+3. **Sugestão Inteligente de Diagnóstico (CID-11):**
+   - O copiloto identifica padrões sindrômicos (ex: síndrome de fragilidade, declínio cognitivo, queixas articulares) e sugere os códigos CID-11 pertinentes para seleção em um clique pelo médico.
+4. **Verificação de Segurança Farmacológica em Idosos:**
+   - Alerta preventivo se o médico prescrever fármacos com critérios de Beers ou STOPP/START (medicamentos potencialmente inapropriados para idosos), ou se houver risco de interação medicamentosa com as receitas anteriores registradas no cofre do paciente.
+
+### 7.4. Salvaguardas Éticas e Regulatórias Inegociáveis (CFM & SBIS)
+1. **Prerrogativa Médica Exclusiva:** A IA não gera diagnósticos definitivos nem assina prescrições. Ela atua estritamente como ferramenta de apoio operacional e redação assistiva.
+2. **Revisão Ativa Obrigatória:** O botão "Finalizar & Assinar Prontuário" exige que o médico confirme a leitura e validação do texto gerado pela IA.
+3. **Sigilo e Privacidade Médica (LGPD / HIPAA):** O áudio da teleconsulta não é armazenado permanentemente após a transcrição; os dados trafegam criptografados e não são utilizados para treinamento de modelos públicos de terceiros.
+4. **Trilha de Auditoria com Metadados da IA:** O registro do prontuário documenta internamente que o texto foi sumarizado com assistência de IA, registrando a versão do modelo e a data/hora em que a revisão médica foi consumada.
+
+---
+
 *Documento registrado e mantido sob metodologia Spec-Driven Development (SDD).*  
 *Active Age — Telessaúde Geriátrica Integrada.*

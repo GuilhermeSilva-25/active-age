@@ -18,7 +18,6 @@ import {
     Printer,
     ExternalLink,
     PlusCircle,
-    Sparkles,
     LogOut,
 } from 'lucide-react';
 import { useAuthUser } from '../../hooks/useAuthUser';
@@ -781,18 +780,7 @@ export const TeleconsultaRoom: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Banner Preparatório para IA (Copiloto Active Age / SPEC-12B) */}
-                                    <div className="p-4 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border border-orange-200/80 rounded-2xl flex items-start gap-3 text-xs">
-                                        <Sparkles className="w-5 h-5 text-brand-orange shrink-0 mt-0.5" />
-                                        <div>
-                                            <h4 className="font-black text-brown-dark text-xs sm:text-sm">
-                                                Copiloto Clínico Active Age (Área Preparada para IA)
-                                            </h4>
-                                            <p className="text-brown-light mt-0.5 leading-relaxed">
-                                                Durante a teleconsulta, a inteligência artificial transcreverá o diálogo médico-paciente e estruturará o relatório clínico em tempo real. O médico revisa, complementa as orientações e assina digitalmente.
-                                            </p>
-                                        </div>
-                                    </div>
+                                    
 
                                     {/* Espaço Único Amplo de Relatório Clínico da Consulta */}
                                     <div>
@@ -806,7 +794,7 @@ export const TeleconsultaRoom: React.FC = () => {
                                             </span>
                                         </div>
                                         <textarea
-                                            rows={12}
+                                            rows={14}
                                             disabled={medicalRecord.status === 'FINALIZED'}
                                             value={medicalRecord.clinicalConduct || medicalRecord.clinicalEvolution || ''}
                                             onChange={(e) => {
@@ -821,77 +809,7 @@ export const TeleconsultaRoom: React.FC = () => {
                                         />
                                     </div>
 
-                                    {/* Seletores Compactos de Parâmetros da AGA (Preservando modelo de dados) */}
-                                    <div className="pt-2 border-t border-brand-pot/20">
-                                        <h4 className="text-[11px] font-black uppercase tracking-wider text-brown-light mb-2">
-                                            Parâmetros Geriátricos Rápidos (AGA)
-                                        </h4>
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                                            <div>
-                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
-                                                    Cognição:
-                                                </label>
-                                                <select
-                                                    disabled={medicalRecord.status === 'FINALIZED'}
-                                                    value={medicalRecord.cognitiveStatus}
-                                                    onChange={(e) => setMedicalRecord({ ...medicalRecord, cognitiveStatus: e.target.value })}
-                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
-                                                >
-                                                    <option value="Preservado">Preservado</option>
-                                                    <option value="Declínio Cognitivo Leve">Declínio Leve</option>
-                                                    <option value="Demência em Investigação">Em Investigação</option>
-                                                </select>
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
-                                                    Risco de Quedas:
-                                                </label>
-                                                <select
-                                                    disabled={medicalRecord.status === 'FINALIZED'}
-                                                    value={medicalRecord.mobilityRisk}
-                                                    onChange={(e) => setMedicalRecord({ ...medicalRecord, mobilityRisk: e.target.value })}
-                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
-                                                >
-                                                    <option value="Baixo Risco de Quedas">Baixo Risco</option>
-                                                    <option value="Risco Moderado de Quedas">Moderado</option>
-                                                    <option value="Marcha Instável / Alto Risco">Alto Risco</option>
-                                                </select>
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
-                                                    Independência:
-                                                </label>
-                                                <select
-                                                    disabled={medicalRecord.status === 'FINALIZED'}
-                                                    value={medicalRecord.functionalIndependence}
-                                                    onChange={(e) => setMedicalRecord({ ...medicalRecord, functionalIndependence: e.target.value })}
-                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
-                                                >
-                                                    <option value="Totalmente Independente">Independente</option>
-                                                    <option value="Dependência Parcial (AIVD)">Parcial (AIVD)</option>
-                                                    <option value="Dependência Total (AVD)">Total (AVD)</option>
-                                                </select>
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-[10px] font-bold text-brown-dark mb-0.5">
-                                                    Apoio Familiar:
-                                                </label>
-                                                <select
-                                                    disabled={medicalRecord.status === 'FINALIZED'}
-                                                    value={medicalRecord.familySupport}
-                                                    onChange={(e) => setMedicalRecord({ ...medicalRecord, familySupport: e.target.value })}
-                                                    className="w-full p-2 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-brand-orange disabled:bg-gray-100"
-                                                >
-                                                    <option value="Apoio Familiar Regular">Regular</option>
-                                                    <option value="Cuidador Presente na Sessão">Presente na Sessão</option>
-                                                    <option value="Idoso Vive Só">Idoso Vive Só</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
 
                                     {/* Exibição do Hash de Integridade se Finalizado */}
                                     {medicalRecord.status === 'FINALIZED' && (
