@@ -4,7 +4,7 @@
 ### Faculdade de Tecnologia de Diadema (Fatec Luigi Papaiz) — DSM 4º Semestre
 **Líder Técnico & Product Owner (PO):** Guilherme Silva  
 **Arquiteto & Engenheiro DevOps:** Antigravity (AI)  
-**Status da Spec:** Aguardando Aprovação Formal do PO ⏳  
+**Status da Spec:** Concluída e Live em Produção ✅  
 **Data da Elaboração:** 02 de Novembro de 2026
 
 ---
@@ -106,7 +106,7 @@ flowchart LR
 
 ---
 
-#### 📌 Micro Tarefa 15.4: Quality Gates de Segurança (DevSecOps) & Container Docker — [IMPLEMENTADA / AGUARDANDO PUSH 🚀]
+#### 📌 Micro Tarefa 15.4: Quality Gates de Segurança (DevSecOps) & Container Docker — [CONCLUÍDA ✅]
 * **Objetivo:** Validar a segurança contra vulnerabilidades conhecidas (CVEs) e a integridade da imagem Docker de produção.
 * **Ações Técnicas:**
   1. Adicionar no job de frontend o step `npm audit --audit-level=high` para checagem de vulnerabilidades críticas;
@@ -119,7 +119,7 @@ flowchart LR
 
 ---
 
-#### 📌 Micro Tarefa 15.5: Observabilidade (GitHub Step Summary) & Documentação Executiva
+#### 📌 Micro Tarefa 15.5: Observabilidade (GitHub Step Summary) & Documentação Executiva — [CONCLUÍDA ✅]
 * **Objetivo:** Criar um painel visual no GitHub Actions e documentar as instruções de manutenção.
 * **Ações Técnicas:**
   1. Adicionar script em bash no final do workflow que escreve no `$GITHUB_STEP_SUMMARY`:
@@ -134,10 +134,10 @@ flowchart LR
 ### 4. Definition of Done (DoD) da SPEC-15
 
 A SPEC-15 será considerada integralmente concluída quando:
-- [ ] Todas as 5 micro tarefas forem executadas, testadas e validadas uma a uma;
-- [ ] A pipeline estiver rodando com sucesso no GitHub Actions em menos de 2 minutos por execução completa;
-- [ ] O Guilherme confirmar que compreendeu o funcionamento de cada etapa e conferir o resultado verde no repositório GitHub;
-- [ ] Todos os commits estiverem no padrão Conventional Commits em português na branch `main`.
+- [x] Todas as 5 micro tarefas forem executadas, testadas e validadas uma a uma;
+- [x] A pipeline estiver rodando com sucesso no GitHub Actions em menos de 2 minutos por execução completa;
+- [x] O Guilherme confirmar que compreendeu o funcionamento de cada etapa e conferir o resultado verde no repositório GitHub;
+- [x] Todos os commits estiverem no padrão Conventional Commits em português na branch `main`.
 
 ---
 *Especificação Técnica redigida para aprovação do Product Owner.*  

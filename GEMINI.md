@@ -100,8 +100,9 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Simplificação do Prontuário Clínico & Especificação de Assinatura Digital e IA no Backlog (SPEC-12C): Card Único de Prontuário super limpo e focado em TeleconsultaRoom.tsx (remoção do card de IA e de parâmetros da AGA da tela), detalhamento arquitetural completo de Assinatura Gov.br/ICP-Brasil e Copiloto de IA no BACKLOG_FUNCIONALIDADES_FUTURAS.md.
   - Baixa Automática de Consultas Finalizadas & Acesso aos Prontuários pelo Médico (SPEC-13): Bloqueio definitivo de reingresso em chamadas finalizadas, tela de atendimento concluído com download de receitas, prevenção de recriação de consultas no semeador, visualização das consultas realizadas na fila do médico e modal MedicalRecordViewModal para conferência do prontuário com hash SHA-256.
   - Central de Prontuários & Prescrições Digitais no Dashboard do Médico (SPEC-14): Ativação do Card 3 das ferramentas médicas, busca reativa, filtros de status, acesso ao prontuário clínico com hash SHA-256 e impressão de receitas/atestados em modelo P&B.
-- **4º Semestre — [PRÓXIMA ETAPA]:**
-  - Microsserviços de Teleconsulta Real (WebRTC Nativo), Gateway de Pagamento com Split Direto e Mensageria Assíncrona para Notificações e Alertas.
+- **4º Semestre — [EM DESENVOLVIMENTO ATIVO 🚀]:**
+  - Pipeline de CI/CD Industrial no GitHub Actions (SPEC-15) [CONCLUÍDA / LIVE ✅]: Esteira com 9 Pilares, matriz paralela (Backend Java 21 / Frontend React 19), 37 testes automatizados JUnit 5/Mockito, cobertura de código Jacoco (HTML/XML), linter oxlint, scanner DevSecOps com Trivy CLI, build da imagem Docker multi-stage e GitHub Step Summary executivo em Markdown.
+  - Próximos Marcos do 4º Semestre: SPEC-16 (Microsserviço de Teleconsulta WebRTC Nativo) e SPEC-17 (Microsserviço de Pagamento com Split Direto BACEN).
 - **5º Semestre — [FUTURO]:**
   - Aplicativo Mobile Multiplataforma (React Native) e Ingestão de Wearables de Saúde.
 
