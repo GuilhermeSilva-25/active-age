@@ -140,17 +140,24 @@ gantt
 
 ---
 
-#### 📅 4º Semestre — Arquitetura de Microsserviços e Tempo Real (UC06, UC07, UC12, UC17) — [PRÓXIMA ETAPA]
-* **Objetivo:** Migração e implementação de microsserviços distribuídos:
-  1. Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (UC12).
-  2. Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN sem retenção de honorários (UC06 / RN005).
-  3. Microsserviço Assíncrono de Mensageria (RabbitMQ / Kafka) para notificações, SMS e recuperação de senha.
-  4. Módulo de avaliação pós-consulta e feedback neutro do paciente (UC17).
+#### 📅 4º Semestre — DevOps, CI/CD Industrial & Microsserviços Distribuídos — [EM DESENVOLVIMENTO ATIVO 🚀]
+* **Objetivo:** Implementação de esteira industrial de CI/CD e desacoplamento de microsserviços distribuídos:
+  1. [x] **Pipeline de CI/CD Industrial no GitHub Actions (SPEC-15 / ISW-033) — [CONCLUÍDO ✅]:**
+     - Workflow com 9 Pilares, matriz paralela (Backend Java 21 / Frontend React 19), 37 testes automatizados JUnit 5/Mockito, cobertura Jacoco (XML/HTML), linter oxlint, scanner DevSecOps com Trivy CLI, validação de container Docker multi-stage e GitHub Step Summary executivo.
+  2. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [PRÓXIMO PASSO]:**
+     - Signaling server dedicado com Node.js, WebSockets / Socket.io e STUN/TURN para chamada audiovisual peer-to-peer de alta performance e baixa latência.
+  3. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
+     - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022).
+  4. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+     - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---
 
-#### 📅 5º Semestre — Aplicativo Mobile Multiplataforma e Saúde 4.0 — [FUTURO]
-* **Objetivo:** Desenvolvimento do Aplicativo Mobile Nativo/Multiplataforma (React Native) para idosos e cuidadores, com ingestão de dados de wearables de saúde (smartwatches, sensores de queda e glicemia contínua).
+#### 📅 5º Semestre — Aplicativo Mobile Multiplataforma, Mensageria & Saúde 4.0 — [FUTURO]
+* **Objetivo:** Desenvolvimento do ecossistema mobile e mensageria avançada:
+  1. **Aplicativo Mobile Multiplataforma (React Native / Expo):** Focado no idoso e cuidador familiar (acessibilidade, receitas offline e botão SOS).
+  2. **Microsserviço de Mensageria & Notificações Assíncronas (RabbitMQ / Redis):** E-mails transacionais de recuperação de senha e alertas de consulta por WhatsApp/SMS.
+  3. **Ingestão de Wearables & Nuvem Avançada:** Sensores de queda, frequência cardíaca e séries temporais.
 
 ---
 

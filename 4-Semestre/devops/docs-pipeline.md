@@ -122,3 +122,4 @@ Para garantir que ninguém consiga fazer push direto na branch `main` sem que a 
 ---
 *Documento homologado para avaliação na disciplina de Integração e Entrega Contínua (ISW-033).*  
 *Projeto Integrador Active Age — Fatec Diadema DSM 2026.*
+

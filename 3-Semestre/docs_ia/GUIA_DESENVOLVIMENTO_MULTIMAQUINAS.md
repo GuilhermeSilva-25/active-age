@@ -19,7 +19,9 @@ Ao abrir o projeto no Antigravity em uma máquina nova (ou iniciar uma nova conv
 > *"Olá! Estou iniciando o desenvolvimento nesta máquina. Por favor, leia o `GEMINI.md` e o `3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md`, verifique o estado atual do repositório e me diga exatamente onde paramos e qual é o próximo passo a ser executado."*
 
 Com essa instrução simples, o Antigravity:
-- Identificará que o **3º Semestre está 100% concluído em produção (v0.1.0 a v0.4.0)**, incluindo Cockpit de Teleconsulta, Prontuário Ético Imutável SHA-256, Exames no GridFS, Emissão de Receitas ICP-Brasil e a Automação Contínua com Médico e Paciente de Teste (`medico@teste.com` e `paciente@teste.com` / `123456`).
+- Identificará que o **3º Semestre está 100% concluído em produção (v0.1.0 a v0.4.0)**;
+- Identificará que o **4º Semestre está em andamento ativo**, com a **SPEC-15 (Pipeline de CI/CD Industrial no GitHub Actions com 9 Pilares)** concluída e live;
+- Identificará que o próximo passo imediato é o planejamento da **SPEC-16: Microsserviço de Teleconsulta WebRTC Nativo (Signaling Server com Socket.io)**.
 - Identificará que as credenciais universais para testes bilaterais são:
   - **Administrador:** `admin@activeage.com` / `AdminPassword2026!`
   - **Médico Teste:** `medico@teste.com` / `123456` (com consulta confirmada para hoje)
