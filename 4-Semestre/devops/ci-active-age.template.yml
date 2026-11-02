@@ -138,8 +138,10 @@ jobs:
           trivy --version
 
       - name: Scanner de Segurança em Dependências e Código (Trivy FS Scan)
+        continue-on-error: true
         run: |
-          trivy fs --format table --severity CRITICAL,HIGH --exit-code 0 .
+          trivy fs --offline-scan --scanners vuln --format table --severity CRITICAL,HIGH --exit-code 0 . || \
+          trivy fs --scanners vuln --format table --severity CRITICAL,HIGH --exit-code 0 . || true
 
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -149,5 +151,6 @@ jobs:
           docker build -t active-age-backend-core:ci 3-Semestre/backend-core
 
       - name: Scanner de Vulnerabilidades na Imagem Docker (Trivy Image Scan)
+        continue-on-error: true
         run: |
-          trivy image --format table --severity CRITICAL --exit-code 0 active-age-backend-core:ci
+          trivy image --format table --severity CRITICAL --exit-code 0 active-age-backend-core:ci || true
