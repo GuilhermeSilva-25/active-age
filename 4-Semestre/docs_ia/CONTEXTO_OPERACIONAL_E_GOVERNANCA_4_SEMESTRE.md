@@ -63,3 +63,4 @@ Uma tarefa da pipeline só é considerada **CONCLUÍDA** quando:
 ---
 *Documento aprovado e em vigor a partir de 02 de Novembro de 2026.*  
 *Projeto Integrador Active Age — Fatec Diadema.*
+

@@ -1,0 +1,86 @@
+name: Active Age CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '3-Semestre/**'
+      - '4-Semestre/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '3-Semestre/**'
+      - '4-Semestre/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+jobs:
+  # =========================================================================
+  # JOB 1: Backend CI (Java 21 LTS + Spring Boot 3 + MongoDB Service)
+  # =========================================================================
+  backend-ci:
+    name: Backend Core (Java 21 / Spring Boot)
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Código-Fonte
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar JDK 21 LTS (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Conceder Permissão de Execução ao Maven Wrapper
+        run: chmod +x 3-Semestre/backend-core/mvnw
+
+      - name: Compilar e Executar Testes Unitários
+        run: |
+          cd 3-Semestre/backend-core
+          ./mvnw test -Dspring.data.mongodb.uri=mongodb://localhost:27017/active_age_test
+
+  # =========================================================================
+  # JOB 2: Frontend CI (Node.js 22 LTS + React 19 + TypeScript + Vite)
+  # =========================================================================
+  frontend-ci:
+    name: Frontend SPA (React 19 / TypeScript)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Código-Fonte
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: 3-Semestre/frontend-react/package-lock.json
+
+      - name: Instalar Dependências
+        run: |
+          cd 3-Semestre/frontend-react
+          npm ci || npm install
+
+      - name: Executar Validação de Tipagem e Build de Produção (Vite)
+        run: |
+          cd 3-Semestre/frontend-react
+          npm run build

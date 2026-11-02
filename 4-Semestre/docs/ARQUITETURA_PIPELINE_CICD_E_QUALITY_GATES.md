@@ -129,3 +129,4 @@ Esta arquitetura atende 100% das competências previstas na disciplina **Integra
 3. *Implementação de testes de segurança estática (SAST) e análise de composição de software (SCA)*;
 4. *Containerização e empacotamento com Docker multi-stage*;
 5. *Relatórios executivos e métricas de qualidade de software*.
+

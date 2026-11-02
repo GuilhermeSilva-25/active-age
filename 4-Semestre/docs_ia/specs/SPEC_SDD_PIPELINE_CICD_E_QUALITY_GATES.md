@@ -70,7 +70,7 @@ flowchart LR
 
 ---
 
-#### 📌 Micro Tarefa 15.2: Fundação da Pipeline Base no GitHub Actions (Matriz Paralela)
+#### 📌 Micro Tarefa 15.2: Fundação da Pipeline Base no GitHub Actions (Matriz Paralela) — [IMPLEMENTADA / AGUARDANDO PUSH 🚀]
 * **Objetivo:** Criar o workflow base `.github/workflows/ci-active-age.yml` rodando em matriz paralela para Backend e Frontend com caching de dependências.
 * **Ações Técnicas:**
   1. Criar `.github/workflows/ci-active-age.yml` com os triggers (`push`, `pull_request`, `workflow_dispatch`);
@@ -142,3 +142,4 @@ A SPEC-15 será considerada integralmente concluída quando:
 ---
 *Especificação Técnica redigida para aprovação do Product Owner.*  
 *Projeto Integrador Active Age — Fatec Diadema.*
+

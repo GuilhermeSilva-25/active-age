@@ -23,3 +23,4 @@ Neste semestre, **nenhum arquivo de pipeline (YAML), Dockerfile, microsserviço 
 ---
 *Catálogo oficial em vigor a partir de 02 de Novembro de 2026.*  
 *Projeto Integrador Active Age — Fatec Diadema.*
+
