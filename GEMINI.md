@@ -86,6 +86,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Rastreabilidade de Teleconsultas na Trilha de Auditoria Imutável (`audit_logs`) e Painel de Métricas Operacionais com sigilo LGPD no Dashboard do Administrador (SPEC-11C / UC04, UC05, UC09).
   - Padronização Universal das Fotos dos 17 Médicos Pioneiros com Retratos Históricos Reais de domínio público / Wikimedia Commons e proteção anti-hotlink no frontend (SPEC-11D).
   - Banco Dinâmico de Dicas de Longevidade Ativa no Dashboard do Paciente com 12 intervenções baseadas em literatura médica (SBGG, OMS, Harvard, The Lancet, EWGSOP2) e alternância interativa (SPEC-11G).
+  - Reorganização de UX dos Dashboards com Priorização Visual de Consultas Agendadas: no paciente, consulta no topo logo após as boas-vindas com botão direto da sala; no médico, fila do dia promovida antes das ferramentas quando houver consultas hoje (SPEC-11H).
 - **Release v0.4.0 (Conclusão do 3º Semestre) — [CONCLUÍDA / EM PRODUÇÃO]:**
   - Cockpit Integrado de Teleconsulta com experiência responsiva computador/mobile (UC12-Demo).
   - Prontuário Ético Eletrônico Geriátrico Imutável (Anamnese, AGA, CID-11, Conduta, Hash SHA-256 e trava irrevogável de integridade) (UC14 / RN003).

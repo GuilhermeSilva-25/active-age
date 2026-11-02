@@ -35,6 +35,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-11E** | **Automação Contínua de Grade e Consultas Ativas para Hoje e Amanhã (Timezone Brasília)** | UC01, UC09, UC10, UC12 | **Concluída / Live ✅** | [SPEC_SDD_AUTOMACAO_CONSULTAS_HOJE_E_AMANHA.md](./SPEC_SDD_AUTOMACAO_CONSULTAS_HOJE_E_AMANHA.md) |
 | **SPEC-11F** | **Foto de Perfil da Paciente Teste Dona Maria no Semeador e Automação Reativa** | UC01, UC18 | **Concluída / Live ✅** | [SPEC_SDD_FOTO_PACIENTE_TESTE.md](./SPEC_SDD_FOTO_PACIENTE_TESTE.md) |
 | **SPEC-11G** | **Banco Dinâmico de Dicas de Longevidade Ativa com Evidências Médicas e Rotação Interativa** | UC01, UC18 | **Concluída / Live ✅** | [SPEC_SDD_BANCO_DICAS_LONGEVIDADE_ATIVA.md](./SPEC_SDD_BANCO_DICAS_LONGEVIDADE_ATIVA.md) |
+| **SPEC-11H** | **Reorganização de UX dos Dashboards com Priorização Visual de Consultas Agendadas** | UC01, UC09, UC10, UC12 | **Concluída / Live ✅** | [SPEC_SDD_REORGANIZACAO_UX_CONSULTAS_DASHBOARDS.md](./SPEC_SDD_REORGANIZACAO_UX_CONSULTAS_DASHBOARDS.md) |
 | **SPEC-12** | **Cockpit de Teleconsulta Integrado, Prontuário Ético Imutável, Exames e Prescrições Digitais** | UC12, UC13, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md](./SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md) |
 
 ---

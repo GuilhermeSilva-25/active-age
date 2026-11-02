@@ -387,6 +387,57 @@ export function DashboardMedico() {
                     </div>
                 </div>
 
+                {/* Seção: Pacientes Agendados Hoje (SPEC-11H - Priorizada no Topo quando houver consultas) */}
+                {todayAppointments.length > 0 && (
+                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/40 p-4 sm:p-6 md:p-8 shadow-xs">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-brand-pot/30 gap-2 sm:gap-4">
+                            <div>
+                                <h3 className="text-base sm:text-xl font-black text-brown-dark">
+                                    Pacientes Agendados Hoje
+                                </h3>
+                                <p className="text-brown-light text-xs sm:text-sm mt-0.5">
+                                    Fila de teleconsultas com pagamento confirmado
+                                </p>
+                            </div>
+                            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brown-light">
+                                {todayAppointments.length} {todayAppointments.length === 1 ? 'consulta para hoje' : 'consultas para hoje'}
+                            </span>
+                        </div>
+
+                        <div className="py-4 space-y-3">
+                            {todayAppointments.map(app => (
+                                <div key={app.id} className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-black px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
+                                                {app.startDateTime.split('T')[1].substring(0, 5)} - {app.endDateTime.split('T')[1].substring(0, 5)}
+                                            </span>
+                                            <span className="text-xs font-bold text-brown-light">
+                                                Teleconsulta ({app.durationMinutes} min)
+                                            </span>
+                                        </div>
+                                        <h4 className="text-sm sm:text-base font-black text-brown-dark">
+                                            Paciente: {app.patientName}
+                                        </h4>
+                                        {app.patientNotes && (
+                                            <p className="text-xs text-brown-light italic">
+                                                "{app.patientNotes}"
+                                            </p>
+                                        )}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate(`/teleconsulta/${app.id}`)}
+                                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
+                                    >
+                                        Abrir Sala Virtual →
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Ações Clínicas Rápidas do Consultório */}
                 <div>
                     <h3 className="text-base sm:text-xl font-black text-brown-dark mb-3 sm:mb-4 flex items-center gap-2">
@@ -524,68 +575,36 @@ export function DashboardMedico() {
                     </div>
                 </div>
 
-                {/* Seção: Pacientes Agendados no Dia (Empty State) */}
-                <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/40 p-4 sm:p-6 md:p-8 shadow-xs">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-brand-pot/30 gap-2 sm:gap-4">
-                        <div>
-                            <h3 className="text-base sm:text-xl font-black text-brown-dark">
-                                Pacientes Agendados Hoje
-                            </h3>
-                            <p className="text-brown-light text-xs sm:text-sm mt-0.5">
-                                Fila de teleconsultas com pagamento confirmado
+                {/* Seção: Pacientes Agendados no Dia (Empty State no rodapé quando não houver consultas - SPEC-11H) */}
+                {todayAppointments.length === 0 && (
+                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/40 p-4 sm:p-6 md:p-8 shadow-xs">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-brand-pot/30 gap-2 sm:gap-4">
+                            <div>
+                                <h3 className="text-base sm:text-xl font-black text-brown-dark">
+                                    Pacientes Agendados Hoje
+                                </h3>
+                                <p className="text-brown-light text-xs sm:text-sm mt-0.5">
+                                    Fila de teleconsultas com pagamento confirmado
+                                </p>
+                            </div>
+                            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brown-light">
+                                0 consultas para hoje
+                            </span>
+                        </div>
+
+                        <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-3 sm:mb-4">
+                                <Clock className="w-6 h-6 sm:w-8 sm:h-8" />
+                            </div>
+                            <h4 className="text-sm sm:text-base font-bold text-brown-dark mb-1">
+                                Nenhum paciente agendado para o dia
+                            </h4>
+                            <p className="text-brown-light text-xs sm:text-sm leading-relaxed">
+                                Assim que sua agenda for disponibilizada e os pacientes confirmarem a reserva, as informações completas aparecerão aqui.
                             </p>
                         </div>
-                        <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brown-light">
-                            {todayAppointments.length} {todayAppointments.length === 1 ? 'consulta para hoje' : 'consultas para hoje'}
-                        </span>
                     </div>
-
-                    {todayAppointments.length > 0 ? (
-                        <div className="py-4 space-y-3">
-                            {todayAppointments.map(app => (
-                                <div key={app.id} className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs font-black px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
-                                                {app.startDateTime.split('T')[1].substring(0, 5)} - {app.endDateTime.split('T')[1].substring(0, 5)}
-                                            </span>
-                                            <span className="text-xs font-bold text-brown-light">
-                                                Teleconsulta ({app.durationMinutes} min)
-                                            </span>
-                                        </div>
-                                        <h4 className="text-sm sm:text-base font-black text-brown-dark">
-                                            Paciente: {app.patientName}
-                                        </h4>
-                                        {app.patientNotes && (
-                                            <p className="text-xs text-brown-light italic">
-                                                "{app.patientNotes}"
-                                            </p>
-                                        )}
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => navigate(`/teleconsulta/${app.id}`)}
-                                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
-                                    >
-                                        Abrir Sala Virtual →
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-3 sm:mb-4">
-                            <Clock className="w-6 h-6 sm:w-8 sm:h-8" />
-                        </div>
-                        <h4 className="text-sm sm:text-base font-bold text-brown-dark mb-1">
-                            Nenhum paciente agendado para o dia
-                        </h4>
-                        <p className="text-brown-light text-xs sm:text-sm leading-relaxed">
-                            Assim que sua agenda for disponibilizada e os pacientes confirmarem a reserva, as informações completas aparecerão aqui.
-                        </p>
-                    </div>
-                    )}
-                </div>
+                )}
             </main>
 
             {/* Modal de Feedback Acessível */}

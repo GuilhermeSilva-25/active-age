@@ -232,6 +232,101 @@ export function DashboardPaciente() {
                     </div>
                 </div>
 
+                {/* Seção: Próximas Consultas Priorizada no Topo (IHC Geriátrico / SPEC-11H) */}
+                <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/40 p-4 sm:p-6 md:p-8 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-brand-pot/30 gap-3 sm:gap-4">
+                        <div>
+                            <h3 className="text-lg sm:text-2xl font-black text-brown-dark">
+                                Próxima Consulta Agendada
+                            </h3>
+                            <p className="text-brown-light text-xs sm:text-sm mt-0.5">
+                                Acompanhe os horários marcados com seus especialistas
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/paciente/busca-medicos')}
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
+                        >
+                            <CalendarPlus className="w-4 h-4" />
+                            Buscar Médico Geriatra
+                        </button>
+                    </div>
+
+                    {nextAppointment ? (
+                        <div className="p-5 sm:p-6 rounded-2xl bg-emerald-50/60 border-2 border-emerald-300 mt-4 sm:mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in duration-200">
+                            <div className="flex items-start gap-3.5">
+                                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                                    <Calendar className="w-6 h-6" />
+                                </div>
+                                <div className="space-y-0.5">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-200/60 px-2 py-0.5 rounded-md">
+                                            Confirmada
+                                        </span>
+                                        <span className="text-xs font-bold text-brown-light">
+                                            Teleconsulta de {nextAppointment.durationMinutes} min
+                                        </span>
+                                    </div>
+                                    <h4 className="text-base sm:text-lg font-black text-brown-dark">
+                                        {nextAppointment.doctorName}
+                                    </h4>
+                                    <p className="text-xs text-brown-light">
+                                        CRM {nextAppointment.doctorCrm}/{nextAppointment.doctorUfCrm} • {nextAppointment.doctorSpecialty}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-900 pt-1">
+                                        <Clock className="w-3.5 h-3.5 text-emerald-700" />
+                                        <span>
+                                            {new Date(nextAppointment.startDateTime).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })} às {nextAppointment.startDateTime.split('T')[1].substring(0, 5)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 self-start md:self-auto">
+                                <button
+                                    type="button"
+                                    onClick={() => navigate(`/teleconsulta/${nextAppointment.id}`)}
+                                    className="px-5 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
+                                >
+                                    <Video className="w-4 h-4" />
+                                    <span>Entrar na Sala Virtual</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/paciente/consultas')}
+                                    className="px-4 py-2.5 rounded-xl border border-emerald-300 text-emerald-800 hover:bg-emerald-100 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
+                                >
+                                    <span>Ver Detalhes →</span>
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        /* Empty State Acolhedor */
+                    <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-3 sm:mb-4">
+                            <Clock className="w-6 h-6 sm:w-8 sm:h-8" />
+                        </div>
+                        <h4 className="text-base sm:text-lg font-bold text-brown-dark mb-1">
+                            Nenhuma consulta marcada no momento
+                        </h4>
+                        <p className="text-brown-light text-xs sm:text-sm leading-relaxed mb-5 sm:mb-6">
+                            Você não possui nenhuma teleconsulta agendada para os próximos dias. Agende uma conversa preventiva com nossos médicos geriatras.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/paciente/busca-medicos')}
+                            className="w-full sm:w-auto px-6 py-3 rounded-xl border border-brand-orange text-brand-orange hover:bg-orange-50 font-bold text-sm transition-all inline-flex items-center justify-center gap-2"
+                        >
+                            <CalendarPlus className="w-4 h-4" />
+                            Agendar Minha Primeira Consulta
+                        </button>
+                    </div>
+                    )}
+                </div>
+
+                
+
                 {/* Grid de Ações Rápidas Táteis Ampliadas (IHC Geriátrico) */}
                 <div>
                     <h3 className="text-lg sm:text-2xl font-black text-brown-dark mb-3 sm:mb-4 flex items-center gap-2">
@@ -360,99 +455,6 @@ export function DashboardPaciente() {
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Seção: Próximas Consultas (Estado Vazio Amigável) */}
-                <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-pot/40 p-4 sm:p-6 md:p-8 shadow-xs">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-brand-pot/30 gap-3 sm:gap-4">
-                        <div>
-                            <h3 className="text-lg sm:text-2xl font-black text-brown-dark">
-                                Próxima Consulta Agendada
-                            </h3>
-                            <p className="text-brown-light text-xs sm:text-sm mt-0.5">
-                                Acompanhe os horários marcados com seus especialistas
-                            </p>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={() => navigate('/paciente/busca-medicos')}
-                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-bold text-sm transition-all shadow-sm"
-                        >
-                            <CalendarPlus className="w-4 h-4" />
-                            Buscar Médico Geriatra
-                        </button>
-                    </div>
-
-                    {nextAppointment ? (
-                        <div className="p-5 sm:p-6 rounded-2xl bg-emerald-50/60 border-2 border-emerald-300 mt-4 sm:mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in duration-200">
-                            <div className="flex items-start gap-3.5">
-                                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
-                                    <Calendar className="w-6 h-6" />
-                                </div>
-                                <div className="space-y-0.5">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-200/60 px-2 py-0.5 rounded-md">
-                                            Confirmada
-                                        </span>
-                                        <span className="text-xs font-bold text-brown-light">
-                                            Teleconsulta de {nextAppointment.durationMinutes} min
-                                        </span>
-                                    </div>
-                                    <h4 className="text-base sm:text-lg font-black text-brown-dark">
-                                        {nextAppointment.doctorName}
-                                    </h4>
-                                    <p className="text-xs text-brown-light">
-                                        CRM {nextAppointment.doctorCrm}/{nextAppointment.doctorUfCrm} • {nextAppointment.doctorSpecialty}
-                                    </p>
-                                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-900 pt-1">
-                                        <Clock className="w-3.5 h-3.5 text-emerald-700" />
-                                        <span>
-                                            {new Date(nextAppointment.startDateTime).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })} às {nextAppointment.startDateTime.split('T')[1].substring(0, 5)}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 self-start md:self-auto">
-                                <button
-                                    type="button"
-                                    onClick={() => navigate(`/teleconsulta/${nextAppointment.id}`)}
-                                    className="px-5 py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
-                                >
-                                    <Video className="w-4 h-4" />
-                                    <span>Entrar na Sala Virtual</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => navigate('/paciente/consultas')}
-                                    className="px-4 py-2.5 rounded-xl border border-emerald-300 text-emerald-800 hover:bg-emerald-100 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
-                                >
-                                    <span>Ver Detalhes →</span>
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        /* Empty State Acolhedor */
-                    <div className="py-8 sm:py-12 text-center max-w-md mx-auto">
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-brand-orange mx-auto mb-3 sm:mb-4">
-                            <Clock className="w-6 h-6 sm:w-8 sm:h-8" />
-                        </div>
-                        <h4 className="text-base sm:text-lg font-bold text-brown-dark mb-1">
-                            Nenhuma consulta marcada no momento
-                        </h4>
-                        <p className="text-brown-light text-xs sm:text-sm leading-relaxed mb-5 sm:mb-6">
-                            Você não possui nenhuma teleconsulta agendada para os próximos dias. Agende uma conversa preventiva com nossos médicos geriatras.
-                        </p>
-                        <button
-                            type="button"
-                            onClick={() => navigate('/paciente/busca-medicos')}
-                            className="w-full sm:w-auto px-6 py-3 rounded-xl border border-brand-orange text-brand-orange hover:bg-orange-50 font-bold text-sm transition-all inline-flex items-center justify-center gap-2"
-                        >
-                            <CalendarPlus className="w-4 h-4" />
-                            Agendar Minha Primeira Consulta
-                        </button>
-                    </div>
-                    )}
                 </div>
 
                 {/* Card de Dica de Saúde Geriátrica & Longevidade Dinâmica */}
