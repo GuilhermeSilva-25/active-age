@@ -93,7 +93,7 @@ flowchart LR
 
 ---
 
-#### 📌 Micro Tarefa 15.3: Quality Gates de Código, Cobertura Jacoco & Artefatos — [IMPLEMENTADA / AGUARDANDO PUSH 🚀]
+#### 📌 Micro Tarefa 15.3: Quality Gates de Código, Cobertura Jacoco & Artefatos — [CONCLUÍDA ✅]
 * **Objetivo:** Adicionar métricas de cobertura de código com Jacoco e upload de artefatos de testes.
 * **Ações Técnicas:**
   1. Configurar o plugin `jacoco-maven-plugin` no `3-Semestre/backend-core/pom.xml` para gerar `jacoco.xml` na fase de teste;
@@ -106,7 +106,7 @@ flowchart LR
 
 ---
 
-#### 📌 Micro Tarefa 15.4: Quality Gates de Segurança (DevSecOps) & Container Docker
+#### 📌 Micro Tarefa 15.4: Quality Gates de Segurança (DevSecOps) & Container Docker — [IMPLEMENTADA / AGUARDANDO PUSH 🚀]
 * **Objetivo:** Validar a segurança contra vulnerabilidades conhecidas (CVEs) e a integridade da imagem Docker de produção.
 * **Ações Técnicas:**
   1. Adicionar no job de frontend o step `npm audit --audit-level=high` para checagem de vulnerabilidades críticas;

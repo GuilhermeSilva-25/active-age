@@ -16,18 +16,19 @@ A pipeline real que executa no GitHub Actions reside na raiz do repositório em 
 
 ### 2. Estrutura de Arquivos
 
-* [`ci-active-age.template.yml`](./ci-active-age.template.yml): Espelho do workflow do GitHub Actions com matriz paralela e caching;
-* [`docs-pipeline.md`](./docs-pipeline.md): Guia passo a passo de como interpretar a execução, métricas e Quality Gates (gerado na SPEC-15);
+* [`ci-active-age.template.yml`](./ci-active-age.template.yml): Espelho do workflow do GitHub Actions com matriz paralela, caching, Jacoco, Trivy e Docker;
+* [`docs-pipeline.md`](./docs-pipeline.md): Guia passo a passo de como interpretar a execução, métricas e Quality Gates (SPEC-15);
 * `docker-compose.infra.yml`: Orquestração local do ecossistema distribuído (em breve na SPEC-18).
 
 ---
 
-### 3. Matriz de Execução da Pipeline Base (Micro Tarefa 15.2)
+### 3. Matriz de Execução da Pipeline Completa (Micro Tarefas 15.2, 15.3 e 15.4)
 
 ```mermaid
-flowchart LR
+flowchart TD
     TRIG["Disparo:<br>Push / Pull Request / Manual"] --> FORK{"Matriz Paralela"}
-    FORK --> BACK["Job: Backend Core<br>• Runner: Ubuntu Latest<br>• JDK 21 Temurin + Cache Maven<br>• Service: MongoDB 7.0<br>• Execução: ./mvnw test"]
-    FORK --> FRONT["Job: Frontend SPA<br>• Runner: Ubuntu Latest<br>• Node 22 + Cache npm<br>• Execução: npm run build"]
+    FORK --> BACK["Job 1: Backend Core<br>• Runner: Ubuntu Latest<br>• JDK 21 Temurin + Cache Maven<br>• Service: MongoDB 7.0<br>• Testes Unitários: 37 testes<br>• Cobertura: Jacoco Report<br>• Upload Artefatos: Surefire & Jacoco"]
+    FORK --> FRONT["Job 2: Frontend SPA<br>• Runner: Ubuntu Latest<br>• Node 22 + Cache npm<br>• Auditoria: npm audit<br>• Linter: oxlint<br>• Build & Tipagem: Vite<br>• Upload Artefato: dist/"]
+    BACK --> SEC["Job 3: DevSecOps & Container Docker<br>(needs: [backend-ci, frontend-ci])<br>• Scanner Trivy FS: Análise de CVEs em dependências<br>• Docker Buildx: Construção da imagem multi-stage<br>• Scanner Trivy Image: Auditoria da imagem Docker final"]
+    FRONT --> SEC
 ```
-
