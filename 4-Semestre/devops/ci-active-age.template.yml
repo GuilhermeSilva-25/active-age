@@ -17,7 +17,7 @@ on:
 
 jobs:
   # =========================================================================
-  # JOB 1: Backend CI (Java 21 LTS + Spring Boot 3 + MongoDB Service)
+  # JOB 1: Backend CI (Java 21 LTS + Spring Boot 3 + Jacoco + Artefatos)
   # =========================================================================
   backend-ci:
     name: Backend Core (Java 21 / Spring Boot)
@@ -50,13 +50,29 @@ jobs:
       - name: Conceder Permissão de Execução ao Maven Wrapper
         run: chmod +x 3-Semestre/backend-core/mvnw
 
-      - name: Compilar e Executar Testes Unitários
+      - name: Compilar, Testar e Gerar Cobertura (Jacoco)
         run: |
           cd 3-Semestre/backend-core
           ./mvnw test -Dspring.data.mongodb.uri=mongodb://localhost:27017/active_age_test
 
+      - name: Upload Relatórios de Testes JUnit (Surefire)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-surefire-reports
+          path: 3-Semestre/backend-core/target/surefire-reports/
+          retention-days: 14
+
+      - name: Upload Relatório de Cobertura Jacoco
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-jacoco-coverage
+          path: 3-Semestre/backend-core/target/site/jacoco/
+          retention-days: 14
+
   # =========================================================================
-  # JOB 2: Frontend CI (Node.js 22 LTS + React 19 + TypeScript + Vite)
+  # JOB 2: Frontend CI (Node 22 + React 19 + TypeScript + Linter + Artefatos)
   # =========================================================================
   frontend-ci:
     name: Frontend SPA (React 19 / TypeScript)
@@ -80,8 +96,19 @@ jobs:
           cd 3-Semestre/frontend-react
           npm ci || npm install
 
+      - name: Análise Estática e Linter de Código (oxlint)
+        run: |
+          cd 3-Semestre/frontend-react
+          npm run lint
+
       - name: Executar Validação de Tipagem e Build de Produção (Vite)
         run: |
           cd 3-Semestre/frontend-react
           npm run build
 
+      - name: Upload Artefato do Build Frontend (dist)
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist-artifact
+          path: 3-Semestre/frontend-react/dist/
+          retention-days: 14

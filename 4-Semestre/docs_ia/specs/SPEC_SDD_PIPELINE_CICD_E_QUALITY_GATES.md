@@ -70,7 +70,7 @@ flowchart LR
 
 ---
 
-#### 📌 Micro Tarefa 15.2: Fundação da Pipeline Base no GitHub Actions (Matriz Paralela) — [IMPLEMENTADA / AGUARDANDO PUSH 🚀]
+#### 📌 Micro Tarefa 15.2: Fundação da Pipeline Base no GitHub Actions (Matriz Paralela) — [CONCLUÍDA ✅]
 * **Objetivo:** Criar o workflow base `.github/workflows/ci-active-age.yml` rodando em matriz paralela para Backend e Frontend com caching de dependências.
 * **Ações Técnicas:**
   1. Criar `.github/workflows/ci-active-age.yml` com os triggers (`push`, `pull_request`, `workflow_dispatch`);
@@ -93,7 +93,7 @@ flowchart LR
 
 ---
 
-#### 📌 Micro Tarefa 15.3: Quality Gates de Código, Cobertura Jacoco & Artefatos
+#### 📌 Micro Tarefa 15.3: Quality Gates de Código, Cobertura Jacoco & Artefatos — [IMPLEMENTADA / AGUARDANDO PUSH 🚀]
 * **Objetivo:** Adicionar métricas de cobertura de código com Jacoco e upload de artefatos de testes.
 * **Ações Técnicas:**
   1. Configurar o plugin `jacoco-maven-plugin` no `3-Semestre/backend-core/pom.xml` para gerar `jacoco.xml` na fase de teste;
