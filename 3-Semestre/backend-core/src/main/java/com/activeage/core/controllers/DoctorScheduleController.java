@@ -4,6 +4,7 @@ import com.activeage.core.dtos.requests.CreateBatchSlotsRequest;
 import com.activeage.core.dtos.requests.CreateSlotRequest;
 import com.activeage.core.dtos.responses.DoctorScheduleSlotResponse;
 import com.activeage.core.dtos.responses.DoctorScheduleSummaryResponse;
+import com.activeage.core.dtos.responses.DoctorDashboardStatsResponse;
 import com.activeage.core.services.DoctorScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +88,16 @@ public class DoctorScheduleController {
     /**
      * Retorna métricas resumidas da agenda do médico (livres, ocupados, taxa de ocupação).
      */
+    /**
+     * Retorna métricas consolidadas do consultório do médico (SPEC-11J).
+     */
+    @GetMapping("/stats")
+    public ResponseEntity<DoctorDashboardStatsResponse> getDoctorStats() {
+        String email = getAuthenticatedEmail();
+        DoctorDashboardStatsResponse stats = doctorScheduleService.getDoctorDashboardStats(email);
+        return ResponseEntity.ok(stats);
+    }
+
     @GetMapping("/summary")
     public ResponseEntity<DoctorScheduleSummaryResponse> getSummary() {
         String email = getAuthenticatedEmail();

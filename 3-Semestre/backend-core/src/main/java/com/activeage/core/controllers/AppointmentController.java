@@ -3,6 +3,8 @@ package com.activeage.core.controllers;
 import com.activeage.core.dtos.requests.CreateAppointmentRequest;
 import com.activeage.core.dtos.responses.AppointmentResponse;
 import com.activeage.core.services.AppointmentService;
+import com.activeage.core.services.DoctorScheduleService;
+import com.activeage.core.dtos.responses.DoctorDashboardStatsResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import java.util.Map;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final DoctorScheduleService doctorScheduleService;
 
     /**
      * Agenda uma nova teleconsulta reservando atomicamente o slot livre (RN001).
@@ -76,6 +79,17 @@ public class AppointmentController {
     /**
      * Lista as consultas agendadas do dia de hoje para o médico autenticado.
      */
+    /**
+     * Retorna métricas consolidadas do médico (SPEC-11J).
+     */
+    @GetMapping("/api/doctor/stats")
+    @PreAuthorize("hasRole('MEDICO')")
+    public ResponseEntity<DoctorDashboardStatsResponse> getDoctorStats() {
+        String email = getAuthenticatedEmail();
+        DoctorDashboardStatsResponse stats = doctorScheduleService.getDoctorDashboardStats(email);
+        return ResponseEntity.ok(stats);
+    }
+
     @GetMapping("/api/doctor/appointments/today")
     @PreAuthorize("hasRole('MEDICO')")
     public ResponseEntity<List<AppointmentResponse>> listDoctorTodayAppointments() {

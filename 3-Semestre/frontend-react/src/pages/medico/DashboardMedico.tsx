@@ -36,6 +36,14 @@ interface DoctorProfile {
     active: boolean;
 }
 
+interface DoctorStats {
+    todayAppointments: number;
+    totalPatients: number;
+    totalAppointments: number;
+    freeSlots: number;
+    trialDaysRemaining: number;
+}
+
 interface DoctorTodayAppointment {
     id: string;
     patientId: string;
@@ -50,6 +58,7 @@ interface DoctorTodayAppointment {
 
 export function DashboardMedico() {
     const [todayAppointments, setTodayAppointments] = useState<DoctorTodayAppointment[]>([]);
+    const [stats, setStats] = useState<DoctorStats | null>(null);
     const navigate = useNavigate();
     const [profile, setProfile] = useState<DoctorProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -84,6 +93,16 @@ export function DashboardMedico() {
                             }
                         } catch (e) {
                             console.error('Erro ao buscar consultas de hoje:', e);
+                        }
+
+                        try {
+                            const statsRes = await fetch('/api/doctor/stats');
+                            if (statsRes.ok) {
+                                const statsData = await statsRes.json();
+                                setStats(statsData);
+                            }
+                        } catch (e) {
+                            console.error('Erro ao buscar métricas do médico:', e);
                         }
                     }
                 } else {
@@ -318,7 +337,7 @@ export function DashboardMedico() {
                                 Atendimentos Hoje
                             </span>
                             <span className="text-xl sm:text-2xl md:text-3xl font-black text-brown-dark mt-0.5 sm:mt-1 block">
-                                0
+                                {stats?.todayAppointments ?? todayAppointments.length}
                             </span>
                             <span className="text-[10px] sm:text-[11px] text-brown-light font-medium mt-0.5 block truncate">
                                 {isApproved ? 'Pronto para pacientes' : 'Aguardando validação'}
@@ -336,7 +355,7 @@ export function DashboardMedico() {
                                 Pacientes
                             </span>
                             <span className="text-xl sm:text-2xl md:text-3xl font-black text-brown-dark mt-0.5 sm:mt-1 block">
-                                0
+                                {stats?.totalPatients ?? (todayAppointments.length > 0 ? 1 : 0)}
                             </span>
                             <span className="text-[10px] sm:text-[11px] text-brown-light font-medium mt-0.5 block truncate">
                                 Prontuários ativos
@@ -354,7 +373,7 @@ export function DashboardMedico() {
                                 Assinatura SaaS
                             </span>
                             <span className="text-sm sm:text-base md:text-lg font-black text-emerald-700 mt-0.5 sm:mt-1 block">
-                                Degustação 15D
+                                Degustação {stats?.trialDaysRemaining ?? 15}D
                             </span>
                             <span className="text-[10px] sm:text-[11px] text-emerald-800 font-bold mt-0.5 block truncate">
                                 100% honorários médico

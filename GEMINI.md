@@ -88,6 +88,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Banco Dinâmico de Dicas de Longevidade Ativa no Dashboard do Paciente com 12 intervenções baseadas em literatura médica (SBGG, OMS, Harvard, The Lancet, EWGSOP2) e alternância interativa (SPEC-11G).
   - Reorganização de UX dos Dashboards com Priorização Visual de Consultas Agendadas: no paciente, consulta no topo logo após as boas-vindas com botão direto da sala; no médico, fila do dia promovida antes das ferramentas quando houver consultas hoje (SPEC-11H).
   - Remoção de Sintomas Prévios no Agendamento e Centralização da Anamnese na Teleconsulta: fluxo simplificado para o idoso, eliminação de textarea de queixas prévias e exclusão de sintomas pré-preenchidos no semeador (SPEC-11I).
+  - Correção da Janela Temporal da Agenda Médica e Dinamização Universal de Contadores: início em 00:00:00 da data local de hoje em Minha Agenda, endpoint `/api/doctor/stats`, dinamização dos contadores do Dashboard Médico e badges reativas nas abas de filtro (SPEC-11J).
 - **Release v0.4.0 (Conclusão do 3º Semestre) — [CONCLUÍDA / EM PRODUÇÃO]:**
   - Cockpit Integrado de Teleconsulta com experiência responsiva computador/mobile (UC12-Demo).
   - Prontuário Ético Eletrônico Geriátrico Imutável (Anamnese, AGA, CID-11, Conduta, Hash SHA-256 e trava irrevogável de integridade) (UC14 / RN003).

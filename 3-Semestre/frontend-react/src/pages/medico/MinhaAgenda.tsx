@@ -67,11 +67,12 @@ export const MinhaAgenda: React.FC = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            // Calcula janela temporal
+            // Calcula janela temporal iniciando em 00:00:00 da data local de hoje (SPEC-11J)
             const now = new Date();
-            const startStr = now.toISOString();
-            const endDate = new Date(now.getTime() + periodDays * 86400000);
-            const endStr = endDate.toISOString();
+            const pad = (n: number) => String(n).padStart(2, '0');
+            const startStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T00:00:00`;
+            const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + periodDays, 23, 59, 59);
+            const endStr = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}T23:59:59`;
 
             const [slotsRes, summaryRes] = await Promise.all([
                 fetch(`/api/doctor/schedule?startDate=${encodeURIComponent(startStr)}&endDate=${encodeURIComponent(endStr)}`),
@@ -320,10 +321,38 @@ export const MinhaAgenda: React.FC = () => {
                                         : 'bg-gray-100 text-brown-dark hover:bg-gray-200'
                                 }`}
                             >
-                                {st === 'TODOS' && 'Todos os Horários'}
-                                {st === 'LIVRE' && 'Apenas Livres'}
-                                {st === 'OCUPADO' && 'Consultas Agendadas'}
-                                {st === 'BLOQUEADO' && 'Bloqueados'}
+                                {st === 'TODOS' && (
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <span>Todos os Horários</span>
+                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-brand-orange/15 text-brand-orange font-black">
+                                            {slots.length}
+                                        </span>
+                                    </span>
+                                )}
+                                {st === 'LIVRE' && (
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <span>Apenas Livres</span>
+                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-black">
+                                            {slots.filter(s => s.status === 'LIVRE').length}
+                                        </span>
+                                    </span>
+                                )}
+                                {st === 'OCUPADO' && (
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <span>Consultas Agendadas</span>
+                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-blue-100 text-blue-800 font-black">
+                                            {slots.filter(s => s.status === 'OCUPADO').length}
+                                        </span>
+                                    </span>
+                                )}
+                                {st === 'BLOQUEADO' && (
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <span>Bloqueados</span>
+                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-gray-200 text-gray-700 font-black">
+                                            {slots.filter(s => s.status === 'BLOQUEADO').length}
+                                        </span>
+                                    </span>
+                                )}
                             </button>
                         ))}
                     </div>
@@ -461,9 +490,20 @@ export const MinhaAgenda: React.FC = () => {
                                             {/* Ações do Slot */}
                                             <div className="pt-3 border-t border-brand-pot/20 flex items-center justify-between gap-2 mt-2">
                                                 {slot.status === 'OCUPADO' ? (
-                                                    <span className="text-[11px] font-medium text-blue-700 italic">
-                                                        Consulta confirmada
-                                                    </span>
+                                                    <div className="w-full flex items-center justify-between gap-2">
+                                                        <span className="text-[11px] font-bold text-blue-800">
+                                                            Consulta confirmada
+                                                        </span>
+                                                        {slot.appointmentId && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => navigate(`/teleconsulta/${slot.appointmentId}`)}
+                                                                className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold transition-all shadow-xs cursor-pointer inline-flex items-center gap-1"
+                                                            >
+                                                                <span>Abrir Sala Virtual →</span>
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 ) : (
                                                     <>
                                                         <button

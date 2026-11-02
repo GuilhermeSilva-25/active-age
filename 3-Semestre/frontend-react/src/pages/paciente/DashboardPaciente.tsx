@@ -387,7 +387,7 @@ export function DashboardPaciente() {
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between">
                                 <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brown-light">
-                                    0 consultas pendentes
+                                    {nextAppointment ? '1 consulta confirmada' : '0 consultas pendentes'}
                                 </span>
                                 <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-brown-dark group-hover:text-brand-orange group-hover:translate-x-1 transition-transform">
                                     Ver Meus Horários →

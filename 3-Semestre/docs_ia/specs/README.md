@@ -37,6 +37,7 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 | **SPEC-11G** | **Banco Dinâmico de Dicas de Longevidade Ativa com Evidências Médicas e Rotação Interativa** | UC01, UC18 | **Concluída / Live ✅** | [SPEC_SDD_BANCO_DICAS_LONGEVIDADE_ATIVA.md](./SPEC_SDD_BANCO_DICAS_LONGEVIDADE_ATIVA.md) |
 | **SPEC-11H** | **Reorganização de UX dos Dashboards com Priorização Visual de Consultas Agendadas** | UC01, UC09, UC10, UC12 | **Concluída / Live ✅** | [SPEC_SDD_REORGANIZACAO_UX_CONSULTAS_DASHBOARDS.md](./SPEC_SDD_REORGANIZACAO_UX_CONSULTAS_DASHBOARDS.md) |
 | **SPEC-11I** | **Remoção de Sintomas Prévios no Agendamento e Centralização da Anamnese na Teleconsulta** | UC01, UC09, UC10, UC12, UC14 | **Concluída / Live ✅** | [SPEC_SDD_REMOCAO_SINTOMAS_PREVIOS_AGENDAMENTO.md](./SPEC_SDD_REMOCAO_SINTOMAS_PREVIOS_AGENDAMENTO.md) |
+| **SPEC-11J** | **Correção da Janela Temporal da Agenda Médica e Dinamização Universal de Contadores** | UC01, UC09, UC10, UC12 | **Concluída / Live ✅** | [SPEC_SDD_JANELA_TEMPORAL_AGENDA_E_CONTADORES.md](./SPEC_SDD_JANELA_TEMPORAL_AGENDA_E_CONTADORES.md) |
 | **SPEC-12** | **Cockpit de Teleconsulta Integrado, Prontuário Ético Imutável, Exames e Prescrições Digitais** | UC12, UC13, UC14, UC15, UC16 | **Concluída / Live ✅** | [SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md](./SPEC_SDD_COCKPIT_TELECONSULTA_PRONTUARIO_E_RECEITAS.md) |
 
 ---

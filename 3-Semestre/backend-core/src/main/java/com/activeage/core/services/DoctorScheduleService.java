@@ -9,6 +9,12 @@ import com.activeage.core.dtos.requests.CreateBatchSlotsRequest;
 import com.activeage.core.dtos.requests.CreateSlotRequest;
 import com.activeage.core.dtos.responses.DoctorScheduleSlotResponse;
 import com.activeage.core.dtos.responses.DoctorScheduleSummaryResponse;
+import com.activeage.core.dtos.responses.DoctorDashboardStatsResponse;
+import com.activeage.core.repositories.AppointmentRepository;
+import com.activeage.core.domain.enums.AppointmentStatus;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Set;
 import com.activeage.core.repositories.DoctorScheduleSlotRepository;
 import com.activeage.core.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +37,7 @@ public class DoctorScheduleService {
 
     private final DoctorScheduleSlotRepository scheduleSlotRepository;
     private final UserRepository userRepository;
+    private final AppointmentRepository appointmentRepository;
 
     /**
      * Cria um slot avulso de horário para atendimento clínico.
@@ -195,6 +202,45 @@ public class DoctorScheduleService {
     /**
      * Retorna o resumo das métricas de agenda do médico.
      */
+    /**
+     * Retorna métricas operacionais consolidadas do consultório do médico (SPEC-11J).
+     */
+    public DoctorDashboardStatsResponse getDoctorDashboardStats(String doctorEmail) {
+        User doctor = getAuthenticatedDoctor(doctorEmail);
+
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfToday = LocalDate.now().atTime(23, 59, 59);
+
+        long todayAppointments = appointmentRepository.countByDoctorIdAndStatusAndStartDateTimeBetween(
+                doctor.getId(), AppointmentStatus.AGENDADA, startOfToday, endOfToday
+        );
+
+        var doctorAppointments = appointmentRepository.findByDoctorIdOrderByStartDateTimeAsc(doctor.getId());
+        long totalAppointments = doctorAppointments.size();
+
+        Set<String> uniquePatientIds = doctorAppointments.stream()
+                .map(a -> a.getPatientId())
+                .filter(id -> id != null && !id.isBlank())
+                .collect(Collectors.toSet());
+        long totalPatients = uniquePatientIds.size();
+
+        long freeSlots = scheduleSlotRepository.countByDoctorIdAndStatus(doctor.getId(), SlotStatus.LIVRE);
+
+        int trialDaysRemaining = 15;
+        if (doctor.getTrialExpiresAt() != null) {
+            long days = ChronoUnit.DAYS.between(LocalDateTime.now(), doctor.getTrialExpiresAt());
+            trialDaysRemaining = (int) Math.max(0, days);
+        }
+
+        return DoctorDashboardStatsResponse.builder()
+                .todayAppointments(todayAppointments)
+                .totalPatients(totalPatients)
+                .totalAppointments(totalAppointments)
+                .freeSlots(freeSlots)
+                .trialDaysRemaining(trialDaysRemaining)
+                .build();
+    }
+
     public DoctorScheduleSummaryResponse getDoctorScheduleSummary(String doctorEmail) {
         User doctor = getAuthenticatedDoctor(doctorEmail);
 

@@ -48,3 +48,4 @@ Na jornada de telessaúde geriátrica do Active Age:
 
 ## 4. Registro de Auditoria e Commits
 - Commit: `feat(paciente): remove sintomas do agendamento centralizando anamnese na teleconsulta (spec-11i)`
+
