@@ -8,6 +8,7 @@ import com.activeage.core.domain.models.User;
 import com.activeage.core.dtos.requests.CreateBatchSlotsRequest;
 import com.activeage.core.dtos.requests.CreateSlotRequest;
 import com.activeage.core.dtos.responses.DoctorScheduleSlotResponse;
+import com.activeage.core.repositories.AppointmentRepository;
 import com.activeage.core.repositories.DoctorScheduleSlotRepository;
 import com.activeage.core.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,9 @@ class DoctorScheduleServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private AppointmentRepository appointmentRepository;
 
     @InjectMocks
     private DoctorScheduleService scheduleService;
@@ -185,5 +189,88 @@ class DoctorScheduleServiceTest {
         assertNotNull(response);
         assertEquals(SlotStatus.BLOQUEADO, response.getStatus());
         verify(scheduleSlotRepository, times(1)).save(any(DoctorScheduleSlot.class));
+    }
+
+    @Test
+    @DisplayName("Deve alternar status de BLOQUEADO para LIVRE com sucesso")
+    void toggleBlockSlot_Unblock_Success() {
+        DoctorScheduleSlot blockedSlot = DoctorScheduleSlot.builder()
+                .id("slot_blocked")
+                .doctorId("doctor_123")
+                .status(SlotStatus.BLOQUEADO)
+                .build();
+
+        when(userRepository.findByEmail("ada.lovelace@activeage.com")).thenReturn(Optional.of(approvedDoctor));
+        when(scheduleSlotRepository.findById("slot_blocked")).thenReturn(Optional.of(blockedSlot));
+        when(scheduleSlotRepository.save(any(DoctorScheduleSlot.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        DoctorScheduleSlotResponse response = scheduleService.toggleBlockSlot("ada.lovelace@activeage.com", "slot_blocked");
+
+        assertEquals(SlotStatus.LIVRE, response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar alternar bloqueio de slot OCUPADO")
+    void toggleBlockSlot_Occupied_ThrowsException() {
+        DoctorScheduleSlot occupiedSlot = DoctorScheduleSlot.builder()
+                .id("slot_occupied")
+                .doctorId("doctor_123")
+                .status(SlotStatus.OCUPADO)
+                .build();
+
+        when(userRepository.findByEmail("ada.lovelace@activeage.com")).thenReturn(Optional.of(approvedDoctor));
+        when(scheduleSlotRepository.findById("slot_occupied")).thenReturn(Optional.of(occupiedSlot));
+
+        assertThrows(IllegalStateException.class, () ->
+                scheduleService.toggleBlockSlot("ada.lovelace@activeage.com", "slot_occupied"));
+    }
+
+    @Test
+    @DisplayName("Deve excluir slot LIVRE com sucesso")
+    void deleteSlot_Success() {
+        DoctorScheduleSlot freeSlot = DoctorScheduleSlot.builder()
+                .id("slot_free")
+                .doctorId("doctor_123")
+                .status(SlotStatus.LIVRE)
+                .build();
+
+        when(userRepository.findByEmail("ada.lovelace@activeage.com")).thenReturn(Optional.of(approvedDoctor));
+        when(scheduleSlotRepository.findById("slot_free")).thenReturn(Optional.of(freeSlot));
+
+        scheduleService.deleteSlot("ada.lovelace@activeage.com", "slot_free");
+
+        verify(scheduleSlotRepository).delete(freeSlot);
+    }
+
+    @Test
+    @DisplayName("Deve calcular resumo da agenda do médico corretamente")
+    void getDoctorScheduleSummary_Success() {
+        when(userRepository.findByEmail("ada.lovelace@activeage.com")).thenReturn(Optional.of(approvedDoctor));
+        when(scheduleSlotRepository.countByDoctorId("doctor_123")).thenReturn(10L);
+        when(scheduleSlotRepository.countByDoctorIdAndStatus("doctor_123", SlotStatus.LIVRE)).thenReturn(6L);
+        when(scheduleSlotRepository.countByDoctorIdAndStatus("doctor_123", SlotStatus.OCUPADO)).thenReturn(4L);
+        when(scheduleSlotRepository.countByDoctorIdAndStatus("doctor_123", SlotStatus.BLOQUEADO)).thenReturn(0L);
+
+        var summary = scheduleService.getDoctorScheduleSummary("ada.lovelace@activeage.com");
+
+        assertEquals(10L, summary.getTotalSlots());
+        assertEquals(6L, summary.getTotalFreeSlots());
+        assertEquals(4L, summary.getTotalBookedSlots());
+        assertEquals(40.0, summary.getOccupancyRatePercentage());
+    }
+
+    @Test
+    @DisplayName("Deve retornar métricas do dashboard do médico")
+    void getDoctorDashboardStats_Success() {
+        when(userRepository.findByEmail("ada.lovelace@activeage.com")).thenReturn(Optional.of(approvedDoctor));
+        when(appointmentRepository.countByDoctorIdAndStatusAndStartDateTimeBetween(any(), any(), any(), any())).thenReturn(2L);
+        when(appointmentRepository.findByDoctorIdOrderByStartDateTimeAsc("doctor_123")).thenReturn(List.of());
+        when(scheduleSlotRepository.countByDoctorIdAndStatus("doctor_123", SlotStatus.LIVRE)).thenReturn(5L);
+
+        var stats = scheduleService.getDoctorDashboardStats("ada.lovelace@activeage.com");
+
+        assertNotNull(stats);
+        assertEquals(2L, stats.getTodayAppointments());
+        assertEquals(5L, stats.getFreeSlots());
     }
 }

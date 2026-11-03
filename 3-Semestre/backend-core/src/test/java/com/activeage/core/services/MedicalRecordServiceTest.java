@@ -168,4 +168,50 @@ class MedicalRecordServiceTest {
                 anyString()
         );
     }
+
+    @Test
+    @DisplayName("Deve negar acesso ao buscar prontuário de consulta de terceiros")
+    void shouldDenyAccessToUnauthorizedUser() {
+        User thirdParty = new User();
+        thirdParty.setId("third-party");
+        thirdParty.setEmail("terceiro@activeage.com");
+        thirdParty.setRole(Role.ROLE_PACIENTE);
+
+        when(userRepository.findByEmail("terceiro@activeage.com")).thenReturn(Optional.of(thirdParty));
+        when(appointmentRepository.findById(appointment.getId())).thenReturn(Optional.of(appointment));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                medicalRecordService.getOrInitRecord("terceiro@activeage.com", appointment.getId()));
+    }
+
+    @Test
+    @DisplayName("Deve impedir salvar rascunho se o médico não for o responsável")
+    void shouldDenySaveDraftForUnassignedDoctor() {
+        User otherDoctor = new User();
+        otherDoctor.setId("other-doc");
+        otherDoctor.setEmail("outro@activeage.com");
+        otherDoctor.setRole(Role.ROLE_MEDICO);
+
+        MedicalRecordRequest request = MedicalRecordRequest.builder()
+                .appointmentId(appointment.getId())
+                .build();
+
+        when(userRepository.findByEmail("outro@activeage.com")).thenReturn(Optional.of(otherDoctor));
+        when(appointmentRepository.findById(appointment.getId())).thenReturn(Optional.of(appointment));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                medicalRecordService.saveDraft("outro@activeage.com", request));
+    }
+
+    @Test
+    @DisplayName("Deve impedir refinalização de prontuário já finalizado")
+    void shouldThrowExceptionWhenRefinalizingRecord() {
+        draftRecord.setStatus("FINALIZED");
+
+        when(userRepository.findByEmail(doctorUser.getEmail())).thenReturn(Optional.of(doctorUser));
+        when(medicalRecordRepository.findById(draftRecord.getId())).thenReturn(Optional.of(draftRecord));
+
+        assertThrows(IllegalStateException.class, () ->
+                medicalRecordService.finalizeRecord(doctorUser.getEmail(), draftRecord.getId()));
+    }
 }

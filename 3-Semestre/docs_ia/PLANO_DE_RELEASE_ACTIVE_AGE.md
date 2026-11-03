@@ -144,11 +144,15 @@ gantt
 * **Objetivo:** Implementação de esteira industrial de CI/CD e desacoplamento de microsserviços distribuídos:
   1. [x] **Pipeline de CI/CD Industrial no GitHub Actions (SPEC-15 / ISW-033) — [CONCLUÍDO ✅]:**
      - Workflow com 9 Pilares, matriz paralela (Backend Java 21 / Frontend React 19), 37 testes automatizados JUnit 5/Mockito, cobertura Jacoco (XML/HTML), linter oxlint, scanner DevSecOps com Trivy CLI, validação de container Docker multi-stage e GitHub Step Summary executivo.
-  2. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [PRÓXIMO PASSO]:**
+  2. [x] **Blindagem de Testes Automatizados & Expansão JaCoCo (SPEC-15B / ISW-033) — [CONCLUÍDO ✅]:**
+     - Expansão da suíte para 180 testes unitários e de integração HTTP (MockMvc) cobrindo 100% dos controllers REST (14 controllers), serviços e camada de exceções (0 falhas, 0 erros);
+     - Salto de cobertura JaCoCo de 48% para 84% em instruções e de 24% para 56% em branches (100% das 45 classes cobertas);
+     - Otimização do tempo de execução com isolamento e mock de beans pesados no contexto de teste.
+  3. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [PRÓXIMO PASSO]:**
      - Signaling server dedicado com Node.js, WebSockets / Socket.io e STUN/TURN para chamada audiovisual peer-to-peer de alta performance e baixa latência.
-  3. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
+  4. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
      - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022).
-  4. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+  5. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---

@@ -163,4 +163,58 @@ class PatientExamServiceTest {
         verify(fileStorageService, times(1)).deletePatientExam("exam_patient-123_uuid.pdf");
         verify(patientExamRepository, times(1)).delete(exam);
     }
+
+    @Test
+    @DisplayName("Deve listar exames filtrando por categoria")
+    void testGetPatientExamsByCategory() {
+        when(userRepository.findByEmail("paciente@activeage.com")).thenReturn(Optional.of(patient));
+
+        PatientExam exam1 = PatientExam.builder()
+                .id("exam-1")
+                .patientId("patient-123")
+                .title("Ecocardiograma")
+                .category(ExamCategory.CARDIOLOGICO)
+                .examDate(LocalDate.of(2026, 6, 1))
+                .sizeBytes(2048)
+                .build();
+
+        when(patientExamRepository.findByPatientIdAndCategoryOrderByExamDateDesc("patient-123", ExamCategory.CARDIOLOGICO))
+                .thenReturn(List.of(exam1));
+
+        List<PatientExamResponse> list = patientExamService.getPatientExams("paciente@activeage.com", ExamCategory.CARDIOLOGICO);
+
+        assertEquals(1, list.size());
+        assertEquals(ExamCategory.CARDIOLOGICO, list.get(0).getCategory());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar excluir exame inexistente")
+    void testDeleteExamNotFound() {
+        when(userRepository.findByEmail("paciente@activeage.com")).thenReturn(Optional.of(patient));
+        when(patientExamRepository.findByIdAndPatientId("invalido", "patient-123")).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                patientExamService.deleteExam("paciente@activeage.com", "invalido"));
+    }
+
+    @Test
+    @DisplayName("Deve carregar download de exame com sucesso")
+    void testGetExamFileSuccess() {
+        when(userRepository.findByEmail("paciente@activeage.com")).thenReturn(Optional.of(patient));
+
+        PatientExam exam = PatientExam.builder()
+                .id("exam-1")
+                .patientId("patient-123")
+                .storedFileName("stored.pdf")
+                .build();
+
+        when(patientExamRepository.findByIdAndPatientId("exam-1", "patient-123")).thenReturn(Optional.of(exam));
+        org.springframework.core.io.Resource mockRes = mock(org.springframework.core.io.Resource.class);
+        when(fileStorageService.loadPatientExamResource("stored.pdf")).thenReturn(mockRes);
+
+        PatientExamService.ExamDownloadData data = patientExamService.getExamForDownload("paciente@activeage.com", "exam-1");
+
+        assertNotNull(data);
+        assertEquals(mockRes, data.resource());
+    }
 }

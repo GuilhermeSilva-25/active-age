@@ -166,4 +166,51 @@ class DoctorServiceTest {
 
         assertTrue(ex.getMessage().contains("não está disponível para consultas públicas"));
     }
+
+    @Test
+    @DisplayName("Deve ordenar por Maior Valor de Consulta (fee_desc) e Nome Decrescente (name_desc)")
+    void testSortVariants() {
+        when(userRepository.findByRoleAndActiveAndDossierStatus(Role.ROLE_MEDICO, true, DoctorDossierStatus.APPROVED))
+                .thenReturn(List.of(doctorAda, doctorAlan, doctorGrace));
+
+        List<DoctorPublicProfileResponse> feeDesc = doctorService.searchApprovedDoctors(null, null, null, null, "fee_desc");
+        assertEquals("Dra. Grace Hopper", feeDesc.get(0).getFullName());
+
+        List<DoctorPublicProfileResponse> nameDesc = doctorService.searchApprovedDoctors(null, null, null, null, "name_desc");
+        assertEquals("Dra. Grace Hopper", nameDesc.get(0).getFullName());
+        assertEquals("Dr. Alan Turing", nameDesc.get(2).getFullName());
+    }
+
+    @Test
+    @DisplayName("Deve filtrar por teto de honorários e ignorar 'TODOS' na UF e foco")
+    void testMaxFeeAndTodosFilters() {
+        when(userRepository.findByRoleAndActiveAndDossierStatus(Role.ROLE_MEDICO, true, DoctorDossierStatus.APPROVED))
+                .thenReturn(List.of(doctorAda, doctorAlan, doctorGrace));
+
+        List<DoctorPublicProfileResponse> max250 = doctorService.searchApprovedDoctors(null, "TODOS", "TODOS", BigDecimal.valueOf(250.00), "name_asc");
+        assertEquals(2, max250.size());
+    }
+
+    @Test
+    @DisplayName("Deve buscar termo textual por RQE ou por Bio")
+    void testSearchByRqeAndBio() {
+        when(userRepository.findByRoleAndActiveAndDossierStatus(Role.ROLE_MEDICO, true, DoctorDossierStatus.APPROVED))
+                .thenReturn(List.of(doctorAda, doctorAlan, doctorGrace));
+
+        List<DoctorPublicProfileResponse> byRqe = doctorService.searchApprovedDoctors("78910", null, null, null, "name_asc");
+        assertEquals(1, byRqe.size());
+        assertEquals("Dr. Alan Turing", byRqe.get(0).getFullName());
+
+        List<DoctorPublicProfileResponse> byBio = doctorService.searchApprovedDoctors("quedas", null, null, null, "name_asc");
+        assertEquals(1, byBio.size());
+        assertEquals("Dra. Grace Hopper", byBio.get(0).getFullName());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção se médico não for localizado por ID")
+    void testDoctorNotFound() {
+        when(userRepository.findById("inexistente")).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> doctorService.getApprovedDoctorById("inexistente"));
+    }
 }

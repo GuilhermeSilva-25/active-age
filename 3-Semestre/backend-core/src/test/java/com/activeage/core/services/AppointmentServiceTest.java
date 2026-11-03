@@ -187,4 +187,168 @@ class AppointmentServiceTest {
         assertEquals(AppointmentStatus.AGENDADA, appointment.getStatus());
         verify(appointmentRepository, never()).save(appointment);
     }
+
+    @Test
+    @DisplayName("Deve listar consultas do paciente")
+    void listPatientAppointments_Success() {
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .patientId("patient_001")
+                .doctorId("doctor_001")
+                .startDateTime(LocalDateTime.now().plusDays(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(userRepository.findByEmail("antonio.silva@activeage.com")).thenReturn(Optional.of(patient));
+        when(appointmentRepository.findByPatientIdOrderByStartDateTimeDesc("patient_001"))
+                .thenReturn(java.util.List.of(appointment));
+
+        java.util.List<AppointmentResponse> list = appointmentService.listPatientAppointments("antonio.silva@activeage.com");
+
+        assertEquals(1, list.size());
+        assertEquals("app_123", list.get(0).getId());
+    }
+
+    @Test
+    @DisplayName("Deve retornar próxima consulta do paciente")
+    void getNextPatientAppointment_Success() {
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .patientId("patient_001")
+                .doctorId("doctor_001")
+                .startDateTime(LocalDateTime.now().plusDays(1))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(userRepository.findByEmail("antonio.silva@activeage.com")).thenReturn(Optional.of(patient));
+        when(appointmentRepository.findFirstByPatientIdAndStatusAndStartDateTimeGreaterThanEqualOrderByStartDateTimeAsc(
+                eq("patient_001"), eq(AppointmentStatus.AGENDADA), any(LocalDateTime.class)))
+                .thenReturn(Optional.of(appointment));
+
+        Optional<AppointmentResponse> res = appointmentService.getNextPatientAppointment("antonio.silva@activeage.com");
+
+        assertTrue(res.isPresent());
+        assertEquals("app_123", res.get().getId());
+    }
+
+    @Test
+    @DisplayName("Deve listar consultas do dia de hoje do médico")
+    void listDoctorTodayAppointments_Success() {
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .doctorId("doctor_001")
+                .patientId("patient_001")
+                .startDateTime(LocalDateTime.now().withHour(14).withMinute(0))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(userRepository.findByEmail("alan.turing@activeage.com")).thenReturn(Optional.of(doctor));
+        when(appointmentRepository.findByDoctorIdAndStatusAndStartDateTimeBetweenOrderByStartDateTimeAsc(
+                eq("doctor_001"), eq(AppointmentStatus.AGENDADA), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(java.util.List.of(appointment));
+
+        java.util.List<AppointmentResponse> list = appointmentService.listDoctorTodayAppointments("alan.turing@activeage.com");
+
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    @DisplayName("Deve listar todas as consultas do médico para histórico")
+    void listDoctorAppointments_Success() {
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .doctorId("doctor_001")
+                .patientId("patient_001")
+                .startDateTime(LocalDateTime.now().minusDays(1))
+                .status(AppointmentStatus.REALIZADA)
+                .build();
+
+        when(userRepository.findByEmail("alan.turing@activeage.com")).thenReturn(Optional.of(doctor));
+        when(appointmentRepository.findByDoctorIdOrderByStartDateTimeDesc("doctor_001"))
+                .thenReturn(java.util.List.of(appointment));
+
+        java.util.List<AppointmentResponse> list = appointmentService.listDoctorAppointments("alan.turing@activeage.com");
+
+        assertEquals(1, list.size());
+        assertEquals(AppointmentStatus.REALIZADA, list.get(0).getStatus());
+    }
+
+    @Test
+    @DisplayName("Deve buscar consulta por ID quando solicitante for o médico ou paciente titular")
+    void getAppointmentById_Authorized() {
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .patientId("patient_001")
+                .doctorId("doctor_001")
+                .startDateTime(LocalDateTime.now().plusDays(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(userRepository.findByEmail("antonio.silva@activeage.com")).thenReturn(Optional.of(patient));
+        when(appointmentRepository.findById("app_123")).thenReturn(Optional.of(appointment));
+
+        AppointmentResponse res = appointmentService.getAppointmentById("antonio.silva@activeage.com", "app_123");
+
+        assertNotNull(res);
+        assertEquals("app_123", res.getId());
+    }
+
+    @Test
+    @DisplayName("Deve negar acesso ao buscar consulta de outro usuário")
+    void getAppointmentById_Unauthorized_ThrowsSecurityException() {
+        User otherUser = new User();
+        otherUser.setId("outro_usuario");
+        otherUser.setEmail("outro@activeage.com");
+        otherUser.setRole(Role.ROLE_PACIENTE);
+
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .patientId("patient_001")
+                .doctorId("doctor_001")
+                .startDateTime(LocalDateTime.now().plusDays(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(userRepository.findByEmail("outro@activeage.com")).thenReturn(Optional.of(otherUser));
+        when(appointmentRepository.findById("app_123")).thenReturn(Optional.of(appointment));
+
+        assertThrows(SecurityException.class, () ->
+                appointmentService.getAppointmentById("outro@activeage.com", "app_123"));
+    }
+
+    @Test
+    @DisplayName("Deve impedir cancelamento de consulta que não pertence ao paciente solicitante")
+    void cancelAppointment_WrongPatient_ThrowsSecurityException() {
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .patientId("outro_paciente")
+                .doctorId("doctor_001")
+                .startDateTime(LocalDateTime.now().plusDays(2))
+                .status(AppointmentStatus.AGENDADA)
+                .build();
+
+        when(userRepository.findByEmail("antonio.silva@activeage.com")).thenReturn(Optional.of(patient));
+        when(appointmentRepository.findById("app_123")).thenReturn(Optional.of(appointment));
+
+        assertThrows(SecurityException.class, () ->
+                appointmentService.cancelAppointment("antonio.silva@activeage.com", "app_123", "Motivo"));
+    }
+
+    @Test
+    @DisplayName("Deve impedir cancelamento de consulta já realizada")
+    void cancelAppointment_NotAgendada_ThrowsIllegalStateException() {
+        Appointment appointment = Appointment.builder()
+                .id("app_123")
+                .patientId("patient_001")
+                .doctorId("doctor_001")
+                .startDateTime(LocalDateTime.now().plusDays(2))
+                .status(AppointmentStatus.REALIZADA)
+                .build();
+
+        when(userRepository.findByEmail("antonio.silva@activeage.com")).thenReturn(Optional.of(patient));
+        when(appointmentRepository.findById("app_123")).thenReturn(Optional.of(appointment));
+
+        assertThrows(IllegalStateException.class, () ->
+                appointmentService.cancelAppointment("antonio.silva@activeage.com", "app_123", "Motivo"));
+    }
 }

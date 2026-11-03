@@ -102,6 +102,7 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Central de Prontuários & Prescrições Digitais no Dashboard do Médico (SPEC-14): Ativação do Card 3 das ferramentas médicas, busca reativa, filtros de status, acesso ao prontuário clínico com hash SHA-256 e impressão de receitas/atestados em modelo P&B.
 - **4º Semestre — [EM DESENVOLVIMENTO ATIVO 🚀]:**
   - Pipeline de CI/CD Industrial no GitHub Actions (SPEC-15) [CONCLUÍDA / LIVE ✅]: Esteira com 9 Pilares, matriz paralela (Backend Java 21 / Frontend React 19), 37 testes automatizados JUnit 5/Mockito, cobertura de código Jacoco (HTML/XML), linter oxlint, scanner DevSecOps com Trivy CLI, build da imagem Docker multi-stage e GitHub Step Summary executivo em Markdown.
+  - Blindagem de Testes Automatizados & Expansão JaCoCo (SPEC-15B) [CONCLUÍDA / LIVE ✅]: 180 testes automatizados (0 falhas/erros), cobertura geral elevada de 48% para 84% de instruções e 56% de branches; 14 controladores RESTful 100% blindados com MockMvc (96% instruções), serviços em 80%, exceptions e utils em 100%, 0 classes sem teste (45/45).
   - Próximos Marcos do 4º Semestre: SPEC-16 (Microsserviço de Teleconsulta WebRTC Nativo) e SPEC-17 (Microsserviço de Pagamento com Split Direto BACEN).
 - **5º Semestre — [FUTURO]:**
   - Aplicativo Mobile Multiplataforma (React Native) e Ingestão de Wearables de Saúde.
