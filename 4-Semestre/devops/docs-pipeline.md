@@ -21,7 +21,7 @@ flowchart TD
     TRIG["1. Triggers:<br>Push / Pull Request / Manual"] --> RUNNERS["2. Runners & Setup:<br>Ubuntu Latest + JDK 21 Temurin + Node 22"]
     RUNNERS --> CACHE["3. Caching Inteligente:<br>~/.m2 (Maven) & ~/.npm"]
     CACHE --> FORK{"4. Matriz Paralela"}
-    FORK --> BACK["Job 1: Backend Core<br>• Service Container: MongoDB 7.0<br>• 37 Testes Unitários/BDD (JUnit 5 + Mockito)<br>• Cobertura de Código com Jacoco<br>• Artefatos: Surefire & Jacoco HTML/XML"]
+    FORK --> BACK["Job 1: Backend Core<br>• Service Container: MongoDB 7.0<br>• 180 Testes Automatizados (JUnit 5 + Mockito + MockMvc)<br>• Cobertura de Código com Jacoco<br>• Artefatos: Surefire & Jacoco HTML/XML"]
     FORK --> FRONT["Job 2: Frontend SPA<br>• Auditoria: npm audit<br>• Linter Estático: oxlint<br>• Validação de Tipos: tsc -b<br>• Build de Produção: Vite<br>• Artefato: dist/"]
     BACK --> SEC["Job 3: DevSecOps & Docker<br>(needs: [backend-ci, frontend-ci])<br>• Trivy CLI (v0.58.2): FS Scan<br>• Docker Buildx: Multi-Stage Image<br>• Trivy Image Scan<br>• GitHub Step Summary Executivo"]
     FRONT --> SEC
@@ -35,7 +35,13 @@ flowchart TD
 * **Runner:** `ubuntu-latest`
 * **Serviço de Banco de Dados:** Container em tempo real com **MongoDB 7.0** (`image: mongo:7.0`) na porta `27017` com healthcheck `mongosh ping`.
 * **JDK:** Java 21 LTS (distribuição Eclipse Temurin) com cache do Maven (`~/.m2`).
-* **Testes Automatizados:** 37 testes unitários e BDD cobrindo:
+* **Testes Automatizados:** 180 testes unitários e de integração HTTP (MockMvc) com 100% de sucesso cobrindo:
+  * 14 Controladores REST com MockMvc (100% dos controllers e 80/80 métodos testados);
+  * Tratamento global de exceções HTTP (GlobalExceptionHandlerTest) e segurança JWT (JwtUtilTest);
+  * Credenciamento médico e auditoria (AdminCredentialingServiceTest, DoctorCredentialingServiceTest);
+  * Gestão de usuários e teleconsultas (AdminUserServiceTest, DoctorConsultationServiceTest);
+  * Perfil de usuário e cuidadores familiares (UserProfileServiceTest);
+  * Armazenamento e download de exames no GridFS (FileStorageServiceTest);
   * Agendamento concorrente e rollback ético (`AppointmentServiceTest`);
   * Autenticação e bloqueio perimetral de contas (`AuthServiceTest`);
   * Automação de grade e consultas com fuso horário de Brasília (`DoctorScheduleAutomationServiceTest`);

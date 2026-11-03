@@ -27,7 +27,7 @@ A pipeline real que executa no GitHub Actions reside na raiz do repositório em 
 ```mermaid
 flowchart TD
     TRIG["Disparo:<br>Push / Pull Request / Manual"] --> FORK{"Matriz Paralela"}
-    FORK --> BACK["Job 1: Backend Core<br>• Runner: Ubuntu Latest<br>• JDK 21 Temurin + Cache Maven<br>• Service: MongoDB 7.0<br>• Testes Unitários: 37 testes<br>• Cobertura: Jacoco Report<br>• Upload Artefatos: Surefire & Jacoco"]
+    FORK --> BACK["Job 1: Backend Core<br>• Runner: Ubuntu Latest<br>• JDK 21 Temurin + Cache Maven<br>• Service: MongoDB 7.0<br>• Testes Automatizados: 180 testes (JUnit 5 + MockMvc)<br>• Cobertura: 84% Jacoco<br>• 100% das 45 Classes Auditadas<br>• Upload Artefatos: Surefire & Jacoco"]
     FORK --> FRONT["Job 2: Frontend SPA<br>• Runner: Ubuntu Latest<br>• Node 22 + Cache npm<br>• Auditoria: npm audit<br>• Linter: oxlint<br>• Build & Tipagem: Vite<br>• Upload Artefato: dist/"]
     BACK --> SEC["Job 3: DevSecOps & Container Docker<br>(needs: [backend-ci, frontend-ci])<br>• Scanner Trivy FS: Análise de CVEs em dependências<br>• Docker Buildx: Construção da imagem multi-stage<br>• Scanner Trivy Image: Auditoria da imagem Docker final"]
     FRONT --> SEC

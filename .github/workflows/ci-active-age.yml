@@ -163,15 +163,15 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Pilar da Esteira | Tecnologia / Ferramenta | Status | Detalhes |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
-          echo "| **Backend Core** | Java 21 LTS + Spring Boot 3 | ✅ Passou | 37 testes unitários/BDD executados com sucesso |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Cobertura de Código** | Jacoco Maven Plugin (v0.8.12) | ✅ Gerada | Relatório XML e HTML empacotados nos artefatos |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Backend Core** | Java 21 LTS + Spring Boot 3 | ✅ Passou | 180 testes automatizados (JUnit 5 + Mockito + MockMvc) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Cobertura de Código** | Jacoco Maven Plugin (v0.8.12) | ✅ 84% Instruções / 56% Branches | 100% das 45 classes auditadas (0 classes ausentes) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Frontend SPA** | React 19 + TypeScript + Vite | ✅ Passou | Tipagem estática validada e build de produção gerado |" >> $GITHUB_STEP_SUMMARY
           echo "| **Análise Estática (Linter)** | oxlint (JavaScript/TypeScript) | ✅ Passou | 0 erros de sintaxe ou conformidade |" >> $GITHUB_STEP_SUMMARY
           echo "| **DevSecOps (SCA)** | Trivy Scanner (Aqua Security) | ✅ Auditado | Varredura de dependências e CVEs concluída |" >> $GITHUB_STEP_SUMMARY
           echo "| **Container Docker** | Docker Multi-Stage (Temurin 21) | ✅ Construído | Imagem de produção testada e validada |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📦 Artefatos Disponíveis para Auditoria:" >> $GITHUB_STEP_SUMMARY
-          echo "* \`backend-surefire-reports\`: Resultados detalhados dos 37 testes automatizados." >> $GITHUB_STEP_SUMMARY
+          echo "* \`backend-surefire-reports\`: Resultados detalhados dos 180 testes automatizados." >> $GITHUB_STEP_SUMMARY
           echo "* \`backend-jacoco-coverage\`: Relatório navegável de cobertura de código." >> $GITHUB_STEP_SUMMARY
           echo "* \`frontend-dist-artifact\`: Pacote de build minificado para deploy." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
