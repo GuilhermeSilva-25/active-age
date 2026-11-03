@@ -17,7 +17,7 @@ Neste semestre, **nenhum arquivo de pipeline (YAML), Dockerfile, microsserviço 
 |---|---|---|---|---|
 | **SPEC-15** | **Pipeline de CI/CD Industrial no GitHub Actions & Quality Gates** | Triggers, Runners, Setup, Matriz Paralela, Lint, Testes, Cobertura Jacoco, Scanners de Segurança Trivy, Docker Multi-Stage e Step Summary | **Concluída / Live ✅** | [SPEC_SDD_PIPELINE_CICD_E_QUALITY_GATES.md](./SPEC_SDD_PIPELINE_CICD_E_QUALITY_GATES.md) |
 | **SPEC-15B** | **Blindagem de Testes Automatizados & Expansão de Cobertura JaCoCo** | JUnit 5, Mockito, MockMvc, Sad Paths, Cobertura de Instruções 84% e Branches 56% (180 testes) | **Concluída / Live ✅** | [SPEC_SDD_BLINDAGEM_TESTES_E_COBERTURA_JACOCO.md](./SPEC_SDD_BLINDAGEM_TESTES_E_COBERTURA_JACOCO.md) |
-| **SPEC-16** | **Microsserviço de Teleconsulta WebRTC Nativo (Signaling Server)** | Node.js, Socket.io, WebSockets, STUN/TURN e integração com a sala virtual | *Planejada* 📅 | Em breve |
+| **SPEC-16** | **Microsserviço de Teleconsulta WebRTC Nativo (Signaling Server)** | Node.js, Socket.io, WebSockets, STUN/TURN e integração com a sala virtual | *Aguardando Aprovação do PO* 📋 | [SPEC_SDD_MICROSSERVICO_TELECONSULTA_WEBRTC.md](./SPEC_SDD_MICROSSERVICO_TELECONSULTA_WEBRTC.md) |
 | **SPEC-17** | **Microsserviço de Gateway de Pagamento & Split Direto BACEN** | API REST, Webhooks, Split Direto sem retenção e conformidade CFM nº 2.314/2022 | *Planejada* 📅 | Em breve |
 | **SPEC-18** | **Orquestração de Containers e Infraestrutura Distribuída (Docker Compose)** | Redes isoladas, variáveis de ambiente seguras e deploy automatizado | *Planejada* 📅 | Em breve |
 
