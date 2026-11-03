@@ -20,8 +20,8 @@ Ao abrir o projeto no Antigravity em uma máquina nova (ou iniciar uma nova conv
 
 Com essa instrução simples, o Antigravity:
 - Identificará que o **3º Semestre está 100% concluído em produção (v0.1.0 a v0.4.0)**;
-- Identificará que o **4º Semestre está em andamento ativo**, com a **SPEC-15 (Pipeline de CI/CD Industrial no GitHub Actions com 9 Pilares)** concluída e live;
-- Identificará que o próximo passo imediato é o planejamento da **SPEC-16: Microsserviço de Teleconsulta WebRTC Nativo (Signaling Server com Socket.io)**.
+- Identificará que o **4º Semestre está em andamento ativo**, com a **SPEC-15 (CI/CD GitHub Actions)** e **SPEC-15B (Blindagem de Testes & JaCoCo 84% com 180 testes)** 100% concluídas e live;
+- Identificará que a **SPEC-16 (Microsserviço de Teleconsulta WebRTC Nativo)** foi totalmente especificada e o próximo passo imediato a executar é a **Micro Tarefa 16.1 (Fundação do Microsserviço ms-teleconsulta-signaling)**.
 - Identificará que as credenciais universais para testes bilaterais são:
   - **Administrador:** `admin@activeage.com` / `AdminPassword2026!`
   - **Médico Teste:** `medico@teste.com` / `123456` (com consulta confirmada para hoje)
