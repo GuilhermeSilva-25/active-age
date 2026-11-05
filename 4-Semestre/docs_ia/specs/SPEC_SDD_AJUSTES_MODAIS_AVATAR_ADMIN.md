@@ -4,8 +4,9 @@
 ### Faculdade de Tecnologia de Diadema (Fatec Luigi Papaiz) — DSM 4º Semestre
 **Líder Técnico & Product Owner (PO):** Guilherme Silva  
 **Arquiteto & Engenheiro de Software:** Antigravity (AI)  
-**Status da Spec:** Aguardando Aprovação do PO 📋  
-**Data da Elaboração:** 05 de Novembro de 2026
+**Status da Spec:** Concluída e Live em Produção ✅  
+**Data da Elaboração:** 05 de Novembro de 2026  
+**Data de Conclusão:** 05 de Novembro de 2026
 
 ---
 
@@ -80,11 +81,11 @@ flowchart LR
 
 ### 4. Critérios de Aceite
 
-1. [ ] A foto de perfil da Dona Maria no Dashboard do Paciente, no Header e nas consultas exibe uma senhora simpática e sorridente (sem faca ou peixe).
-2. [ ] Em qualquer resolução de tela (inclusive 1366x768 ou com zoom ativado), o modal de "Disponibilizar Horários" e os demais modais exibem barra de rolagem interna própria e todos os botões de ação ficam acessíveis.
-3. [ ] Enquanto qualquer modal estiver aberto, a página ao fundo fica estática e não rola com o scroll do mouse.
-4. [ ] O painel do administrador (`AdminDashboard.tsx`) não exibe mais os cards estáticos de infraestrutura.
-5. [ ] Todos os 180 testes do backend e o build/linter do frontend continuam 100% verdes.
+1. [x] A foto de perfil da Dona Maria no Dashboard do Paciente, no Header e nas consultas exibe uma senhora simpática e sorridente (sem faca ou peixe).
+2. [x] Em qualquer resolução de tela (inclusive 1366x768 ou com zoom ativado), o modal de "Disponibilizar Horários" e os demais modais exibem barra de rolagem interna própria e todos os botões de ação ficam acessíveis.
+3. [x] Enquanto qualquer modal estiver aberto, a página ao fundo fica estática e não rola com o scroll do mouse (hook `useBodyScrollLock`).
+4. [x] O painel do administrador (`AdminDashboard.tsx`) não exibe mais os cards estáticos de infraestrutura.
+5. [x] Todos os 181 testes do backend e o build/linter do frontend continuam 100% verdes (0 falhas/erros).
 
 ---
 *Especificação elaborada em conformidade com as diretrizes do Tech Lead Guilherme Silva e governança SDD do Active Age.*

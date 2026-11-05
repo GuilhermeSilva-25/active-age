@@ -5,10 +5,7 @@ import {
   Users, 
   Calendar, 
   FileText, 
-  ArrowRight, 
-  Server, 
-  Database, 
-  Globe,
+  ArrowRight,
   Loader2
 } from 'lucide-react';
 
@@ -183,50 +180,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* === STATUS DA INFRAESTRUTURA EM NUVEM === */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-brand-pot/40 shadow-sm">
-        <h2 className="text-xl font-bold text-brown-dark mb-2">
-          Infraestrutura em Produção
-        </h2>
-        <p className="text-sm text-brown-light mb-6">
-          Monitoramento em tempo real dos serviços essenciais da plataforma.
-        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-brand-orange">
-              <Server className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-400 block font-bold">SERVIÇO PRINCIPAL</span>
-              <span className="text-sm font-extrabold text-brown-dark">Servidor da Aplicação</span>
-              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Operacional</span>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-emerald-600">
-              <Database className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-400 block font-bold">DADOS SEGUROS</span>
-              <span className="text-sm font-extrabold text-brown-dark">Armazenamento em Nuvem</span>
-              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Conexão Criptografada Ativa</span>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-sky-600">
-              <Globe className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-xs text-gray-400 block font-bold">PORTAL WEB</span>
-              <span className="text-sm font-extrabold text-brown-dark">Interface de Atendimento</span>
-              <span className="text-xs text-emerald-600 font-bold block mt-0.5">Disponível Globalmente</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

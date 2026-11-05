@@ -148,11 +148,15 @@ gantt
      - Expansão da suíte para 180 testes unitários e de integração HTTP (MockMvc) cobrindo 100% dos controllers REST (14 controllers), serviços e camada de exceções (0 falhas, 0 erros);
      - Salto de cobertura JaCoCo de 48% para 84% em instruções e de 24% para 56% em branches (100% das 45 classes cobertas);
      - Otimização do tempo de execução com isolamento e mock de beans pesados no contexto de teste.
-  3. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [PRÓXIMO PASSO]:**
+  3. [x] **Ajustes de Usabilidade: Foto da Paciente, Modais Responsivos e Limpeza no Admin (SPEC-15C) — [CONCLUÍDO ✅]:**
+     - Retrato humanizado e acolhedor da paciente de teste Dona Maria (Wikimedia Commons) atualizado com resiliência no `DoctorScheduleAutomationService` e suíte expandida para 181 testes automatizados (0 falhas);
+     - Criação do custom hook `useBodyScrollLock` e blindagem responsiva universal de todos os modais da aplicação (`max-h-[92vh]`, `overflow-y-auto` e bloqueio de scroll bleed no body);
+     - Limpeza da seção estática redundante de infraestrutura em `AdminDashboard.tsx`, otimizando a densidade de informação visual.
+  4. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [PRÓXIMO PASSO]:**
      - Signaling server dedicado com Node.js, WebSockets / Socket.io e STUN/TURN para chamada audiovisual peer-to-peer de alta performance e baixa latência.
-  4. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
+  5. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
      - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022).
-  5. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+  6. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---

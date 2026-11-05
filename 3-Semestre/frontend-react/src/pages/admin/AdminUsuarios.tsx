@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { UserItemResponse, UserRole } from '../../types/admin';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 export function AdminUsuarios() {
     const [users, setUsers] = useState<UserItemResponse[]>([]);
@@ -26,6 +27,8 @@ export function AdminUsuarios() {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [toggleReason, setToggleReason] = useState('');
     const [processingToggle, setProcessingToggle] = useState(false);
+
+    useBodyScrollLock(isConfirmModalOpen && !!userToToggle);
 
     // Feedback Modal
     const [feedback, setFeedback] = useState<{
@@ -332,8 +335,8 @@ export function AdminUsuarios() {
 
             {/* Modal de Confirmação de Alteração de Status */}
             {isConfirmModalOpen && userToToggle && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brown-dark/70 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-brand-pot/50 space-y-5">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-brown-dark/70 backdrop-blur-sm animate-fade-in overscroll-contain">
+                    <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto overscroll-contain shadow-2xl border border-brand-pot/50 space-y-5">
                         <div className="flex items-center gap-3">
                             <span className={`p-3 rounded-2xl ${userToToggle.active ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                                 {userToToggle.active ? <UserX className="w-6 h-6" /> : <UserCheck className="w-6 h-6" />}

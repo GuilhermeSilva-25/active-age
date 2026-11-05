@@ -1,3 +1,4 @@
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import React, { useState, useEffect } from 'react';
 import {
     X,
@@ -92,6 +93,8 @@ export const DoctorRecordsManagerModal: React.FC<DoctorRecordsManagerModalProps>
         fetchDoctorAppointments();
     }, [isOpen]);
 
+    useBodyScrollLock(isOpen);
+
     if (!isOpen) return null;
 
     const formatDateTime = (isoStr: string) => {
@@ -145,7 +148,7 @@ export const DoctorRecordsManagerModal: React.FC<DoctorRecordsManagerModalProps>
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 overscroll-contain"
             role="dialog"
             aria-modal="true"
         >

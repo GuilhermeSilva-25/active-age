@@ -18,6 +18,7 @@ import {
     Calendar
 } from 'lucide-react';
 import type { AuditLogResponse, AuditLogStatsResponse } from '../../types/admin';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 export function AdminAuditoria() {
     const [logs, setLogs] = useState<AuditLogResponse[]>([]);
@@ -26,6 +27,8 @@ export function AdminAuditoria() {
     const [actionFilter, setActionFilter] = useState<string>('ALL');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedLog, setSelectedLog] = useState<AuditLogResponse | null>(null);
+
+    useBodyScrollLock(!!selectedLog);
 
     const formatRoleName = (role?: string) => {
         if (!role) return 'Não informado';
@@ -353,8 +356,8 @@ export function AdminAuditoria() {
 
             {/* Modal de Detalhes do Log */}
             {selectedLog && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brown-dark/70 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-brand-pot/50 space-y-5">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-brown-dark/70 backdrop-blur-sm animate-fade-in overscroll-contain">
+                    <div className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto overscroll-contain shadow-2xl border border-brand-pot/50 space-y-5">
                         <div className="flex items-center justify-between border-b border-brand-pot/30 pb-4">
                             <div className="flex items-center gap-3">
                                 <span className="p-2.5 rounded-2xl bg-emerald-100 text-emerald-800">

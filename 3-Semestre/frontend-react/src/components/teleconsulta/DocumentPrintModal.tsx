@@ -1,3 +1,4 @@
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import React from 'react';
 import { X, Printer, ShieldCheck } from 'lucide-react';
 import type { MedicalDocument } from '../../types/teleconsulta';
@@ -13,6 +14,8 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
     onClose,
     document,
 }) => {
+    useBodyScrollLock(isOpen);
+
     if (!isOpen || !document) return null;
 
     const handlePrint = () => {
@@ -49,7 +52,7 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 print:p-0 print:bg-white print:static"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overscroll-contain print:p-0 print:bg-white print:static"
             role="dialog"
             aria-modal="true"
         >

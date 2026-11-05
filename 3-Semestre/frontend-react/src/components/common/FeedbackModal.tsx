@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { CheckCircle2, AlertCircle, AlertTriangle, Info, X, Loader2 } from 'lucide-react';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 export type FeedbackModalType = 'success' | 'error' | 'warning' | 'info';
 
@@ -29,6 +30,8 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   isLoading = false,
 }) => {
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
+
+  useBodyScrollLock(isOpen);
 
   const isBusy = isLoading || 
     confirmText?.toLowerCase().includes('excluindo') || 
@@ -83,13 +86,13 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-200 overscroll-contain"
       role="dialog"
       aria-modal="true"
       aria-labelledby="feedback-modal-title"
       aria-describedby="feedback-modal-description"
     >
-      <div className="relative w-full max-w-md bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-brand-pot/40 text-center transform transition-all animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-brand-pot/40 text-center transform transition-all animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto overscroll-contain">
         {/* Botão de Fechar opcional no topo */}
         {showCancelButton && onCancel && (
           <button

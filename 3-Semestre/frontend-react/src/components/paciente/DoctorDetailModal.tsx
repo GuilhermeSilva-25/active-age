@@ -1,3 +1,4 @@
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import { useEffect } from 'react';
 import {
     X,
@@ -48,6 +49,8 @@ export function DoctorDetailModal({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose]);
 
+    useBodyScrollLock(isOpen);
+
     if (!isOpen || !doctor) return null;
 
     const formattedFee = doctor.consultationFee
@@ -58,7 +61,7 @@ export function DoctorDetailModal({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200 overscroll-contain"
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-doctor-title"

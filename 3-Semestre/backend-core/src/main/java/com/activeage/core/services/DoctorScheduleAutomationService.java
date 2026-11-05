@@ -48,7 +48,7 @@ public class DoctorScheduleAutomationService {
 
     public static final String TEST_DOCTOR_EMAIL = "medico@teste.com";
     public static final String TEST_PATIENT_EMAIL = "paciente@teste.com";
-    public static final String TEST_PATIENT_AVATAR_URL = "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&auto=format&fit=crop&q=80";
+    public static final String TEST_PATIENT_AVATAR_URL = "https://upload.wikimedia.org/wikipedia/commons/8/81/Smiling_senior_woman_with_curly_hair_portrait.jpg";
 
     // Grade ampla matutina, vespertina e noturna para testes a qualquer hora do dia
     private static final int[] APPOINTMENT_HOURS = {8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
@@ -318,7 +318,7 @@ public class DoctorScheduleAutomationService {
         Optional<User> patientOpt = userRepository.findByEmail(TEST_PATIENT_EMAIL);
         if (patientOpt.isPresent()) {
             User p = patientOpt.get();
-            if (p.getAvatarUrl() == null || p.getAvatarUrl().isBlank()) {
+            if (p.getAvatarUrl() == null || p.getAvatarUrl().isBlank() || p.getAvatarUrl().contains("1581579438747")) {
                 p.setAvatarUrl(TEST_PATIENT_AVATAR_URL);
                 userRepository.save(p);
                 logger.info(">>> [AUTOMAÇÃO] Foto de perfil atribuída à paciente de teste já existente: {}", TEST_PATIENT_EMAIL);

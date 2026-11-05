@@ -9,6 +9,7 @@ import {
     Loader2
 } from 'lucide-react';
 import { FeedbackModal } from '../common/FeedbackModal';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 interface DoctorScheduleSlot {
     id: string;
@@ -43,6 +44,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     onClose,
     onSuccess,
 }) => {
+    useBodyScrollLock(isOpen);
     const [slots, setSlots] = useState<DoctorScheduleSlot[]>([]);
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
@@ -180,7 +182,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     const selectedSlotObj = slots.find(s => s.id === selectedSlotId);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200 overscroll-contain">
             <div
                 className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
                 onClick={e => e.stopPropagation()}

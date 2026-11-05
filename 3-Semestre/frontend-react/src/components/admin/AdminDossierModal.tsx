@@ -1,3 +1,4 @@
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import { useState, useEffect } from 'react';
 import {
     X,
@@ -144,10 +145,12 @@ export function AdminDossierModal({ doctorId, isOpen, onClose, onReviewSuccess }
         }
     };
 
+    useBodyScrollLock(isOpen);
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-brown-dark/70 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-brown-dark/70 backdrop-blur-sm animate-fade-in overscroll-contain">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden border border-brand-pot/50">
                 
                 {/* Cabeçalho do Modal */}

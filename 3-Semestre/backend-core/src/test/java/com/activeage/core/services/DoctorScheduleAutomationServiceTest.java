@@ -313,4 +313,22 @@ class DoctorScheduleAutomationServiceTest {
         ));
     }
 
+
+    @Test
+    @DisplayName("Deve atualizar a foto de perfil da Dona Maria caso possua a foto antiga do peixe")
+    void ensureTestPatient_updatesAvatarWhenOldPhotoPresent() {
+        testPatient.setAvatarUrl("https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400");
+        when(userRepository.findByEmail("medico@teste.com")).thenReturn(Optional.of(testDoctor));
+        when(userRepository.findByEmail("paciente@teste.com")).thenReturn(Optional.of(testPatient));
+        when(patientExamRepository.countByPatientId("pac-teste-456")).thenReturn(2L);
+        when(doctorScheduleSlotRepository.existsByDoctorIdAndStartDateTime(eq("doc-teste-123"), any(LocalDateTime.class))).thenReturn(true);
+        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
+        when(appointmentRepository.save(any(Appointment.class))).thenAnswer(i -> i.getArgument(0));
+        when(doctorScheduleSlotRepository.save(any(DoctorScheduleSlot.class))).thenAnswer(i -> i.getArgument(0));
+
+        automationService.ensureTestDoctorSchedule();
+
+        assertEquals(DoctorScheduleAutomationService.TEST_PATIENT_AVATAR_URL, testPatient.getAvatarUrl());
+        verify(userRepository).save(testPatient);
+    }
 }

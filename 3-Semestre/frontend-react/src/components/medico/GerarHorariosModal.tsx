@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Calendar, Clock, Sparkles, Plus, Check } from 'lucide-react';
 import { FeedbackModal } from '../common/FeedbackModal';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 interface GerarHorariosModalProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
     onClose,
     onSuccess,
 }) => {
+    useBodyScrollLock(isOpen);
     const [mode, setMode] = useState<'batch' | 'single'>('batch');
     const [loading, setLoading] = useState(false);
 
@@ -162,11 +164,13 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
         }
     };
 
+    if (!isOpen) return null;
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-brand-pot/40 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200 overscroll-contain">
+            <div className="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-brand-pot/40 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Cabeçalho */}
-                <div className="bg-brand-ice/80 px-6 py-5 border-b border-brand-pot/30 flex items-center justify-between">
+                <div className="bg-brand-ice/80 px-6 py-5 border-b border-brand-pot/30 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-brand-orange/10 text-brand-orange flex items-center justify-center">
                             <Calendar className="w-5 h-5" />
@@ -190,7 +194,7 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
                 </div>
 
                 {/* Alternador de Abas */}
-                <div className="p-6 pb-0">
+                <div className="p-6 pb-2 shrink-0">
                     <div className="grid grid-cols-2 gap-2 p-1.5 bg-gray-100 rounded-2xl">
                         <button
                             type="button"
@@ -221,7 +225,7 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
 
                 {/* Formulário: Geração em Lote */}
                 {mode === 'batch' ? (
-                    <form onSubmit={handleBatchSubmit} className="p-6 space-y-4">
+                    <form onSubmit={handleBatchSubmit} className="p-6 pt-2 space-y-4 overflow-y-auto flex-1 overscroll-contain">
                         <div>
                             <label className="block text-xs font-bold text-brown-dark uppercase tracking-wider mb-1.5">
                                 Data do Turno
@@ -351,7 +355,7 @@ export const GerarHorariosModal: React.FC<GerarHorariosModalProps> = ({
                     </form>
                 ) : (
                     /* Formulário: Horário Avulso */
-                    <form onSubmit={handleSingleSubmit} className="p-6 space-y-4">
+                    <form onSubmit={handleSingleSubmit} className="p-6 pt-2 space-y-4 overflow-y-auto flex-1 overscroll-contain">
                         <div className="grid grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-xs font-bold text-brown-dark uppercase tracking-wider mb-1.5">

@@ -1,3 +1,4 @@
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import React, { useState, useEffect, useRef } from 'react';
 import {
     X,
@@ -51,6 +52,8 @@ export function UploadExamModal({ isOpen, onClose, onSuccess }: UploadExamModalP
             setErrorMessage('');
         }
     }, [isOpen, today]);
+
+    useBodyScrollLock(isOpen);
 
     if (!isOpen) return null;
 
@@ -129,7 +132,7 @@ export function UploadExamModal({ isOpen, onClose, onSuccess }: UploadExamModalP
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200 overscroll-contain"
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-exam-title"
