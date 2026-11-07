@@ -109,8 +109,8 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
     - SPEC-15B: Blindagem de Testes Automatizados & Expansão JaCoCo 84% [LIVE ✅]
     - SPEC-15C: Usabilidade, Fotos Humanizadas e Rolagem Interna de Modais [LIVE ✅]
     - SPEC-16: Microsserviço de Teleconsulta WebRTC Nativo P2P com Signaling [LIVE ✅]
-    - SPEC-17: Microsserviço de Pagamento com Split Direto BACEN e Gestão de Assinaturas SaaS do Médico via Mercado Pago [CONCLUÍDO ✅]: Novo serviço ms-pagamento-faturamento (Java 21 LTS + Spring Boot 3 + JPA/H2 + Resilience4j + Caffeine), 31 testes automatizados unitários/MockMvc (0 falhas), Split Direto 100% médico sem dicotomia (Res. CFM nº 2.314/2022), faturamento SaaS de consultório virtual (R$ 149,90/mês), Circuit Breaker com fallback de contingência, callbacks atômicos no backend-core (184 testes 100% aprovados), checkout Pix no paciente e modal AssinaturaSaaSModal.tsx no médico. Total de 215 testes backend automatizados!
-  - Próximos Marcos do 4º Semestre: SPEC-18 (Orquestração com Docker Compose e Deploy/Push GHCR) e SPEC-18 (Orquestração com Docker Compose e Push GHCR).
+    - SPEC-17: Microsserviço de Pagamento com Split Direto BACEN e Gestão de Assinaturas SaaS do Médico via Mercado Pago [CONCLUÍDO ✅]: Novo serviço ms-pagamento-faturamento (Java 21 LTS + Spring Boot 3 + JPA/H2 + Resilience4j + Caffeine + Mercado Pago API Oficial v1/payments), 34 testes automatizados unitários/MockMvc (0 falhas), Split Direto 100% médico sem dicotomia (Res. CFM nº 2.314/2022), faturamento SaaS de consultório virtual (R$ 149,90/mês), Circuit Breaker com fallback de contingência, callbacks atômicos no backend-core (184 testes 100% aprovados), checkout Pix no paciente com QR Code dinâmico e modal AssinaturaSaaSModal.tsx no médico. Total de 218 testes backend automatizados!
+  - Próximos Marcos do 4º Semestre: SPEC-18 (Orquestração com Docker Compose e Deploy/Push GHCR).
 - **5º Semestre — [FUTURO]:**
   - Aplicativo Mobile Multiplataforma (React Native) e Ingestão de Wearables de Saúde.
 
