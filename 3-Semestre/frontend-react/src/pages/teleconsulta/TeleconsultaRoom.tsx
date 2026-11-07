@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     CheckCircle2,
@@ -20,6 +20,8 @@ import {
     ExternalLink,
     PlusCircle,
     LogOut,
+    Maximize2,
+    Minimize2,
 } from 'lucide-react';
 import { useAuthUser } from '../../hooks/useAuthUser';
 import { useWebRTC } from '../../hooks/useWebRTC';
@@ -48,6 +50,44 @@ export const TeleconsultaRoom: React.FC = () => {
 
     // Estado da Consulta
     const [appointment, setAppointment] = useState<AppointmentDetails | null>(null);
+
+    // Gerenciamento de Tela Inteira (Fullscreen API)
+    const videoContainerRef = useRef<HTMLDivElement | null>(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    const toggleFullscreen = useCallback(async () => {
+        try {
+            if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+                if (videoContainerRef.current) {
+                    if (videoContainerRef.current.requestFullscreen) {
+                        await videoContainerRef.current.requestFullscreen();
+                    } else if ((videoContainerRef.current as any).webkitRequestFullscreen) {
+                        await (videoContainerRef.current as any).webkitRequestFullscreen();
+                    }
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                } else if ((document as any).webkitExitFullscreen) {
+                    await (document as any).webkitExitFullscreen();
+                }
+            }
+        } catch (err) {
+            console.error('Falha ao alternar tela inteira:', err);
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!(document.fullscreenElement || (document as any).webkitFullscreenElement));
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+        };
+    }, []);
     const [loadingAppt, setLoadingAppt] = useState(true);
 
     const isDoctor = user?.role === 'ROLE_MEDICO' || user?.role === 'ROLE_ADMIN';
@@ -709,16 +749,23 @@ export const TeleconsultaRoom: React.FC = () => {
             {/* Layout Principal: Split-Screen no Computador / Empilhado no Celular */}
             <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
                 {/* COLUNA ESQUERDA: Janela de Vídeo Responsiva */}
-                <div className={`p-3 sm:p-5 flex flex-col ${isDoctor ? 'lg:col-span-5 xl:col-span-5 justify-between' : 'lg:col-span-12 justify-start items-center overflow-y-auto'} bg-black relative`}>
-                    <div className={`w-full ${!isDoctor ? 'max-w-3xl xl:max-w-4xl mx-auto flex flex-col items-center' : 'flex-1 flex flex-col justify-between'}`}>
+                <div className={`p-3 sm:p-4 flex flex-col ${isDoctor ? 'lg:col-span-5 xl:col-span-5 h-full min-h-0' : 'lg:col-span-12 justify-start items-center overflow-y-auto'} bg-black relative`}>
+                    <div className={`w-full ${!isDoctor ? 'max-w-4xl mx-auto flex flex-col items-center' : 'flex-1 h-full min-h-0 flex flex-col'}`}>
                     {/* Área da Tela de Vídeo Principal */}
-                    <div className="w-full aspect-[4/3] sm:aspect-video max-h-[340px] sm:max-h-[400px] lg:max-h-[440px] xl:max-h-[480px] bg-gray-900 rounded-3xl border border-gray-800 relative overflow-hidden flex items-center justify-center shadow-2xl shrink-0">
+                    <div
+                        ref={videoContainerRef}
+                        className={`w-full relative overflow-hidden flex items-center justify-center shadow-2xl bg-gray-900 border border-gray-800 rounded-3xl ${
+                            isDoctor
+                                ? 'flex-1 h-full min-h-[380px]'
+                                : 'aspect-[4/3] sm:aspect-video min-h-[280px] sm:min-h-[380px] max-h-[62vh]'
+                        }`}
+                    >
                         {/* Feed de Vídeo Remoto Real */}
                         <video
                             ref={remoteVideoRef}
                             autoPlay
                             playsInline
-                            className={`w-full h-full object-cover rounded-3xl transition-opacity duration-300 ${
+                            className={`w-full h-full ${isFullscreen ? 'object-contain' : 'object-cover'} rounded-3xl transition-opacity duration-300 ${
                                 remoteStream && !peerVideoOff ? 'opacity-100' : 'opacity-0 absolute pointer-events-none'
                             }`}
                         />
@@ -828,8 +875,8 @@ export const TeleconsultaRoom: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Miniatura Picture-in-Picture do Feed Local */}
-                        <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 w-28 sm:w-40 h-20 sm:h-28 bg-gray-900/95 backdrop-blur-xs rounded-2xl border border-gray-700/80 shadow-2xl overflow-hidden flex items-center justify-center z-20">
+                        {/* Miniatura Picture-in-Picture do Feed Local (Posicionada acima dos controles) */}
+                        <div className="absolute bottom-20 right-3 sm:bottom-22 sm:right-4 w-28 sm:w-40 h-20 sm:h-28 bg-gray-900/95 backdrop-blur-xs rounded-2xl border border-gray-700/80 shadow-2xl overflow-hidden flex items-center justify-center z-20">
                             <video
                                 ref={localVideoRef}
                                 autoPlay
@@ -841,73 +888,90 @@ export const TeleconsultaRoom: React.FC = () => {
                             />
                             {isVideoOff && (
                                 <div className="text-center p-2">
-                                    <VideoOff className="w-6 h-6 text-gray-500 mx-auto mb-1" />
+                                    <VideoOff className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 mx-auto mb-1" />
                                     <span className="text-[10px] text-gray-400 font-bold block">
                                         Câmera Desligada
                                     </span>
                                 </div>
                             )}
-                            <div className="absolute bottom-1.5 left-2 right-2 flex items-center justify-between text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                            <div className="absolute bottom-1.5 left-2 right-2 flex items-center justify-between text-[10px] font-bold text-white bg-black/70 px-2 py-0.5 rounded-md backdrop-blur-xs">
                                 <span className="truncate">Você</span>
                                 {isMuted && <MicOff className="w-3 h-3 text-red-400 shrink-0" />}
                             </div>
                         </div>
-                    </div>
 
-                    {/* Barra Flutuante de Comandos de Chamada (Acessível) */}
-                    <div className="mt-3 sm:mt-4 py-2 px-4 bg-gray-900/90 backdrop-blur-xs border border-gray-800 rounded-2xl flex items-center justify-center gap-3 sm:gap-4 shrink-0">
-                        {/* Botão Microfone */}
-                        <button
-                            type="button"
-                            onClick={toggleAudio}
-                            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
-                                isMuted
-                                    ? 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30'
-                                    : 'bg-gray-800 text-gray-200 border border-gray-700 hover:bg-gray-700'
-                            }`}
-                            title={isMuted ? 'Ativar Microfone' : 'Silenciar Microfone'}
-                            aria-label={isMuted ? 'Ativar Microfone' : 'Silenciar Microfone'}
-                        >
-                            {isMuted ? <MicOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Mic className="w-5 h-5 sm:w-6 sm:h-6" />}
-                        </button>
+                        {/* Barra Integrada de Comandos de Chamada (Fixada no Rodapé da Janela de Vídeo) */}
+                        <div className="absolute bottom-3 sm:bottom-4 inset-x-0 flex items-center justify-center z-30 pointer-events-auto px-2">
+                            <div className="py-2 px-3 sm:px-4 bg-gray-950/85 backdrop-blur-md border border-gray-700/70 rounded-2xl flex items-center justify-center gap-2.5 sm:gap-4 shadow-2xl">
+                                {/* Botão Microfone */}
+                                <button
+                                    type="button"
+                                    onClick={toggleAudio}
+                                    className={`w-11 h-11 sm:w-13 sm:h-13 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                                        isMuted
+                                            ? 'bg-red-500/30 text-red-400 border border-red-500/50 hover:bg-red-500/40'
+                                            : 'bg-gray-800 text-gray-200 border border-gray-700 hover:bg-gray-700'
+                                    }`}
+                                    title={isMuted ? 'Ativar Microfone' : 'Silenciar Microfone'}
+                                    aria-label={isMuted ? 'Ativar Microfone' : 'Silenciar Microfone'}
+                                >
+                                    {isMuted ? <MicOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Mic className="w-5 h-5 sm:w-6 sm:h-6" />}
+                                </button>
 
-                        {/* Botão Câmera */}
-                        <button
-                            type="button"
-                            onClick={toggleVideo}
-                            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
-                                isVideoOff
-                                    ? 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30'
-                                    : 'bg-gray-800 text-gray-200 border border-gray-700 hover:bg-gray-700'
-                            }`}
-                            title={isVideoOff ? 'Ligar Câmera' : 'Desligar Câmera'}
-                            aria-label={isVideoOff ? 'Ligar Câmera' : 'Desligar Câmera'}
-                        >
-                            {isVideoOff ? <VideoOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Video className="w-5 h-5 sm:w-6 sm:h-6" />}
-                        </button>
+                                {/* Botão Câmera */}
+                                <button
+                                    type="button"
+                                    onClick={toggleVideo}
+                                    className={`w-11 h-11 sm:w-13 sm:h-13 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                                        isVideoOff
+                                            ? 'bg-red-500/30 text-red-400 border border-red-500/50 hover:bg-red-500/40'
+                                            : 'bg-gray-800 text-gray-200 border border-gray-700 hover:bg-gray-700'
+                                    }`}
+                                    title={isVideoOff ? 'Ligar Câmera' : 'Desligar Câmera'}
+                                    aria-label={isVideoOff ? 'Ligar Câmera' : 'Desligar Câmera'}
+                                >
+                                    {isVideoOff ? <VideoOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Video className="w-5 h-5 sm:w-6 sm:h-6" />}
+                                </button>
 
-                        {/* Botão Sair da Sala (Paciente não encerra consulta / Prerrogativa médica) */}
-                        {isDoctor ? (
-                            <button
-                                type="button"
-                                onClick={handleDoctorLeave}
-                                className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer"
-                                title="Sair da Sala"
-                                aria-label="Sair da Sala"
-                            >
-                                <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-brand-orange" />
-                            </button>
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={handlePatientLeave}
-                                className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer"
-                                title="Sair da Sala (Você pode retornar quando desejar)"
-                                aria-label="Sair da Sala"
-                            >
-                                <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-brand-orange" />
-                            </button>
-                        )}
+                                {/* Botão Tela Inteira (Fullscreen - Mobile e Desktop) */}
+                                <button
+                                    type="button"
+                                    onClick={toggleFullscreen}
+                                    className={`w-11 h-11 sm:w-13 sm:h-13 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
+                                        isFullscreen
+                                            ? 'bg-brand-orange text-white border-brand-orange shadow-md'
+                                            : 'bg-gray-800 text-gray-200 border border-gray-700 hover:bg-gray-700'
+                                    }`}
+                                    title={isFullscreen ? 'Sair da Tela Inteira' : 'Tela Inteira (Expandir Vídeo)'}
+                                    aria-label={isFullscreen ? 'Sair da Tela Inteira' : 'Tela Inteira'}
+                                >
+                                    {isFullscreen ? <Minimize2 className="w-5 h-5 sm:w-6 sm:h-6" /> : <Maximize2 className="w-5 h-5 sm:w-6 sm:h-6" />}
+                                </button>
+
+                                {/* Botão Sair da Sala */}
+                                {isDoctor ? (
+                                    <button
+                                        type="button"
+                                        onClick={handleDoctorLeave}
+                                        className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-red-600 hover:bg-red-500 text-white border border-red-500/60 flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer"
+                                        title="Sair da Sala"
+                                        aria-label="Sair da Sala"
+                                    >
+                                        <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={handlePatientLeave}
+                                        className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-red-600 hover:bg-red-500 text-white border border-red-500/60 flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer"
+                                        title="Sair da Sala (Você pode retornar quando desejar)"
+                                        aria-label="Sair da Sala"
+                                    >
+                                        <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     {/* Visão do Paciente: Documentos Emitidos nesta Sessão em Tempo Real (SPEC-12B) */}
