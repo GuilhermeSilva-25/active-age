@@ -121,6 +121,7 @@ export const TeleconsultaRoom: React.FC = () => {
 
     // Abas do Cockpit Médico
     const [activeTab, setActiveTab] = useState<'prontuario' | 'exames' | 'receitas'>('prontuario');
+    const [patientTab, setPatientTab] = useState<'documentos' | 'orientacoes'>('documentos');
 
     // Estado do Prontuário Clínico (UC14 / RN003)
     const [medicalRecord, setMedicalRecord] = useState<MedicalRecord>({
@@ -748,21 +749,17 @@ export const TeleconsultaRoom: React.FC = () => {
 
             {/* Layout Principal: Split-Screen no Computador / Empilhado no Celular */}
             <main className="flex-1 h-[calc(100vh-3.5rem)] max-h-[calc(100vh-3.5rem)] grid grid-cols-1 lg:grid-cols-12 overflow-hidden min-h-0">
-                {/* COLUNA ESQUERDA: Janela de Vídeo Responsiva */}
+                {/* COLUNA ESQUERDA: Janela de Vídeo Responsiva (Tanto Médico quanto Paciente) */}
                 <div className={`p-2 sm:p-3 lg:p-4 flex flex-col ${
                     isDoctor
                         ? 'lg:col-span-5 xl:col-span-5 h-full min-h-0 justify-center items-center overflow-hidden'
-                        : 'lg:col-span-12 h-full min-h-0 justify-start items-center overflow-y-auto'
+                        : 'lg:col-span-7 xl:col-span-7 h-full min-h-0 justify-center items-center overflow-hidden'
                 } bg-black relative min-h-0`}>
-                    <div className={`w-full ${!isDoctor ? 'max-w-4xl mx-auto flex flex-col items-center space-y-4' : 'w-full h-full min-h-0 flex flex-col justify-center items-center'}`}>
+                    <div className="w-full h-full min-h-0 flex flex-col justify-center items-center">
                     {/* Área da Tela de Vídeo Principal */}
                     <div
                         ref={videoContainerRef}
-                        className={`w-full relative overflow-hidden flex items-center justify-center shadow-2xl bg-gray-900 border border-gray-800 rounded-3xl min-h-0 ${
-                            isDoctor
-                                ? 'h-full max-h-[calc(100vh-5.5rem)] aspect-video lg:aspect-auto'
-                                : 'aspect-[4/3] sm:aspect-video max-h-[48vh] sm:max-h-[52vh]'
-                        }`}
+                        className="w-full h-full max-h-[calc(100vh-5.5rem)] relative overflow-hidden flex items-center justify-center shadow-2xl bg-gray-900 border border-gray-800 rounded-3xl min-h-0"
                     >
                         {/* Feed de Vídeo Remoto Real */}
                         <video
@@ -978,66 +975,6 @@ export const TeleconsultaRoom: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Visão do Paciente: Documentos Emitidos nesta Sessão em Tempo Real (SPEC-12B) */}
-                    {!isDoctor && (
-                        <div className="mt-4 bg-gray-900 border border-gray-800 rounded-3xl p-4 sm:p-5 space-y-3">
-                            <div className="flex items-center justify-between">
-                                <h4 className="text-xs sm:text-sm font-black text-brand-orange uppercase tracking-wider flex items-center gap-2">
-                                    <FileSignature className="w-4 h-4" />
-                                    Documentos Emitidos Nesta Sessão ({documents.length})
-                                </h4>
-                                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
-                                    Sincronização em Tempo Real
-                                </span>
-                            </div>
-
-                            {loadingDocs && documents.length === 0 ? (
-                                <div className="py-8 text-center text-gray-400">
-                                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-brand-orange" />
-                                </div>
-                            ) : documents.length === 0 ? (
-                                <div className="p-6 bg-gray-950/60 rounded-2xl border border-dashed border-gray-800 text-center space-y-1.5">
-                                    <FileText className="w-8 h-8 text-gray-600 mx-auto" />
-                                    <p className="text-xs sm:text-sm font-bold text-gray-300">
-                                        Nenhum documento emitido até o momento nesta sessão.
-                                    </p>
-                                    <p className="text-[11px] text-gray-500 max-w-md mx-auto">
-                                        Assim que o médico prescrever uma receita, atestado ou pedido de exame, ele aparecerá aqui automaticamente para visualização e impressão.
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {documents.map((doc) => (
-                                        <div
-                                            key={doc.id}
-                                            className="bg-gray-950 p-4 rounded-2xl border border-gray-800 hover:border-brand-orange/60 transition-all flex items-center justify-between gap-3"
-                                        >
-                                            <div className="min-w-0">
-                                                <span className="text-[10px] font-black uppercase text-brand-orange block">
-                                                    {doc.documentType === 'RECEITA_MEDICA' ? 'Receita Médica' : doc.documentType === 'PEDIDO_EXAME' ? 'Pedido de Exame' : 'Atestado'}
-                                                </span>
-                                                <h5 className="text-xs sm:text-sm font-bold text-white truncate">
-                                                    {doc.title}
-                                                </h5>
-                                                <p className="text-[11px] text-gray-400 font-mono mt-0.5">
-                                                    {doc.validationCode}
-                                                </p>
-                                            </div>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => handleOpenPrintModal(doc)}
-                                                className="px-3.5 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer min-h-[40px]"
-                                            >
-                                                <Printer className="w-3.5 h-3.5" />
-                                                <span>Imprimir</span>
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
                     </div>
                 </div>
 
@@ -1425,6 +1362,160 @@ export const TeleconsultaRoom: React.FC = () => {
                                                 </div>
                                             ))
                                         )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* COLUNA DIREITA: Painel Clínico e Prescrições do Paciente (Duas Colunas) */}
+                {!isDoctor && (
+                    <div className="lg:col-span-5 xl:col-span-5 bg-brand-ice text-brown-dark flex flex-col border-t lg:border-t-0 lg:border-l border-brand-pot/30 overflow-hidden h-full min-h-0">
+                        {/* Seletor de Abas Acessíveis do Paciente */}
+                        <div className="p-2 sm:p-3 bg-white border-b border-brand-pot/30 flex items-center gap-1.5 shrink-0 overflow-x-auto">
+                            <button
+                                type="button"
+                                onClick={() => setPatientTab('documentos')}
+                                className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer min-h-[44px] ${
+                                    patientTab === 'documentos'
+                                        ? 'bg-brand-orange text-white shadow-sm font-black'
+                                        : 'text-brown-light hover:bg-brand-ice hover:text-brown-dark'
+                                }`}
+                            >
+                                <FileSignature className="w-4 h-4 shrink-0" />
+                                <span>Receitas & Prescrições ({documents.length})</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setPatientTab('orientacoes')}
+                                className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer min-h-[44px] ${
+                                    patientTab === 'orientacoes'
+                                        ? 'bg-brand-orange text-white shadow-sm font-black'
+                                        : 'text-brown-light hover:bg-brand-ice hover:text-brown-dark'
+                                }`}
+                            >
+                                <FileText className="w-4 h-4 shrink-0" />
+                                <span>Dados da Consulta</span>
+                            </button>
+                        </div>
+
+                        {/* Conteúdo da Aba do Paciente com Scroll Interno */}
+                        <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+                            {patientTab === 'documentos' && (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between pb-2 border-b border-brand-pot/20">
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                                            <span className="text-xs font-black uppercase text-brand-pot tracking-wider">
+                                                Prescrições em Tempo Real
+                                            </span>
+                                        </div>
+                                        <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-md">
+                                            {documents.length} disponível(is)
+                                        </span>
+                                    </div>
+
+                                    {loadingDocs && documents.length === 0 ? (
+                                        <div className="py-12 text-center text-brown-light">
+                                            <Loader2 className="w-7 h-7 animate-spin mx-auto text-brand-orange" />
+                                            <p className="text-xs font-bold mt-2">Buscando documentos...</p>
+                                        </div>
+                                    ) : documents.length === 0 ? (
+                                        <div className="p-6 sm:p-8 bg-white rounded-3xl border border-dashed border-brand-pot/40 text-center space-y-2.5 shadow-xs">
+                                            <FileText className="w-12 h-12 text-brand-pot/40 mx-auto" />
+                                            <h5 className="text-sm sm:text-base font-black text-brown-dark">
+                                                Nenhum documento emitido até o momento
+                                            </h5>
+                                            <p className="text-xs text-brown-light leading-relaxed max-w-md mx-auto">
+                                                Assim que o médico emitir uma receita, atestado ou pedido de exame durante a chamada, ele aparecerá aqui instantaneamente com botão direto para visualização e impressão em modelo oficial.
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {documents.map((doc) => (
+                                                <div
+                                                    key={doc.id}
+                                                    className="bg-white p-4 rounded-2xl border border-brand-pot/30 hover:border-brand-orange/60 transition-all flex items-center justify-between gap-3 shadow-xs"
+                                                >
+                                                    <div className="min-w-0">
+                                                        <span className="text-[10px] font-black uppercase text-brand-orange block">
+                                                            {doc.documentType === 'RECEITA_MEDICA' ? 'Receita Médica' : doc.documentType === 'PEDIDO_EXAME' ? 'Pedido de Exame' : 'Atestado'}
+                                                        </span>
+                                                        <h5 className="text-xs sm:text-sm font-black text-brown-dark truncate">
+                                                            {doc.title}
+                                                        </h5>
+                                                        <p className="text-[11px] text-brown-light font-mono mt-0.5">
+                                                            Código: {doc.validationCode}
+                                                        </p>
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleOpenPrintModal(doc)}
+                                                        className="px-3.5 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer min-h-[40px] shadow-xs"
+                                                    >
+                                                        <Printer className="w-3.5 h-3.5" />
+                                                        <span>Imprimir</span>
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {patientTab === 'orientacoes' && (
+                                <div className="space-y-4">
+                                    {/* Card de Informações Médicas */}
+                                    <div className="bg-white p-5 rounded-3xl border border-brand-pot/30 shadow-xs space-y-3">
+                                        <h5 className="text-xs font-black uppercase text-brand-orange tracking-wider flex items-center gap-2">
+                                            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                                            Médico Especialista
+                                        </h5>
+                                        <div className="flex items-center gap-3 pt-1">
+                                            <div className="w-12 h-12 rounded-full bg-orange-100 text-brand-orange flex items-center justify-center font-black text-lg shrink-0">
+                                                <User className="w-6 h-6" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <h4 className="text-sm font-black text-brown-dark truncate">
+                                                    {appointment?.doctorName}
+                                                </h4>
+                                                <p className="text-xs text-brown-light">
+                                                    CRM {appointment?.doctorCrm}/{appointment?.doctorUfCrm} • {appointment?.doctorSpecialty || 'Geriatria & Longevidade'}
+                                                </p>
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded mt-1 border border-emerald-200">
+                                                    Telemedicina Homologada Res. CFM 2.314/2022
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Card de Orientações da Consulta */}
+                                    <div className="bg-white p-5 rounded-3xl border border-brand-pot/30 shadow-xs space-y-3">
+                                        <h5 className="text-xs font-black uppercase text-brand-pot tracking-wider flex items-center gap-2">
+                                            <Clock className="w-4 h-4 text-brand-orange" />
+                                            Orientações para o Idoso e Cuidador
+                                        </h5>
+                                        <ul className="text-xs text-brown-light space-y-2.5">
+                                            <li className="flex items-start gap-2">
+                                                <span className="text-brand-orange font-bold text-sm leading-none">•</span>
+                                                <span>Fale com tranquilidade e posicione a câmera na altura dos olhos.</span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <span className="text-brand-orange font-bold text-sm leading-none">•</span>
+                                                <span>Tenha sua lista ou caixas de remédios em uso por perto para conferência.</span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <span className="text-brand-orange font-bold text-sm leading-none">•</span>
+                                                <span>Todas as receitas emitidas nesta sala são válidas em qualquer farmácia do Brasil.</span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <span className="text-brand-orange font-bold text-sm leading-none">•</span>
+                                                <span>Esta teleconsulta conta com criptografia P2P e sigilo absoluto perante o CFM.</span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             )}
