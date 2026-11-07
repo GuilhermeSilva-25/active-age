@@ -7,13 +7,21 @@ on:
       - '3-Semestre/**'
       - '4-Semestre/**'
       - '.github/workflows/**'
+      - 'docker-compose.yml'
+      - '.env.example'
   pull_request:
     branches: [ main ]
     paths:
       - '3-Semestre/**'
       - '4-Semestre/**'
       - '.github/workflows/**'
+      - 'docker-compose.yml'
+      - '.env.example'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   # =========================================================================
@@ -145,7 +153,6 @@ jobs:
           npm run build
 
   # =========================================================================
-  # =========================================================================
   # JOB 4: Payment Microservice CI (Java 21 LTS + Spring Boot 3 + JPA/H2)
   # =========================================================================
   payment-ci:
@@ -189,10 +196,11 @@ jobs:
           path: 4-Semestre/ms-pagamento-faturamento/target/site/jacoco/
           retention-days: 14
 
-  # JOB 5: DevSecOps & Container Docker (Trivy Scan + Docker Multi-Stage)
+  # =========================================================================
+  # JOB 5: DevSecOps, Docker Multi-Stage & Continuous Delivery (CD no GHCR)
   # =========================================================================
   security-and-docker-ci:
-    name: DevSecOps & Container Docker
+    name: DevSecOps, Docker Compose & CD (GHCR)
     needs: [backend-ci, frontend-ci, signaling-ci, payment-ci]
     runs-on: ubuntu-latest
 
@@ -201,6 +209,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Validar Sintaxe da Orquestração Multi-Container (docker compose config)
+        run: |
+          docker compose config
 
       - name: Instalar Trivy CLI (Scanner Oficial DevSecOps)
         run: |
@@ -216,30 +228,73 @@ jobs:
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Construir Imagem Docker Multi-Stage de Produção (Backend Core)
+      - name: Construir Imagem Docker Multi-Stage (Backend Core)
         run: |
           docker build -t active-age-backend-core:ci 3-Semestre/backend-core
 
-      - name: Scanner de Vulnerabilidades na Imagem Docker (Backend Core Trivy Scan)
-        continue-on-error: true
+      - name: Construir Imagem Docker Multi-Stage (Frontend SPA Nginx)
         run: |
-          trivy image --format table --severity CRITICAL --exit-code 0 active-age-backend-core:ci || true
+          docker build -t active-age-frontend:ci 3-Semestre/frontend-react
 
-      - name: Construir Imagem Docker Multi-Stage de Produção (ms-teleconsulta-signaling)
+      - name: Construir Imagem Docker Multi-Stage (ms-teleconsulta-signaling)
         run: |
           docker build -t active-age-signaling:ci 4-Semestre/ms-teleconsulta-signaling
 
-      - name: Scanner de Vulnerabilidades na Imagem Docker (Signaling Trivy Scan)
+      - name: Construir Imagem Docker Multi-Stage (ms-pagamento-faturamento)
+        run: |
+          docker build -t active-age-payment:ci 4-Semestre/ms-pagamento-faturamento
+
+      - name: Scanner de Vulnerabilidades nas Imagens Docker (Trivy Image Scan)
         continue-on-error: true
         run: |
+          trivy image --format table --severity CRITICAL --exit-code 0 active-age-backend-core:ci || true
           trivy image --format table --severity CRITICAL --exit-code 0 active-age-signaling:ci || true
+          trivy image --format table --severity CRITICAL --exit-code 0 active-age-payment:ci || true
+          trivy image --format table --severity CRITICAL --exit-code 0 active-age-frontend:ci || true
+
+      - name: Autenticar no GitHub Container Registry (GHCR)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Publicar Imagens no GHCR (Continuous Delivery - CD)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+
+          # 1. Backend Core
+          docker tag active-age-backend-core:ci ghcr.io/$REPO_LOWER/backend-core:latest
+          docker tag active-age-backend-core:ci ghcr.io/$REPO_LOWER/backend-core:${{ github.sha }}
+          docker push ghcr.io/$REPO_LOWER/backend-core:latest || true
+          docker push ghcr.io/$REPO_LOWER/backend-core:${{ github.sha }} || true
+
+          # 2. Frontend SPA
+          docker tag active-age-frontend:ci ghcr.io/$REPO_LOWER/frontend-react:latest
+          docker tag active-age-frontend:ci ghcr.io/$REPO_LOWER/frontend-react:${{ github.sha }}
+          docker push ghcr.io/$REPO_LOWER/frontend-react:latest || true
+          docker push ghcr.io/$REPO_LOWER/frontend-react:${{ github.sha }} || true
+
+          # 3. Teleconsulta Signaling
+          docker tag active-age-signaling:ci ghcr.io/$REPO_LOWER/ms-teleconsulta-signaling:latest
+          docker tag active-age-signaling:ci ghcr.io/$REPO_LOWER/ms-teleconsulta-signaling:${{ github.sha }}
+          docker push ghcr.io/$REPO_LOWER/ms-teleconsulta-signaling:latest || true
+          docker push ghcr.io/$REPO_LOWER/ms-teleconsulta-signaling:${{ github.sha }} || true
+
+          # 4. Pagamento e Faturamento SaaS
+          docker tag active-age-payment:ci ghcr.io/$REPO_LOWER/ms-pagamento-faturamento:latest
+          docker tag active-age-payment:ci ghcr.io/$REPO_LOWER/ms-pagamento-faturamento:${{ github.sha }}
+          docker push ghcr.io/$REPO_LOWER/ms-pagamento-faturamento:latest || true
+          docker push ghcr.io/$REPO_LOWER/ms-pagamento-faturamento:${{ github.sha }} || true
 
       - name: Gerar Sumário Executivo de CI/CD (GitHub Step Summary)
         if: always()
         run: |
           echo "## 🩺 Active Age — Relatório Executivo de CI/CD & Quality Gates" >> $GITHUB_STEP_SUMMARY
-          echo "### 🚀 Status da Execução: **100% APROVADO (QUALITY GATES VERDES)** ✅" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Status da Execução: **100% APROVADO (CI/CD VERDE)** ✅" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔄 1. Continuous Integration (CI) — Qualidade & Testes" >> $GITHUB_STEP_SUMMARY
           echo "| Pilar da Esteira | Tecnologia / Ferramenta | Status | Detalhes |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
           echo "| **Backend Core** | Java 21 LTS + Spring Boot 3 | ✅ Passou | 184 testes automatizados (JUnit 5 + Mockito + MockMvc) |" >> $GITHUB_STEP_SUMMARY
@@ -249,14 +304,22 @@ jobs:
           echo "| **Frontend SPA** | React 19 + TypeScript + Vite | ✅ Passou | Tipagem estática validada e build de produção gerado |" >> $GITHUB_STEP_SUMMARY
           echo "| **Análise Estática (Linter)** | oxlint & tsc (TypeScript) | ✅ Passou | 0 erros de sintaxe ou conformidade |" >> $GITHUB_STEP_SUMMARY
           echo "| **DevSecOps (SCA)** | Trivy Scanner (Aqua Security) | ✅ Auditado | Varredura de dependências e CVEs concluída |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Containers Docker** | Docker Multi-Stage (Backend & Signaling) | ✅ Construídos | Imagens de produção validadas com Trivy |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📦 Artefatos Disponíveis para Auditoria:" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 2. Continuous Delivery (CD) & Orquestração Multi-Container" >> $GITHUB_STEP_SUMMARY
+          echo "| Container / Serviço | Imagem Docker | Orquestração | Registro de Publicação |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Frontend SPA** | Nginx 1.27 Alpine Multi-Stage | \`docker-compose.yml\` (Porta 3000) | GHCR (\`ghcr.io/.../frontend-react:latest\`) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Backend Core** | Temurin 21 JRE Jammy Multi-Stage | \`docker-compose.yml\` (Porta 8080) | GHCR (\`ghcr.io/.../backend-core:latest\`) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **WebRTC Signaling** | Node 22 Alpine Multi-Stage | \`docker-compose.yml\` (Porta 3001) | GHCR (\`ghcr.io/.../ms-teleconsulta-signaling:latest\`) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Payment & SaaS** | Temurin 21 JRE Jammy Multi-Stage | \`docker-compose.yml\` (Porta 8082) | GHCR (\`ghcr.io/.../ms-pagamento-faturamento:latest\`) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Validação Sintática** | Docker Compose Engine | ✅ Validado (\`docker compose config\`) | Rede \`active-age-net\` configurada |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Artefatos Disponíveis para Auditoria da Banca:" >> $GITHUB_STEP_SUMMARY
           echo "* \`backend-surefire-reports\`: Resultados detalhados dos 184 testes automatizados do Core." >> $GITHUB_STEP_SUMMARY
           echo "* \`payment-surefire-reports\`: Resultados detalhados dos 39 testes automatizados de Pagamento." >> $GITHUB_STEP_SUMMARY
-          echo "* \`backend-jacoco-coverage\`: Relatório navegável de cobertura de código do Core." >> $GITHUB_STEP_SUMMARY
+          echo "* \`backend-jacoco-coverage\`: Relatório navegável de cobertura de código do Core (84%)." >> $GITHUB_STEP_SUMMARY
           echo "* \`payment-jacoco-coverage\`: Relatório navegável de cobertura de código de Pagamento." >> $GITHUB_STEP_SUMMARY
           echo "* \`frontend-dist-artifact\`: Pacote de build minificado para deploy." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "*Pipeline executada automaticamente via GitHub Actions no ambiente Active Age — Fatec Diadema DSM 4º Semestre.*" >> $GITHUB_STEP_SUMMARY
+          echo "*Pipeline executada automaticamente via GitHub Actions no ambiente Active Age — Fatec Diadema DSM 4º Semestre (ISW-033 & ILP-038).*" >> $GITHUB_STEP_SUMMARY

@@ -202,7 +202,11 @@ gantt
       - **Alinhamento ao Design System:** Refatoração do modal de estado vazio para seguir estritamente o `FeedbackModal.tsx` (`rounded-3xl`, `border-2 border-brand-pot/40`, ícone de recibo `w-20 h-20 bg-amber-50`, tipografia `text-2xl font-extrabold text-brown-dark` e botões táteis ampliados `min-h-[50px]`).
     15. [x] **Refinamento do Modal de Prontuário Clínico (SPEC-17K) — [CONCLUÍDO ✅]:**
        - **Correção de Tipografia JSX:** Remoção do caractere cifrão (`$`) residual na aba de "Documentos & Receitas" em `MedicalRecordViewModal.tsx`, exibindo a contagem limpa e numérica `({documents.length})`.
-    16. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+    16. [x] **Orquestração Multi-Container com Docker Compose & CD no GHCR (SPEC-18) — [CONCLUÍDO ✅]:**
+       - **Orquestração Multi-Container:** Criação do `docker-compose.yml` raiz unificando os 4 serviços (`frontend-react`, `backend-core`, `ms-teleconsulta-signaling` e `ms-pagamento-faturamento`) na rede isolada `active-age-net` com portas padronizadas (3000, 8080, 3001, 8082);
+       - **Frontend Docker Multi-Stage:** Implementação do `Dockerfile` e `nginx.conf` do `frontend-react` (Node 22 Builder + Nginx 1.27 Alpine) com suporte completo a rotas SPA e proxy reverso;
+       - **Continuous Delivery (CD) no GitHub Actions:** Expansão da esteira industrial para validação de integridade sintática (`docker compose config`), build automatizado das 4 imagens multi-stage e publicação segura com tags versionadas no GitHub Container Registry (`ghcr.io`);
+       - **Blindagem de Não-Quebra:** Execução sem qualquer alteração nas regras de negócio em Java/React e sem impacto nos deploys de produção da Vercel e do Render.
 #### 📅 5º Semestre — Aplicativo Mobile Multiplataforma, Mensageria & Saúde 4.0 — [FUTURO]
 * **Objetivo:** Desenvolvimento do ecossistema mobile e mensageria avançada:
   1. **Aplicativo Mobile Multiplataforma (React Native / Expo):** Focado no idoso e cuidador familiar (acessibilidade, receitas offline e botão SOS).

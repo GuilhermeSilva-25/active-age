@@ -1,0 +1,97 @@
+services:
+  # ===========================================================================
+  # 1. FRONTEND SPA (React 19 + TypeScript + Vite + Nginx Alpine)
+  # ===========================================================================
+  frontend-react:
+    container_name: active-age-frontend
+    build:
+      context: ./3-Semestre/frontend-react
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend-core
+    restart: unless-stopped
+    networks:
+      - active-age-net
+    labels:
+      org.opencontainers.image.title: "Active Age Frontend SPA"
+      org.opencontainers.image.description: "Interface web de telemedicina geriátrica (React 19 / Nginx)"
+      org.opencontainers.image.version: "v0.4.0"
+
+  # ===========================================================================
+  # 2. BACKEND CORE (Java 21 LTS + Spring Boot 3.4.x + Spring Data MongoDB)
+  # ===========================================================================
+  backend-core:
+    container_name: active-age-backend-core
+    build:
+      context: ./3-Semestre/backend-core
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI:-mongodb://localhost:27017/active_age}
+      - JWT_SECRET=${JWT_SECRET:-ActiveAgeSuperSecureKeySecret2026JwtTokenSignature!}
+      - MS_PAGAMENTO_URL=${MS_PAGAMENTO_URL:-http://ms-pagamento-faturamento:8082}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173,https://active-age.vercel.app}
+    restart: unless-stopped
+    networks:
+      - active-age-net
+    labels:
+      org.opencontainers.image.title: "Active Age Backend Core"
+      org.opencontainers.image.description: "Serviço central clínico, agendamentos e prontuários (Spring Boot 3)"
+      org.opencontainers.image.version: "v0.4.0"
+
+  # ===========================================================================
+  # 3. MICROSSERVIÇO DE TELECONSULTA SIGNALING (Node.js 22 + WebRTC Socket.io)
+  # ===========================================================================
+  ms-teleconsulta-signaling:
+    container_name: active-age-signaling
+    build:
+      context: ./4-Semestre/ms-teleconsulta-signaling
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3000,http://localhost:5173,https://active-age.vercel.app}
+    restart: unless-stopped
+    networks:
+      - active-age-net
+    labels:
+      org.opencontainers.image.title: "Active Age Teleconsulta Signaling"
+      org.opencontainers.image.description: "Servidor de sinalização WebRTC P2P em tempo real (Socket.io)"
+      org.opencontainers.image.version: "v0.4.0"
+
+  # ===========================================================================
+  # 4. MICROSSERVIÇO DE PAGAMENTO & SPLIT SAAS (Java 21 LTS + Spring Boot 3)
+  # ===========================================================================
+  ms-pagamento-faturamento:
+    container_name: active-age-pagamento
+    build:
+      context: ./4-Semestre/ms-pagamento-faturamento
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - PORT=8082
+      - BACKEND_CORE_URL=${BACKEND_CORE_URL:-http://backend-core:8080}
+      - MERCADO_PAGO_ACCESS_TOKEN=${MERCADO_PAGO_ACCESS_TOKEN:-TEST-mock-token-active-age-2026}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+    restart: unless-stopped
+    networks:
+      - active-age-net
+    labels:
+      org.opencontainers.image.title: "Active Age Pagamento & Faturamento"
+      org.opencontainers.image.description: "Gateway financeiro com Split Direto BACEN e Gestão SaaS (Res. CFM nº 2.314/2022)"
+      org.opencontainers.image.version: "v0.4.0"
+
+# =============================================================================
+# REDE VIRTUAL ISOLADA (Bridge)
+# =============================================================================
+networks:
+  active-age-net:
+    driver: bridge
+    name: active-age-net
