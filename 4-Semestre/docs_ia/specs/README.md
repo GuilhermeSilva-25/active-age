@@ -22,7 +22,7 @@ Neste semestre, **nenhum arquivo de pipeline (YAML), Dockerfile, microsserviço 
 | **SPEC-16.2** | **Hub de Sinalização WebRTC & Gerenciamento de Salas** | Salas efêmeras, trava de 2 participantes, roteamento SDP/ICE e desconexão | **Concluída / Testada ✅** | [SPEC_SDD_MICRO_TAREFA_16.2_HUB_SINALIZACAO_SALAS.md](./SPEC_SDD_MICRO_TAREFA_16.2_HUB_SINALIZACAO_SALAS.md) |
 | **SPEC-16.3** | **Cliente WebRTC no Frontend React 19 (`TeleconsultaRoom.tsx`)** | Hook `useWebRTC.ts`, STUN, feeds remoto/local PiP e controles táteis | **Concluída / Testada ✅** | [SPEC_SDD_MICRO_TAREFA_16.3_CLIENTE_WEBRTC_FRONTEND.md](./SPEC_SDD_MICRO_TAREFA_16.3_CLIENTE_WEBRTC_FRONTEND.md) |
 | **SPEC-16.4** | **Resiliência de Rede, Fallbacks de Permissão e CI/CD** | ICE restart, reconexão automática, guia visual de cadeado e Docker CI | **Concluída / Testada ✅** | [SPEC_SDD_MICRO_TAREFA_16.4_RESILIENCIA_REDE_FALLBACKS_CI.md](./SPEC_SDD_MICRO_TAREFA_16.4_RESILIENCIA_REDE_FALLBACKS_CI.md) |
-| **SPEC-17** | **Microsserviço de Gateway de Pagamento & Split Direto BACEN** | API REST, Webhooks, Split Direto sem retenção e conformidade CFM nº 2.314/2022 | *Planejada* 📅 | Em breve |
+| **SPEC-17** | **Microsserviço de Gateway de Pagamento & Split Direto BACEN (Mercado Pago)** | API REST, Webhooks, Split Direto via Mercado Pago Marketplace e conformidade CFM nº 2.314/2022 | *Decisão do PO / Próximo Passo* 📋 | Em breve |
 | **SPEC-18** | **Orquestração de Containers e Infraestrutura Distribuída (Docker Compose)** | Redes isoladas, variáveis de ambiente seguras e deploy automatizado | *Planejada* 📅 | Em breve |
 
 ---

@@ -156,9 +156,9 @@ gantt
      - **Micro Tarefa 16.1 [CONCLUÍDA ✅]:** Fundação do microsserviço `4-Semestre/ms-teleconsulta-signaling/` em Node.js LTS, TypeScript, Express, Socket.io, Dockerfile multi-stage, healthcheck (`GET /health`) e testes unitários Vitest.
      - **Micro Tarefa 16.2 [CONCLUÍDA ✅]:** Hub de sinalização WebRTC com isolamento de salas por `appointmentId`, trava de 2 participantes (CFM/LGPD), roteamento de SDP Offer/Answer e ICE Candidates e 10 testes automatizados (SPEC-16.2).
      - **Micro Tarefa 16.3 [CONCLUÍDA ✅]:** Cliente WebRTC no Frontend React 19 (`TeleconsultaRoom.tsx`) com hook `useWebRTC.ts`, feeds de vídeo remoto e local PiP, sincronização de mute e STUN Google (SPEC-16.3).
-     - **Micro Tarefa 16.4 [CONCLUÍDA ✅]:** Resiliência de rede com ICE restart, reconexão automática, fallback acessível de permissões de hardware (cadeado 🔒) com `retryMedia` e esteira de CI/CD industrial com escaneamento Docker Trivy (SPEC-16.4).
-  5. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005) — [PRÓXIMO MARCO]:**
-     - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022).
+     - **Micro Tarefa 16.4 [CONCLUÍDA ✅]:** Resiliência de rede com ICE restart, reconexão automática, fallback acessível de permissões de hardware (cadeado 🔒) com `retryMedia`, esteira de CI/CD industrial com escaneamento Docker Trivy, deploy em produção no Render (`active-age-signaling.onrender.com`), botão de Tela Inteira (Fullscreen) e Cockpit Responsivo de 2 Colunas no desktop para Médico e Paciente (SPEC-16.4).
+  5. [ ] **Microsserviço de Gateway de Pagamento com Split Direto via Mercado Pago regulado pelo BACEN (SPEC-17 / UC06 / RN005) — [PRÓXIMO MARCO]:**
+     - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022) utilizando a API de Marketplace / Split do Mercado Pago.
   6. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
