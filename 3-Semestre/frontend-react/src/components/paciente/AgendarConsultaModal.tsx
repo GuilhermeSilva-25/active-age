@@ -673,18 +673,6 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                             {paymentMethod === 'PIX' ? (
                                 /* ABA PIX */
                                 <div className="space-y-5">
-                                    {/* Alerta de Homologação Sandbox */}
-                                    <div className="bg-amber-50 border border-amber-300/80 rounded-2xl p-4 flex items-start gap-3 text-left">
-                                        <Sparkles className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-                                        <div className="text-xs text-amber-950 leading-relaxed">
-                                            <strong className="block font-black text-amber-900">
-                                                Ambiente de Testes do Mercado Pago (Sandbox)
-                                            </strong>
-                                            O QR Code abaixo foi gerado oficialmente no Sandbox do Mercado Pago. Aplicativos de bancos reais recusam QR Codes de teste por não estarem no SPI oficial do Banco Central.
-                                            Para homologar a consulta sem gastar dinheiro real, utilize o botão <strong>Simular Confirmação do Pix</strong> abaixo!
-                                        </div>
-                                    </div>
-
                                     {/* QR Code Pix */}
                                     <div className="text-center space-y-4">
                                         <div className="w-48 h-48 mx-auto bg-white border-2 border-emerald-600 rounded-2xl p-3 shadow-md flex items-center justify-center">
@@ -859,28 +847,11 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                     </div>
                                 </form>
                             ) : (
-                                /* ABA MERCADO PAGO CHECKOUT PRO / CONTA TESTE */
+                                /* ABA MERCADO PAGO CHECKOUT PRO */
                                 <div className="space-y-5 text-center">
-                                    <div className="bg-sky-50 border-2 border-sky-300 rounded-2xl p-5 text-left space-y-3">
-                                        <div className="flex items-center gap-2 text-sky-900 font-black text-sm">
-                                            <ExternalLink className="w-5 h-5 text-sky-700" />
-                                            <span>Checkout Oficial Mercado Pago (Link Seguro)</span>
-                                        </div>
-                                        <p className="text-xs text-sky-950 leading-relaxed font-medium">
-                                            Você será redirecionado para a página oficial do Mercado Pago para efetuar o pagamento dos honorários médicos de <strong>{formattedFee}</strong> via saldo de conta, cartão salvo ou boleto.
-                                        </p>
-
-                                        {/* Card especial de homologação com conta de teste */}
-                                        <div className="bg-white border border-sky-200 rounded-xl p-3.5 text-xs text-sky-950 space-y-1.5">
-                                            <span className="font-bold text-sky-900 flex items-center gap-1.5">
-                                                <Sparkles className="w-4 h-4 text-sky-600" />
-                                                Instruções para Pagamento com Conta de Teste:
-                                            </span>
-                                            <p className="text-[11px] text-brown-dark leading-relaxed">
-                                                No ambiente de testes (Sandbox), entre com a sua <strong>Conta de Teste de Comprador</strong> (criada na aba &quot;Contas de teste&quot; no painel de desenvolvedores do Mercado Pago). Ela possui saldo fictício e cartões de teste liberados sem debitar dinheiro real.
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <p className="text-xs sm:text-sm text-brown-dark font-medium leading-relaxed">
+                                        Clique no botão abaixo para abrir o ambiente seguro do Mercado Pago e efetuar o pagamento dos honorários médicos de <strong>{formattedFee}</strong>.
+                                    </p>
 
                                     {/* Botão de Redirecionamento para o Mercado Pago */}
                                     <div className="space-y-3">
