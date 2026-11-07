@@ -37,18 +37,13 @@ public class MercadoPagoGatewayImpl implements IMercadoPagoGateway {
     private final HttpClient httpClient;
 
     public MercadoPagoGatewayImpl() {
-        this.objectMapper = new ObjectMapper();
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(3))
-                .build();
+        this(new ObjectMapper(), HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
     }
 
     @Autowired
-    public MercadoPagoGatewayImpl(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper != null ? objectMapper : new ObjectMapper();
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(3))
-                .build();
+    public MercadoPagoGatewayImpl(@Autowired(required = false) ObjectMapper objectMapper) {
+        this(objectMapper != null ? objectMapper : new ObjectMapper(),
+             HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
     }
 
     public MercadoPagoGatewayImpl(ObjectMapper objectMapper, HttpClient httpClient) {
