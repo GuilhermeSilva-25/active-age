@@ -174,7 +174,11 @@ gantt
       - **Higienização do RQE:** Correção da duplicidade do prefixo RQE nos cards e modal de detalhes (`RQE {rqe.replace(/^RQE[:\s]*/i, '').trim()}`);
       - **Remoção de Nota Ética:** Exclusão do callout informativo no perfil detalhado do médico;
       - **Simplificação de Badges:** Ajuste de "Homologado CFM" para apenas "Homologado" nos cards e modal de médicos.
-   8. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+   8. [x] **Comprovante de Pagamento em Preto e Branco (P&B) & Isolamento de Impressão Universal (SPEC-17D) — [CONCLUÍDO ✅]:**
+      - **Isolamento de Impressão Global:** Regra CSS `@media print` e `@page` em `index.css` com classe universal `.printable-document`, eliminando vazamento da página de fundo (`print leak`) em todos os modais imprimíveis;
+      - **Comprovante P&B Oficial:** Reformulação de `ComprovantePagamentoModal.tsx` em Preto e Branco puro alinhado a `DocumentPrintModal.tsx` (receituários, laudos e atestados), com molduras pretas, cabeçalho institucional, tabela discriminatória de split direto e código de validação digital;
+      - **Blindagem nos Demais Modais:** Aplicação da classe `.printable-document` em `DocumentPrintModal.tsx` e `ExtratoFinanceiroModal.tsx`.
+   9. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---

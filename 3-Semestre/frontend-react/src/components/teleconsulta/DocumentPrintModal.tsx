@@ -56,7 +56,7 @@ export const DocumentPrintModal: React.FC<DocumentPrintModalProps> = ({
             role="dialog"
             aria-modal="true"
         >
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[94vh] flex flex-col shadow-2xl border border-gray-300 overflow-hidden print:shadow-none print:border-none print:max-h-none print:max-w-none print:rounded-none">
+            <div className="printable-document bg-white rounded-2xl max-w-2xl w-full max-h-[94vh] flex flex-col shadow-2xl border border-gray-300 overflow-hidden print:shadow-none print:border-none print:max-h-none print:max-w-none print:rounded-none">
                 {/* Barra de Ferramentas Superior (Oculta na impressão física ou PDF) */}
                 <div className="p-4 bg-gray-100 border-b border-gray-300 flex items-center justify-between gap-3 shrink-0 print:hidden">
                     <div className="flex items-center gap-2">

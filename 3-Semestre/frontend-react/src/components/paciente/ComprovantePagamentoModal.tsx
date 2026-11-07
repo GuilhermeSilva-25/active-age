@@ -3,10 +3,7 @@ import {
     X,
     Printer,
     ShieldCheck,
-    CheckCircle2,
-    Lock,
-    Building2,
-    User
+    CheckCircle2
 } from 'lucide-react';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
@@ -60,188 +57,242 @@ export const ComprovantePagamentoModal: React.FC<ComprovantePagamentoModalProps>
     const authCode = `AA-REC-2026-${data.appointmentId.substring(0, 8).toUpperCase()}`;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 print:p-0 print:bg-white print:static">
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overscroll-contain print:p-0 print:bg-white print:static"
+            role="dialog"
+            aria-modal="true"
+        >
             <div
-                className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] print:max-h-none print:shadow-none print:border-none print:w-full"
+                className="printable-document bg-white rounded-2xl max-w-2xl w-full max-h-[94vh] flex flex-col shadow-2xl border border-gray-300 overflow-hidden print:shadow-none print:border-none print:max-h-none print:max-w-none print:rounded-none"
                 onClick={e => e.stopPropagation()}
             >
-                {/* Header - Não impresso */}
-                <div className="px-5 sm:px-6 py-4 bg-emerald-800 text-white flex items-center justify-between shrink-0 print:hidden">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-300">
-                            <ShieldCheck className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-300 block">
-                                Comprovante Financeiro Oficial
-                            </span>
-                            <h2 className="text-base sm:text-lg font-black text-white">
-                                Recibo de Pagamento de Teleconsulta
-                            </h2>
-                        </div>
+                {/* Barra de Ferramentas Superior (Oculta na Impressão Física ou PDF) */}
+                <div className="p-4 bg-gray-100 border-b border-gray-300 flex items-center justify-between gap-3 shrink-0 print:hidden">
+                    <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 bg-black text-white text-xs font-bold rounded">
+                            Recibo de Teleconsulta
+                        </span>
+                        <span className="text-xs text-gray-700 font-mono font-bold">
+                            {authCode}
+                        </span>
                     </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
-                        title="Fechar recibo"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={handlePrint}
+                            className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-800 text-white text-xs sm:text-sm font-bold rounded-lg shadow-xs transition-colors cursor-pointer min-h-[44px]"
+                        >
+                            <Printer className="w-4 h-4" />
+                            <span>Imprimir / Salvar PDF</span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="w-10 h-10 rounded-lg bg-white hover:bg-gray-200 text-gray-800 flex items-center justify-center border border-gray-300 transition-colors cursor-pointer"
+                            aria-label="Fechar comprovante"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
 
-                {/* Conteúdo com rolagem e modelo timbrado oficial para impressão */}
-                <div className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1 text-brown-dark print:p-6 print:overflow-visible">
-                    {/* Cabeçalho Timbrado */}
-                    <div className="border-b-2 border-emerald-800/40 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                {/* Conteúdo Timbrado Oficial em Preto e Branco (P&B Puro) */}
+                <div className="p-8 sm:p-12 overflow-y-auto space-y-6 text-black bg-white font-sans print:p-8 print:overflow-visible print:text-black">
+                    {/* Cabeçalho Oficial Timbrado */}
+                    <header className="border-b-2 border-black pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3">
                         <div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-xl sm:text-2xl font-black tracking-tight text-emerald-950 font-serif">
-                                    ACTIVE AGE TELEMEDICINA
-                                </span>
-                            </div>
-                            <p className="text-xs text-brown-light font-bold mt-0.5">
-                                Plataforma Integral de Telessaúde Geriátrica • CNPJ 54.321.987/0001-00
-                            </p>
-                            <p className="text-[11px] text-brown-light">
-                                São Paulo - SP • Faturamento & Split Direto Regulado
+                            <span className="text-[11px] font-bold tracking-widest uppercase text-gray-600 block">
+                                ACTIVE AGE • TELESSAÚDE GERIÁTRICA
+                            </span>
+                            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-black mt-0.5">
+                                Recibo de Pagamento de Teleconsulta
+                            </h1>
+                            <p className="text-xs text-gray-800 font-medium">
+                                CNPJ 54.321.987/0001-00 • São Paulo - SP
                             </p>
                         </div>
-                        <div className="text-left sm:text-right bg-emerald-50 sm:bg-transparent p-3 sm:p-0 rounded-2xl border sm:border-0 border-emerald-200">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
-                                Código de Autenticidade Digital
-                            </span>
-                            <span className="text-sm sm:text-base font-black font-mono text-emerald-950 block">
-                                {authCode}
-                            </span>
-                            <span className="text-[10px] text-emerald-700 font-bold block">
-                                Válido perante IR e Reembolso
-                            </span>
-                        </div>
-                    </div>
 
-                    {/* Selo de Confirmação */}
-                    <div className="bg-emerald-50/80 border border-emerald-300 rounded-2xl p-4 flex items-center justify-between gap-4">
+                        <div className="text-left sm:text-right text-xs text-gray-700">
+                            <p className="font-semibold flex items-center sm:justify-end gap-1 text-black">
+                                <ShieldCheck className="w-3.5 h-3.5 text-black" />
+                                Split Direto Regulado (BACEN)
+                            </p>
+                            <p className="text-[11px] text-gray-600">
+                                Resolução CFM nº 2.314/2022
+                            </p>
+                        </div>
+                    </header>
+
+                    {/* Selo de Confirmação em Preto e Branco */}
+                    <section className="border border-gray-300 p-4 rounded-lg flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                                <CheckCircle2 className="w-6 h-6" />
+                            <div className="w-10 h-10 rounded-lg bg-black text-white flex items-center justify-center shrink-0">
+                                <CheckCircle2 className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-sm font-black text-emerald-950">
+                                <h3 className="text-sm font-bold text-black">
                                     Pagamento Liquidado com Sucesso
                                 </h3>
-                                <p className="text-xs text-emerald-800 font-medium">
+                                <p className="text-xs text-gray-700">
                                     Transação autorizada e repassada integralmente ao médico assistente.
                                 </p>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <span className="text-[10px] font-black uppercase text-emerald-800 block">Valor Liquidado</span>
-                            <span className="text-xl sm:text-2xl font-black text-emerald-950">
+                        <div className="text-right shrink-0">
+                            <span className="text-[10px] font-bold uppercase text-gray-600 block">
+                                Valor Liquidado
+                            </span>
+                            <span className="text-lg sm:text-xl font-bold text-black font-mono">
                                 R$ {Number(data.consultationFee).toFixed(2).replace('.', ',')}
                             </span>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Detalhes do Pagador e Prestador */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* Dados do Paciente */}
-                        <div className="bg-gray-50 border border-brand-pot/30 rounded-2xl p-4 space-y-1.5">
-                            <span className="text-[10px] font-black uppercase text-brown-light tracking-wider flex items-center gap-1.5">
-                                <User className="w-3.5 h-3.5 text-brand-orange" />
-                                Paciente Titular (Pagador)
+                    {/* Identificação do Paciente e Médico Prestador */}
+                    <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div className="border border-gray-300 p-3.5 rounded-lg space-y-1">
+                            <span className="text-gray-600 uppercase font-semibold text-[10px] block">
+                                Paciente Titular (Pagador):
                             </span>
-                            <p className="font-black text-brown-dark text-sm sm:text-base">
+                            <p className="font-bold text-sm text-black">
                                 {data.patientName}
                             </p>
-                            <p className="text-xs text-brown-light">
+                            <p className="text-gray-700 text-[11px]">
                                 Teleconsulta Geriátrica Individual
                             </p>
                         </div>
 
-                        {/* Dados do Médico */}
-                        <div className="bg-gray-50 border border-brand-pot/30 rounded-2xl p-4 space-y-1.5">
-                            <span className="text-[10px] font-black uppercase text-brown-light tracking-wider flex items-center gap-1.5">
-                                <Building2 className="w-3.5 h-3.5 text-brand-orange" />
-                                Médico Assistente (Beneficiário)
+                        <div className="border border-gray-300 p-3.5 rounded-lg space-y-1 sm:text-right">
+                            <span className="text-gray-600 uppercase font-semibold text-[10px] block">
+                                Médico Assistente (Beneficiário):
                             </span>
-                            <p className="font-black text-brown-dark text-sm sm:text-base">
+                            <p className="font-bold text-sm text-black">
                                 {data.doctorName}
                             </p>
-                            <p className="text-xs text-brown-light font-bold">
+                            <p className="text-gray-700 text-[11px]">
                                 CRM {data.doctorCrm}/{data.doctorUfCrm} • {data.doctorSpecialty || 'Geriatria'}
                             </p>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Dados Transacionais */}
-                    <div className="border border-brand-pot/30 rounded-2xl p-4 space-y-3 bg-white">
-                        <span className="text-[10px] font-black uppercase text-brown-light tracking-wider block">
-                            Discriminação da Operação de Telemedicina
-                        </span>
+                    {/* Discriminação da Operação de Telemedicina */}
+                    <section className="border border-black rounded-lg p-4 space-y-3">
+                        <h2 className="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-300 pb-2">
+                            Discriminação da Operação Financeira
+                        </h2>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                             <div>
-                                <span className="text-brown-light block">Data da Consulta:</span>
-                                <span className="font-black text-brown-dark">{formattedDate()}</span>
+                                <span className="text-gray-600 block text-[11px]">Data da Consulta:</span>
+                                <span className="font-bold text-black">{formattedDate()}</span>
                             </div>
                             <div>
-                                <span className="text-brown-light block">Forma de Pagamento:</span>
-                                <span className="font-black text-brown-dark">
+                                <span className="text-gray-600 block text-[11px]">Forma de Pagamento:</span>
+                                <span className="font-bold text-black">
                                     {data.paymentMethod || 'Pix / Cartão de Crédito'}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-brown-light block">Gateway Processador:</span>
-                                <span className="font-black text-brown-dark">Mercado Pago IP LTDA</span>
+                                <span className="text-gray-600 block text-[11px]">Gateway Processador:</span>
+                                <span className="font-bold text-black">Mercado Pago IP LTDA</span>
                             </div>
                             <div>
-                                <span className="text-brown-light block">ID da Transação:</span>
-                                <span className="font-mono font-bold text-brown-dark">
+                                <span className="text-gray-600 block text-[11px]">ID da Transação (MP):</span>
+                                <span className="font-mono font-bold text-black">
                                     {data.mpPaymentId || 'MP-' + data.appointmentId.substring(0, 10)}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-brown-light block">Taxa da Plataforma:</span>
-                                <span className="font-black text-emerald-700">R$ 0,00 (0% Dicotomia)</span>
+                                <span className="text-gray-600 block text-[11px]">Taxa da Plataforma:</span>
+                                <span className="font-bold text-black">R$ 0,00 (0% Dicotomia)</span>
                             </div>
                             <div>
-                                <span className="text-brown-light block">Repasse Médico:</span>
-                                <span className="font-black text-emerald-800">
+                                <span className="text-gray-600 block text-[11px]">Repasse Líquido ao Médico:</span>
+                                <span className="font-bold text-black">
                                     100% (R$ {Number(data.consultationFee).toFixed(2).replace('.', ',')})
                                 </span>
                             </div>
                         </div>
-                    </div>
+
+                        <div className="border-t-2 border-black pt-3 flex items-center justify-between">
+                            <span className="text-xs font-bold uppercase text-black">
+                                Total Pago pelo Paciente:
+                            </span>
+                            <span className="text-lg sm:text-xl font-bold font-mono text-black">
+                                R$ {Number(data.consultationFee).toFixed(2).replace('.', ',')}
+                            </span>
+                        </div>
+                    </section>
 
                     {/* Nota Legal e LGPD */}
-                    <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 text-[11px] text-amber-950 space-y-1.5 leading-relaxed">
-                        <div className="font-black text-amber-900 flex items-center gap-1.5">
-                            <Lock className="w-3.5 h-3.5 text-amber-700" />
-                            <span>Conformidade Ético-Regulatória &amp; Proteção de Dados (LGPD)</span>
-                        </div>
-                        <p>
+                    <aside className="p-3 border border-gray-400 rounded-lg text-xs space-y-1">
+                        <h3 className="font-bold text-black uppercase text-[11px] tracking-wide">
+                            Conformidade Ético-Regulatória &amp; Proteção de Dados (LGPD):
+                        </h3>
+                        <p className="text-gray-800 leading-relaxed text-[11px]">
                             Documento emitido exclusivamente para fins fiscais, contábeis e de reembolso perante operadoras de saúde. Em cumprimento estrito à Resolução CFM nº 2.314/2022 (vedação à dicotomia de honorários médicos) e à Lei Geral de Proteção de Dados (Lei nº 13.709/2018), este recibo é puramente financeiro e não contém diagnósticos, CID-11, anamnese ou dados clínicos sensíveis do paciente.
                         </p>
-                    </div>
+                    </aside>
+
+                    {/* Rodapé: Assinatura e Autenticação Digital */}
+                    <footer className="border-t border-gray-300 pt-6 mt-6 space-y-6">
+                        <div className="w-72 mx-auto text-center pt-6 border-t border-black">
+                            <p className="font-bold text-sm text-black">
+                                {data.doctorName}
+                            </p>
+                            <p className="text-xs text-gray-700">
+                                CRM {data.doctorCrm}/{data.doctorUfCrm}
+                            </p>
+                            <p className="text-[10px] text-gray-500 mt-0.5">
+                                Médico(a) Assistente • Beneficiário dos Honorários
+                            </p>
+                        </div>
+
+                        <div className="border border-black p-3.5 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                            <div className="space-y-0.5">
+                                <p className="font-bold text-black">
+                                    Documento Emitido Eletronicamente via Active Age
+                                </p>
+                                <p className="text-[11px] text-gray-700">
+                                    Válido para fins de declaração de IRPF e comprovação perante operadoras de saúde.
+                                </p>
+                            </div>
+                            <div className="text-left sm:text-right border-t sm:border-t-0 sm:border-l border-gray-400 pt-2 sm:pt-0 sm:pl-3 shrink-0">
+                                <span className="text-[10px] text-gray-600 uppercase font-semibold block">
+                                    Código de Autenticidade Digital:
+                                </span>
+                                <span className="font-mono font-bold text-xs text-black">
+                                    {authCode}
+                                </span>
+                            </div>
+                        </div>
+
+                        <p className="text-center text-[10px] text-gray-600 print:text-[9px]">
+                            Validação pública por pacientes, operadoras e órgãos fiscais em:{' '}
+                            <strong className="text-black font-semibold">
+                                activeage.com/validar-documento
+                            </strong>
+                        </p>
+                    </footer>
                 </div>
 
-                {/* Footer com Ações - Não impresso */}
-                <div className="p-4 sm:p-5 bg-gray-50 border-t border-brand-pot/30 flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden">
-                    <span className="text-xs text-brown-light text-center sm:text-left">
+                {/* Footer com Ações na Tela (Oculto na Impressão) */}
+                <div className="p-4 sm:p-5 bg-gray-100 border-t border-gray-300 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 print:hidden">
+                    <span className="text-xs text-gray-600 text-center sm:text-left">
                         Autenticação eletrônica válida perante o CFM e Receita Federal.
                     </span>
                     <div className="flex items-center gap-2.5 w-full sm:w-auto">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 sm:flex-none px-5 py-3 rounded-xl border border-brand-pot/40 hover:bg-white text-xs sm:text-sm font-bold text-brown-dark transition-all cursor-pointer min-h-[44px]"
+                            className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-200 text-xs sm:text-sm font-bold text-gray-800 transition-all cursor-pointer min-h-[44px]"
                         >
                             Fechar
                         </button>
                         <button
                             type="button"
                             onClick={handlePrint}
-                            className="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer min-h-[44px]"
+                            className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg bg-black hover:bg-gray-800 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer min-h-[44px]"
                         >
                             <Printer className="w-4 h-4" />
                             <span>Imprimir / Salvar PDF</span>

@@ -127,7 +127,7 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 print:p-0 print:bg-white print:static">
             <div
-                className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] print:max-h-none print:shadow-none print:border-none print:w-full"
+                className="printable-document bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] print:max-h-none print:shadow-none print:border-none print:w-full"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header - Não impresso */}

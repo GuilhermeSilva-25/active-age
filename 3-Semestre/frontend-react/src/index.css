@@ -37,3 +37,48 @@
     @apply bg-white text-brown-dark border-2 border-brand-pot hover:border-brand-orange hover:text-brand-orange px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all focus:ring-4 outline-none flex items-center justify-center gap-2;
   }
 }
+
+/* Regras Globais de Isolamento de Impressão (SPEC-17D) */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-document,
+  .printable-document * {
+    visibility: visible !important;
+  }
+
+  .printable-document {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .print\:hidden,
+  .print-hidden {
+    display: none !important;
+  }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 12mm 15mm 15mm 15mm;
+}
