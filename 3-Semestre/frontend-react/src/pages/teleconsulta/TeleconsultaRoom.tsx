@@ -690,7 +690,7 @@ export const TeleconsultaRoom: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white flex flex-col">
+        <div className="h-screen max-h-screen overflow-hidden bg-gray-950 text-white flex flex-col">
             {/* Barra de Navegação Superior da Teleconsulta */}
             <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center justify-between gap-3 shrink-0">
                 <div className="flex items-center gap-3">
@@ -747,17 +747,21 @@ export const TeleconsultaRoom: React.FC = () => {
             </header>
 
             {/* Layout Principal: Split-Screen no Computador / Empilhado no Celular */}
-            <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+            <main className="flex-1 h-[calc(100vh-3.5rem)] max-h-[calc(100vh-3.5rem)] grid grid-cols-1 lg:grid-cols-12 overflow-hidden min-h-0">
                 {/* COLUNA ESQUERDA: Janela de Vídeo Responsiva */}
-                <div className={`p-3 sm:p-4 flex flex-col ${isDoctor ? 'lg:col-span-5 xl:col-span-5 h-full min-h-0' : 'lg:col-span-12 justify-start items-center overflow-y-auto'} bg-black relative`}>
-                    <div className={`w-full ${!isDoctor ? 'max-w-4xl mx-auto flex flex-col items-center' : 'flex-1 h-full min-h-0 flex flex-col'}`}>
+                <div className={`p-2 sm:p-3 lg:p-4 flex flex-col ${
+                    isDoctor
+                        ? 'lg:col-span-5 xl:col-span-5 h-full min-h-0 justify-center items-center overflow-hidden'
+                        : 'lg:col-span-12 h-full min-h-0 justify-start items-center overflow-y-auto'
+                } bg-black relative min-h-0`}>
+                    <div className={`w-full ${!isDoctor ? 'max-w-4xl mx-auto flex flex-col items-center space-y-4' : 'w-full h-full min-h-0 flex flex-col justify-center items-center'}`}>
                     {/* Área da Tela de Vídeo Principal */}
                     <div
                         ref={videoContainerRef}
-                        className={`w-full relative overflow-hidden flex items-center justify-center shadow-2xl bg-gray-900 border border-gray-800 rounded-3xl ${
+                        className={`w-full relative overflow-hidden flex items-center justify-center shadow-2xl bg-gray-900 border border-gray-800 rounded-3xl min-h-0 ${
                             isDoctor
-                                ? 'flex-1 h-full min-h-[380px]'
-                                : 'aspect-[4/3] sm:aspect-video min-h-[280px] sm:min-h-[380px] max-h-[62vh]'
+                                ? 'h-full max-h-[calc(100vh-5.5rem)] aspect-video lg:aspect-auto'
+                                : 'aspect-[4/3] sm:aspect-video max-h-[48vh] sm:max-h-[52vh]'
                         }`}
                     >
                         {/* Feed de Vídeo Remoto Real */}
@@ -765,14 +769,14 @@ export const TeleconsultaRoom: React.FC = () => {
                             ref={remoteVideoRef}
                             autoPlay
                             playsInline
-                            className={`w-full h-full ${isFullscreen ? 'object-contain' : 'object-cover'} rounded-3xl transition-opacity duration-300 ${
-                                remoteStream && !peerVideoOff ? 'opacity-100' : 'opacity-0 absolute pointer-events-none'
+                            className={`absolute inset-0 w-full h-full ${isFullscreen ? 'object-contain' : 'object-cover'} rounded-3xl transition-opacity duration-300 ${
+                                remoteStream && !peerVideoOff ? 'opacity-100' : 'opacity-0 pointer-events-none'
                             }`}
                         />
 
                         {/* Fallback quando o par estiver sem câmera ou aguardando */}
                         {(!remoteStream || peerVideoOff) && (
-                            <div className="w-full h-full flex flex-col items-center justify-center relative bg-gradient-to-b from-gray-900 to-gray-950 p-6">
+                            <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-gray-950 p-6">
                                 <div className="relative">
                                     <div className={`w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr from-brand-orange to-amber-500 p-1 shadow-2xl ${
                                         connectionStatus === 'connected' ? '' : 'animate-pulse'
@@ -1039,7 +1043,7 @@ export const TeleconsultaRoom: React.FC = () => {
 
                 {/* COLUNA DIREITA: Cockpit Clínico do Médico Durante a Chamada */}
                 {isDoctor && (
-                    <div className="lg:col-span-7 xl:col-span-7 bg-brand-ice text-brown-dark flex flex-col border-t lg:border-t-0 lg:border-l border-brand-pot/30 overflow-hidden min-h-[450px]">
+                    <div className="lg:col-span-7 xl:col-span-7 bg-brand-ice text-brown-dark flex flex-col border-t lg:border-t-0 lg:border-l border-brand-pot/30 overflow-hidden h-full min-h-0">
                         {/* Seletor de Abas Clínicas com Alvos Táteis */}
                         <div className="p-2 sm:p-3 bg-white border-b border-brand-pot/30 flex items-center gap-1.5 shrink-0 overflow-x-auto">
                             <button
