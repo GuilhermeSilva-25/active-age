@@ -72,18 +72,23 @@ public class MercadoPagoGatewayImpl implements IMercadoPagoGateway {
                     lastName = pagadorNome.substring(idx + 1).trim();
                 }
 
-                String cpfLimpo = pagamento.getPagadorCpfCnpj() != null ? pagamento.getPagadorCpfCnpj().replaceAll("[^0-9]", "") : "";
-                if (cpfLimpo.length() < 11) {
-                    cpfLimpo = "12345678901";
-                }
+                String cpfLimpo = sanitizeOrGenerateValidCpf(pagamento.getPagadorCpfCnpj());
 
                 // Sandbox do MP rejeita e-mails fictícios de domínios restritos ou pertencentes ao próprio vendedor
-                String email = "paciente.activeage@gmail.com";
+                String email = pagamento.getTipo() == TipoPagamento.ASSINATURA_SAAS_MEDICO
+                        ? "medico.activeage@gmail.com"
+                        : "paciente.activeage@gmail.com";
+
                 if (pagamento.getPagadorId() != null && pagamento.getPagadorId().contains("@")
                         && !pagamento.getPagadorId().endsWith("@teste.com")
-                        && !pagamento.getPagadorId().endsWith("@example.com")) {
+                        && !pagamento.getPagadorId().endsWith("@example.com")
+                        && !pagamento.getPagadorId().endsWith("@testuser.com")) {
                     email = pagamento.getPagadorId();
                 }
+
+                String description = pagamento.getTipo() == TipoPagamento.ASSINATURA_SAAS_MEDICO
+                        ? "Active Age Assinatura SaaS Consultorio Digital - Dr(a). " + pagadorNome
+                        : "Active Age Telemedicina - Ref: " + pagamento.getReferenciaId();
 
                 Map<String, Object> identification = Map.of(
                         "type", "CPF",
@@ -99,7 +104,7 @@ public class MercadoPagoGatewayImpl implements IMercadoPagoGateway {
 
                 Map<String, Object> body = Map.of(
                         "transaction_amount", pagamento.getValorTotal(),
-                        "description", "Active Age Telemedicina - Ref: " + pagamento.getReferenciaId(),
+                        "description", description,
                         "payment_method_id", "pix",
                         "payer", payer
                 );
@@ -245,6 +250,40 @@ public class MercadoPagoGatewayImpl implements IMercadoPagoGateway {
                 && token.length() > 30
                 && !token.contains("ACTIVEAGE-MERCADOPAGO-TOKEN")
                 && !token.equals("TEST-TOKEN-123");
+    }
+
+    private String sanitizeOrGenerateValidCpf(String cpf) {
+        if (cpf == null) {
+            return "11144477735";
+        }
+        String clean = cpf.replaceAll("[^0-9]", "");
+        if (clean.length() != 11 || isAllSameDigits(clean) || !isValidCpfDigits(clean)) {
+            return "11144477735";
+        }
+        return clean;
+    }
+
+    private boolean isAllSameDigits(String s) {
+        return s.chars().distinct().count() <= 1;
+    }
+
+    private boolean isValidCpfDigits(String cpf) {
+        try {
+            int d1 = 0, d2 = 0;
+            for (int i = 0; i < 9; i++) {
+                int dig = cpf.charAt(i) - '0';
+                d1 += dig * (10 - i);
+                d2 += dig * (11 - i);
+            }
+            d1 = 11 - (d1 % 11);
+            if (d1 >= 10) d1 = 0;
+            d2 += d1 * 2;
+            d2 = 11 - (d2 % 11);
+            if (d2 >= 10) d2 = 0;
+            return (cpf.charAt(9) - '0' == d1) && (cpf.charAt(10) - '0' == d2);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

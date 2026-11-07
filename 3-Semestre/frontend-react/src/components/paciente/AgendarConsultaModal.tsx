@@ -180,15 +180,16 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
             const apptData = await res.json();
 
             // 2. Solicita geração de cobrança Pix com Split Direto no Microsserviço de Pagamento
+            let generatedPix: { qrCodePix: string; qrCodeBase64?: string } | null = null;
             try {
                 const payRes = await fetch('/api/v1/pagamentos/consulta', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         appointmentId: apptData.id,
-                        patientId: apptData.patientId || 'PACIENTE',
-                        patientNome: apptData.patientName || 'Paciente Active Age',
-                        patientCpf: '000.000.000-00',
+                        patientId: apptData.patientId || 'paciente.activeage@gmail.com',
+                        patientNome: apptData.patientName || 'Dona Maria da Silva',
+                        patientCpf: '111.444.777-35',
                         doctorId: doctor.id,
                         doctorNome: doctor.fullName,
                         valor: doctor.consultationFee || 250.00,
@@ -198,11 +199,12 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
 
                 if (payRes.ok) {
                     const payJson = await payRes.json();
-                    if (payJson.data?.qrCodePix) {
-                        setPixData({
+                    if (payJson.data?.qrCodePix && !payJson.data.qrCodePix.startsWith('PIX_CONTINGENCIA')) {
+                        generatedPix = {
                             qrCodePix: payJson.data.qrCodePix,
                             qrCodeBase64: payJson.data.qrCodeBase64,
-                        });
+                        };
+                        setPixData(generatedPix);
                     }
                 }
             } catch (payErr) {
@@ -210,7 +212,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
             }
 
             // Fallback para exibição do Pix regulamentado se o microsserviço retornar em modo de contingência
-            if (!pixData) {
+            if (!generatedPix) {
                 const fallbackPix = `00020126580014br.gov.bcb.pix0136activeage-teleconsulta-${apptData.id}520400005303986540${(doctor.consultationFee || 250).toFixed(2)}5802BR5925${doctor.fullName.substring(0, 25).toUpperCase()}6009SAO PAULO62070503***6304`;
                 setPixData({ qrCodePix: fallbackPix });
             }

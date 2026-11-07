@@ -65,8 +65,8 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
                 body: JSON.stringify({
                     doctorId,
                     doctorNome: doctorName,
-                    doctorEmail: doctorEmail || 'medico@activeage.com',
-                    doctorCpfCnpj: '00.000.000/0001-00',
+                    doctorEmail: doctorEmail || 'medico.activeage@gmail.com',
+                    doctorCpfCnpj: '111.444.777-35',
                     valor: 149.90,
                     metodo: method,
                 }),
@@ -79,7 +79,7 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
             const json = await res.json();
             const data = json.data;
 
-            if (method === 'PIX' && data?.qrCodePix) {
+            if (method === 'PIX' && data?.qrCodePix && !data.qrCodePix.startsWith('PIX_CONTINGENCIA')) {
                 setPixData({
                     qrCodePix: data.qrCodePix,
                     qrCodeBase64: data.qrCodeBase64,
