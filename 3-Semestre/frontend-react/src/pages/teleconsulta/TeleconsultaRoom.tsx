@@ -709,9 +709,10 @@ export const TeleconsultaRoom: React.FC = () => {
             {/* Layout Principal: Split-Screen no Computador / Empilhado no Celular */}
             <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
                 {/* COLUNA ESQUERDA: Janela de Vídeo Responsiva */}
-                <div className={`p-3 sm:p-5 flex flex-col justify-between bg-black relative ${isDoctor ? 'lg:col-span-6 xl:col-span-7' : 'lg:col-span-12'}`}>
+                <div className={`p-3 sm:p-5 flex flex-col ${isDoctor ? 'lg:col-span-5 xl:col-span-5 justify-between' : 'lg:col-span-12 justify-start items-center overflow-y-auto'} bg-black relative`}>
+                    <div className={`w-full ${!isDoctor ? 'max-w-3xl xl:max-w-4xl mx-auto flex flex-col items-center' : 'flex-1 flex flex-col justify-between'}`}>
                     {/* Área da Tela de Vídeo Principal */}
-                    <div className="flex-1 w-full bg-gray-900 rounded-3xl border border-gray-800 relative overflow-hidden flex items-center justify-center min-h-[220px] sm:min-h-[340px] shadow-2xl">
+                    <div className="w-full aspect-[4/3] sm:aspect-video max-h-[340px] sm:max-h-[400px] lg:max-h-[440px] xl:max-h-[480px] bg-gray-900 rounded-3xl border border-gray-800 relative overflow-hidden flex items-center justify-center shadow-2xl shrink-0">
                         {/* Feed de Vídeo Remoto Real */}
                         <video
                             ref={remoteVideoRef}
@@ -792,38 +793,43 @@ export const TeleconsultaRoom: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Badge de Status de Conexão no Canto Superior Direito */}
-                        <div className="absolute top-4 right-4 z-10">
-                            {connectionStatus === 'connected' && (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 backdrop-blur-xs shadow-md">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                    P2P Criptografado Ativo
-                                </span>
-                            )}
-                            {connectionStatus === 'waiting' && (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-950/80 text-amber-300 border border-amber-500/40 backdrop-blur-xs shadow-md">
-                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                                    Aguardando Participante
-                                </span>
-                            )}
-                            {connectionStatus === 'reconnecting' && (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-red-950/80 text-red-300 border border-red-500/40 backdrop-blur-xs shadow-md">
-                                    <AlertCircle className="w-3 h-3 text-red-400 animate-spin" />
-                                    Reconectando...
-                                </span>
-                            )}
+                        {/* Barra Superior de Status e Alertas dentro da Janela de Vídeo (Evita sobreposição no mobile) */}
+                        <div className="absolute top-2.5 sm:top-3 inset-x-2.5 sm:inset-x-3 z-10 flex flex-wrap items-center justify-between gap-1.5 pointer-events-none">
+                            {/* Alerta de Microfone Silenciado (Lado Esquerdo) */}
+                            <div className="pointer-events-auto">
+                                {peerMuted && connectionStatus === 'connected' && (
+                                    <div className="flex items-center gap-1 sm:gap-1.5 bg-red-950/90 border border-red-500/50 text-red-200 text-[10px] sm:text-xs px-2.5 sm:px-3 py-1 rounded-full backdrop-blur-md shadow-md">
+                                        <MicOff className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400 shrink-0" />
+                                        <span className="truncate max-w-[140px] sm:max-w-none">Microfone silenciado</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Badge de Status de Conexão (Lado Direito) */}
+                            <div className="pointer-events-auto ml-auto">
+                                {connectionStatus === 'connected' && (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 backdrop-blur-md shadow-md">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                                        P2P Criptografado
+                                    </span>
+                                )}
+                                {connectionStatus === 'waiting' && (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-amber-950/90 text-amber-300 border border-amber-500/50 backdrop-blur-md shadow-md">
+                                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
+                                        Aguardando
+                                    </span>
+                                )}
+                                {connectionStatus === 'reconnecting' && (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-red-950/90 text-red-300 border border-red-500/50 backdrop-blur-md shadow-md">
+                                        <AlertCircle className="w-3 h-3 text-red-400 animate-spin shrink-0" />
+                                        Reconectando...
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
-                        {/* Badge de Aviso se o Par Remoto estiver Mutado */}
-                        {peerMuted && connectionStatus === 'connected' && (
-                            <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-red-950/85 border border-red-500/40 text-red-200 text-xs px-3 py-1.5 rounded-full backdrop-blur-xs shadow-md">
-                                <MicOff className="w-3.5 h-3.5 text-red-400" />
-                                <span>Microfone do par silenciado</span>
-                            </div>
-                        )}
-
                         {/* Miniatura Picture-in-Picture do Feed Local */}
-                        <div className="absolute bottom-4 right-4 w-32 sm:w-44 h-24 sm:h-32 bg-gray-900/95 backdrop-blur-xs rounded-2xl border border-gray-700/80 shadow-2xl overflow-hidden flex items-center justify-center z-20">
+                        <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 w-28 sm:w-40 h-20 sm:h-28 bg-gray-900/95 backdrop-blur-xs rounded-2xl border border-gray-700/80 shadow-2xl overflow-hidden flex items-center justify-center z-20">
                             <video
                                 ref={localVideoRef}
                                 autoPlay
@@ -964,11 +970,12 @@ export const TeleconsultaRoom: React.FC = () => {
                             )}
                         </div>
                     )}
+                    </div>
                 </div>
 
                 {/* COLUNA DIREITA: Cockpit Clínico do Médico Durante a Chamada */}
                 {isDoctor && (
-                    <div className="lg:col-span-6 xl:col-span-5 bg-brand-ice text-brown-dark flex flex-col border-t lg:border-t-0 lg:border-l border-brand-pot/30 overflow-hidden min-h-[450px]">
+                    <div className="lg:col-span-7 xl:col-span-7 bg-brand-ice text-brown-dark flex flex-col border-t lg:border-t-0 lg:border-l border-brand-pot/30 overflow-hidden min-h-[450px]">
                         {/* Seletor de Abas Clínicas com Alvos Táteis */}
                         <div className="p-2 sm:p-3 bg-white border-b border-brand-pot/30 flex items-center gap-1.5 shrink-0 overflow-x-auto">
                             <button
