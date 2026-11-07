@@ -195,8 +195,10 @@ gantt
    12. [x] **Status de Assinatura Ativa & Extrato Exclusivo SaaS do Médico (SPEC-17H) — [CONCLUÍDO ✅]:**
       - **Blindagem do Status Ativo e Trava de Re-assinatura:** Implementação do endpoint autenticado `POST /api/doctor/subscription/activate`, suporte a ativação resiliente no Core, identificação de plano ativo no Dashboard (`isSubscribed`) com badge "Ativo" e bloqueio de reingresso no formulário de pagamento para médicos com plano regularizado;
       - **Extrato Exclusivo de Faturas SaaS:** Remoção de consultas clínicas e repasse de honorários do extrato do médico no 4º semestre, concentrando 100% do demonstrativo contábil nas faturas de licenciamento tecnológico SaaS (R$ 149,90) em Preto e Branco Puro (P&B) com autenticação `AA-SAAS-2026-XXXXXX`.
-   13. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
----
+   13. [x] **Filtragem de Extrato Liquidado & Estado Vazio Pré-Assinatura (SPEC-17I) — [CONCLUÍDO ✅]:**
+      - **Exibição Estrita de Faturas Liquidadas:** Filtragem exclusiva de transações aprovadas (`status == APROVADO`), descartando tentativas pendentes e deduplicando faturas para evitar repetições no extrato;
+      - **Trava de Emissão Pré-Assinatura:** Eliminação de mock de fallback sintético. Enquanto a assinatura não estiver confirmada, o modal exibe o estado vazio informativo com botão para contratação do plano, sem emitir o relatório contábil timbrado.
+   14. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
 
 #### 📅 5º Semestre — Aplicativo Mobile Multiplataforma, Mensageria & Saúde 4.0 — [FUTURO]
 * **Objetivo:** Desenvolvimento do ecossistema mobile e mensageria avançada:

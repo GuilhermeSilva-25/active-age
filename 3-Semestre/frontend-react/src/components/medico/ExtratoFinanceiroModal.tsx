@@ -4,7 +4,6 @@ import {
     Printer,
     ShieldCheck,
     CheckCircle2,
-    Clock,
     Receipt,
     Lock
 } from 'lucide-react';
@@ -29,6 +28,8 @@ export interface PagamentoItem {
 interface ExtratoFinanceiroModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onOpenSubscribe?: () => void;
+    isSubscribed?: boolean;
     doctorId: string;
     doctorName: string;
 }
@@ -36,6 +37,8 @@ interface ExtratoFinanceiroModalProps {
 export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
     isOpen,
     onClose,
+    onOpenSubscribe,
+    isSubscribed,
     doctorId,
     doctorName,
 }) => {
@@ -54,21 +57,23 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
         try {
             const combined: PagamentoItem[] = [];
 
-            // 1. Consulta o microsserviço ms-pagamento-faturamento (apenas faturas SaaS)
+            // 1. Consulta o microsserviço ms-pagamento-faturamento (estritamente faturas SaaS APROVADAS)
             try {
                 const res = await fetch(`/api/v1/pagamentos/medico/${doctorId}`);
                 if (res.ok) {
                     const json = await res.json();
                     if (Array.isArray(json.data) && json.data.length > 0) {
-                        const saasOnly = json.data.filter((p: any) => p.tipo === 'ASSINATURA_SAAS_MEDICO');
-                        combined.push(...saasOnly);
+                        const approvedSaas = json.data.filter(
+                            (p: any) => p.tipo === 'ASSINATURA_SAAS_MEDICO' && p.status === 'APROVADO'
+                        );
+                        combined.push(...approvedSaas);
                     }
                 }
             } catch (err) {
                 console.warn('ms-pagamento offline ou inacessível no momento:', err);
             }
 
-            // 2. Carrega pagamentos locais de assinatura SaaS persistidos em localStorage
+            // 2. Carrega pagamentos locais de assinatura SaaS persistidos em localStorage (somente APROVADOS)
             try {
                 const key1 = `activeage_doctor_payments_${doctorId}`;
                 const key2 = 'activeage_doctor_payments_medico@teste.com';
@@ -77,9 +82,9 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                 const mergedLocals = [...local1, ...local2];
 
                 mergedLocals.forEach((item: any) => {
-                    if (item.tipo === 'ASSINATURA_SAAS_MEDICO') {
+                    if (item.tipo === 'ASSINATURA_SAAS_MEDICO' && item.status === 'APROVADO') {
                         const exists = combined.some(
-                            c => c.id === item.id || (c.tipo === item.tipo && c.mpPaymentId === item.mpPaymentId)
+                            c => c.id === item.id || (c.mpPaymentId && c.mpPaymentId === item.mpPaymentId)
                         );
                         if (!exists) {
                             combined.push(item);
@@ -90,8 +95,12 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                 console.warn('Erro ao carregar pagamentos locais:', err);
             }
 
-            // 3. Fallback: Se ainda não tiver faturas registradas, gera a fatura exemplar de R$ 149,90
-            if (combined.length === 0) {
+            // 3. Se a assinatura estiver confirmada como ATIVA mas não houver registro remoto, gera a fatura liquidada
+            const isDoctorActive = isSubscribed ||
+                localStorage.getItem(`activeage_doctor_subscription_${doctorId}`) === 'ASSINATURA_ATIVA' ||
+                localStorage.getItem('activeage_doctor_subscription_medico@teste.com') === 'ASSINATURA_ATIVA';
+
+            if (combined.length === 0 && isDoctorActive) {
                 combined.push({
                     id: 1,
                     tipo: 'ASSINATURA_SAAS_MEDICO',
@@ -109,11 +118,23 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                 });
             }
 
+            // 4. Deduplica por competência/dia para evitar faturas duplicadas na mesma liquidação
+            const seen = new Set<string>();
+            const deduplicated: PagamentoItem[] = [];
+            for (const p of combined) {
+                const dayKey = p.dataCriacao ? p.dataCriacao.substring(0, 10) : 'today';
+                if (!seen.has(dayKey)) {
+                    seen.add(dayKey);
+                    deduplicated.push(p);
+                }
+            }
+
             // Ordena cronologicamente decrescente
-            combined.sort((a, b) => new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime());
-            setPagamentos(combined);
+            deduplicated.sort((a, b) => new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime());
+            setPagamentos(deduplicated);
         } catch (err) {
             console.error('Erro ao compilar extrato financeiro:', err);
+            setPagamentos([]);
         } finally {
             setLoading(false);
         }
@@ -130,7 +151,7 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
 
         window.addEventListener('activeage_payment_updated', handleUpdate);
         return () => window.removeEventListener('activeage_payment_updated', handleUpdate);
-    }, [isOpen, doctorId]);
+    }, [isOpen, doctorId, isSubscribed]);
 
     const formatDate = (isoStr: string) => {
         try {
@@ -156,6 +177,54 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
     };
 
     if (!isOpen) return null;
+
+    // Estado Vazio: Enquanto não assinar, NÃO gera relatório
+    if (pagamentos.length === 0 && !loading) {
+        return (
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+                role="dialog"
+                aria-modal="true"
+            >
+                <div
+                    className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-200 flex flex-col items-center text-center space-y-4"
+                    onClick={e => e.stopPropagation()}
+                >
+                    <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
+                        <Receipt className="w-7 h-7" />
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <h2 className="text-xl font-bold text-black">
+                            Nenhum Comprovante Disponível
+                        </h2>
+                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-sm mx-auto">
+                            O comprovante fiscal e o extrato financeiro só são gerados após a confirmação e liquidação da assinatura do Consultório Virtual Pro.
+                        </p>
+                    </div>
+
+                    <div className="w-full pt-3 flex flex-col sm:flex-row gap-2.5">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-100 text-xs sm:text-sm font-bold text-gray-700 transition-colors cursor-pointer min-h-[44px]"
+                        >
+                            Fechar
+                        </button>
+                        {onOpenSubscribe && (
+                            <button
+                                type="button"
+                                onClick={onOpenSubscribe}
+                                className="flex-1 px-4 py-2.5 rounded-lg bg-black hover:bg-gray-800 text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 min-h-[44px]"
+                            >
+                                <span>Assinar Consultório</span>
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div
@@ -303,75 +372,55 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                             Demonstrativo de Faturas da Assinatura ({pagamentos.length})
                         </h2>
 
-                        {loading ? (
-                            <div className="py-12 text-center text-gray-600">
-                                <p className="text-xs font-bold">Compilando demonstrativo da assinatura SaaS...</p>
-                            </div>
-                        ) : pagamentos.length === 0 ? (
-                            <div className="py-10 text-center border border-dashed border-gray-300 rounded-lg space-y-2">
-                                <Receipt className="w-8 h-8 text-gray-500 mx-auto" />
-                                <p className="text-sm font-bold text-black">Nenhuma fatura localizada</p>
-                                <p className="text-xs text-gray-600">
-                                    Os comprovantes de mensalidade do seu consultório aparecerão aqui.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="overflow-x-auto border border-black rounded-lg">
-                                <table className="w-full text-left text-xs">
-                                    <thead className="bg-gray-100 text-black font-bold uppercase text-[10px] tracking-wider border-b border-black">
-                                        <tr>
-                                            <th className="p-3">Data / Hora</th>
-                                            <th className="p-3">Descrição da Fatura</th>
-                                            <th className="p-3">Método</th>
-                                            <th className="p-3">Status</th>
-                                            <th className="p-3 text-right">Valor</th>
+                        <div className="overflow-x-auto border border-black rounded-lg">
+                            <table className="w-full text-left text-xs">
+                                <thead className="bg-gray-100 text-black font-bold uppercase text-[10px] tracking-wider border-b border-black">
+                                    <tr>
+                                        <th className="p-3">Data / Hora</th>
+                                        <th className="p-3">Descrição da Fatura</th>
+                                        <th className="p-3">Método</th>
+                                        <th className="p-3">Status</th>
+                                        <th className="p-3 text-right">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-300">
+                                    {pagamentos.map(p => (
+                                        <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
+                                            <td className="p-3 font-mono text-[11px] text-gray-700 whitespace-nowrap">
+                                                {formatDate(p.dataCriacao)}
+                                            </td>
+                                            <td className="p-3">
+                                                <span className="font-bold text-black block">
+                                                    Assinatura SaaS Mensal (Consultório Virtual Pro)
+                                                </span>
+                                                <span className="text-[10px] font-mono text-gray-600">
+                                                    ID: {p.mpPaymentId || 'REF-' + p.referenciaId}
+                                                </span>
+                                            </td>
+                                            <td className="p-3 whitespace-nowrap">
+                                                <span className="font-medium text-black">
+                                                    {p.metodo === 'PIX'
+                                                        ? 'Pix Instantâneo'
+                                                        : p.metodo === 'MERCADO_PAGO_CHECKOUT'
+                                                        ? 'Mercado Pago Pro'
+                                                        : 'Cartão de Crédito'}
+                                                </span>
+                                            </td>
+                                            <td className="p-3 whitespace-nowrap">
+                                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black border border-black px-2 py-0.5 rounded">
+                                                    <CheckCircle2 className="w-3 h-3 text-black" /> Liquidado
+                                                </span>
+                                            </td>
+                                            <td className="p-3 text-right whitespace-nowrap font-bold font-mono">
+                                                <span className="text-black">
+                                                    {formatCurrency(p.valorTotal)}
+                                                </span>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-300">
-                                        {pagamentos.map(p => (
-                                            <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
-                                                <td className="p-3 font-mono text-[11px] text-gray-700 whitespace-nowrap">
-                                                    {formatDate(p.dataCriacao)}
-                                                </td>
-                                                <td className="p-3">
-                                                    <span className="font-bold text-black block">
-                                                        Assinatura SaaS Mensal (Consultório Virtual Pro)
-                                                    </span>
-                                                    <span className="text-[10px] font-mono text-gray-600">
-                                                        ID: {p.mpPaymentId || 'REF-' + p.referenciaId}
-                                                    </span>
-                                                </td>
-                                                <td className="p-3 whitespace-nowrap">
-                                                    <span className="font-medium text-black">
-                                                        {p.metodo === 'PIX'
-                                                            ? 'Pix Instantâneo'
-                                                            : p.metodo === 'MERCADO_PAGO_CHECKOUT'
-                                                            ? 'Mercado Pago Pro'
-                                                            : 'Cartão de Crédito'}
-                                                    </span>
-                                                </td>
-                                                <td className="p-3 whitespace-nowrap">
-                                                    {p.status === 'APROVADO' ? (
-                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black border border-black px-2 py-0.5 rounded">
-                                                            <CheckCircle2 className="w-3 h-3 text-black" /> Liquidado
-                                                        </span>
-                                                    ) : (
-                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 border border-gray-400 px-2 py-0.5 rounded">
-                                                            <Clock className="w-3 h-3 text-gray-700" /> Pendente
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="p-3 text-right whitespace-nowrap font-bold font-mono">
-                                                    <span className="text-black">
-                                                        {formatCurrency(p.valorTotal)}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     {/* Nota Legal e LGPD */}

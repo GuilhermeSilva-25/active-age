@@ -749,6 +749,11 @@ export function DashboardMedico() {
             <ExtratoFinanceiroModal
                 isOpen={isExtratoModalOpen}
                 onClose={() => setIsExtratoModalOpen(false)}
+                onOpenSubscribe={() => {
+                    setIsExtratoModalOpen(false);
+                    setIsSaaSModalOpen(true);
+                }}
+                isSubscribed={isSubscribed}
                 doctorId={profile?.id || ''}
                 doctorName={profile?.fullName || ''}
             />

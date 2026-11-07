@@ -187,6 +187,7 @@ public class PagamentoServiceImpl implements IPagamentoService {
         todos.addAll(pagos);
 
         return todos.stream()
+                .filter(p -> p.getStatus() == null || p.getStatus() == StatusPagamento.APROVADO)
                 .sorted((a, b) -> b.getDataCriacao().compareTo(a.getDataCriacao()))
                 .map(this::mapToResponse)
                 .toList();
