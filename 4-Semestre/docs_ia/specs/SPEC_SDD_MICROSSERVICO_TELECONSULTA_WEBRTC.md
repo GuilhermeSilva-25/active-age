@@ -5,7 +5,7 @@
 **Disciplinas de Foco:** Sistemas Distribuídos (ILP-038) & Integração e Entrega Contínua (ISW-033)  
 **Líder Técnico & Product Owner (PO):** Guilherme Silva  
 **Arquiteto & Engenheiro de Software:** Antigravity (AI)  
-**Status da Spec:** Em Execução (Micro Tarefas 16.1 e 16.2 Concluídas ✅) 🚀  
+**Status da Spec:** Em Execução (Micro Tarefas 16.1, 16.2 e 16.3 Concluídas ✅) 🚀  
 **Data da Elaboração:** 03 de Novembro de 2026
 
 ---
@@ -133,13 +133,13 @@ flowchart LR
 - [x] Desalocação automática da sala em memória $\mathcal{O}(1)$ quando o último participante se desconecta;
 - [x] Teste automatizado com dois clientes virtuais de socket (`socket.io-client`) simulando handshake de conexão, troca de SDP/ICE, toggle-media e desconexão (10 testes totais no Vitest).
 
-#### 📌 Micro Tarefa 16.3: Integração no Frontend React 19 (`TeleconsultaRoom.tsx`)
-- Implementação do custom hook [`useWebRTC.ts`](../../3-Semestre/frontend-react/src/hooks/useWebRTC.ts);
-- Configuração do `RTCPeerConnection` com servidores STUN do Google (`stun:stun.l.google.com:19302`);
-- Exibição de 2 feeds de vídeo em `TeleconsultaRoom.tsx`:
+#### 📌 Micro Tarefa 16.3: Integração no Frontend React 19 (`TeleconsultaRoom.tsx`) — [CONCLUÍDA ✅]
+- [x] Implementação do custom hook [`useWebRTC.ts`](../../3-Semestre/frontend-react/src/hooks/useWebRTC.ts);
+- [x] Configuração do `RTCPeerConnection` com servidores STUN do Google (`stun:stun.l.google.com:19302`);
+- [x] Exibição de 2 feeds de vídeo em `TeleconsultaRoom.tsx`:
   - Vídeo principal: Stream de alta definição do participante remoto (Médico na visão do paciente, e Paciente na visão do médico);
-  - Vídeo em miniatura (Picture-in-Picture): Stream da câmera local do usuário;
-- Sincronização dos seletores táteis de microfone e câmera com a faixa de mídia do WebRTC (`track.enabled`).
+  - Vídeo em miniatura (Picture-in-Picture): Stream da câmera local do usuário com espelhamento `scale-x-[-1]`;
+- [x] Sincronização dos seletores táteis de microfone e câmera com a faixa de mídia do WebRTC (`track.enabled`) e liberação de hardware no cleanup (`track.stop()`).
 
 #### 📌 Micro Tarefa 16.4: Resiliência de Rede, Fallback de Permissões e CI
 - Fila de buffer para *ICE Candidates* (caso cheguem antes da aplicação da descrição remota `remoteDescription`);

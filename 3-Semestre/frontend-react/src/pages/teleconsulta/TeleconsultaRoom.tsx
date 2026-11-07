@@ -22,6 +22,7 @@ import {
     LogOut,
 } from 'lucide-react';
 import { useAuthUser } from '../../hooks/useAuthUser';
+import { useWebRTC } from '../../hooks/useWebRTC';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { DocumentPrintModal } from '../../components/teleconsulta/DocumentPrintModal';
 import type { MedicalRecord, MedicalDocument, PatientExamItem, MedicalDocumentType } from '../../types/teleconsulta';
@@ -49,9 +50,32 @@ export const TeleconsultaRoom: React.FC = () => {
     const [appointment, setAppointment] = useState<AppointmentDetails | null>(null);
     const [loadingAppt, setLoadingAppt] = useState(true);
 
-    // Controles de Chamada
-    const [isMuted, setIsMuted] = useState(false);
-    const [isVideoOff, setIsVideoOff] = useState(false);
+    const isDoctor = user?.role === 'ROLE_MEDICO' || user?.role === 'ROLE_ADMIN';
+    const isCallActive = !loadingAppt && !!appointment && appointment.status !== 'REALIZADA';
+
+    // Cliente WebRTC Nativo e Gerenciamento de Mídia (SPEC-16.3)
+    const {
+        remoteStream,
+        connectionStatus,
+        isMuted,
+        isVideoOff,
+        peerMuted,
+        peerVideoOff,
+        peerName,
+        errorMessage: rtcError,
+        toggleAudio,
+        toggleVideo,
+        leaveRoom,
+        localVideoRef,
+        remoteVideoRef,
+    } = useWebRTC({
+        appointmentId: appointmentId || '',
+        userId: user?.id || user?.email || '',
+        userRole: user?.role || 'ROLE_PACIENTE',
+        userName: user?.fullName || (isDoctor ? 'Médico' : 'Paciente'),
+        enabled: isCallActive,
+    });
+
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
     // Abas do Cockpit Médico
@@ -108,7 +132,17 @@ export const TeleconsultaRoom: React.FC = () => {
         message: '',
     });
 
-    const isDoctor = user?.role === 'ROLE_MEDICO' || user?.role === 'ROLE_ADMIN';
+    // Notificação amigável de erro de WebRTC/mídia
+    useEffect(() => {
+        if (rtcError) {
+            setFeedback({
+                isOpen: true,
+                type: 'warning',
+                title: 'Aviso de Mídia / WebRTC',
+                message: rtcError,
+            });
+        }
+    }, [rtcError]);
 
     // Timer da Consulta
     useEffect(() => {
@@ -430,6 +464,7 @@ export const TeleconsultaRoom: React.FC = () => {
             title: 'Sair da Sala Virtual?',
             message: 'Você voltará ao seu painel principal, mas sua chamada continuará ativa e você poderá retornar quando desejar.',
             actionToConfirm: () => {
+                leaveRoom();
                 navigate('/paciente/dashboard');
             },
         });
@@ -438,6 +473,7 @@ export const TeleconsultaRoom: React.FC = () => {
     // Saída do Médico
     const handleDoctorLeave = () => {
         if (medicalRecord.status === 'FINALIZED') {
+            leaveRoom();
             navigate('/medico/dashboard');
             return;
         }
@@ -448,6 +484,7 @@ export const TeleconsultaRoom: React.FC = () => {
             title: 'Sair da Sala sem Finalizar?',
             message: 'A consulta permanecerá em andamento até que o prontuário seja finalizado e assinado digitalmente. Deseja retornar ao seu painel?',
             actionToConfirm: () => {
+                leaveRoom();
                 navigate('/medico/dashboard');
             },
         });
@@ -671,54 +708,122 @@ export const TeleconsultaRoom: React.FC = () => {
                 <div className={`p-3 sm:p-5 flex flex-col justify-between bg-black relative ${isDoctor ? 'lg:col-span-6 xl:col-span-7' : 'lg:col-span-12'}`}>
                     {/* Área da Tela de Vídeo Principal */}
                     <div className="flex-1 w-full bg-gray-900 rounded-3xl border border-gray-800 relative overflow-hidden flex items-center justify-center min-h-[220px] sm:min-h-[340px] shadow-2xl">
-                        {!isVideoOff ? (
+                        {/* Feed de Vídeo Remoto Real */}
+                        <video
+                            ref={remoteVideoRef}
+                            autoPlay
+                            playsInline
+                            className={`w-full h-full object-cover rounded-3xl transition-opacity duration-300 ${
+                                remoteStream && !peerVideoOff ? 'opacity-100' : 'opacity-0 absolute pointer-events-none'
+                            }`}
+                        />
+
+                        {/* Fallback quando o par estiver sem câmera ou aguardando */}
+                        {(!remoteStream || peerVideoOff) && (
                             <div className="w-full h-full flex flex-col items-center justify-center relative bg-gradient-to-b from-gray-900 to-gray-950 p-6">
                                 <div className="relative">
-                                    <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr from-brand-orange to-amber-500 p-1 shadow-2xl animate-pulse">
+                                    <div className={`w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-gradient-to-tr from-brand-orange to-amber-500 p-1 shadow-2xl ${
+                                        connectionStatus === 'connected' ? '' : 'animate-pulse'
+                                    }`}>
                                         <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
                                             <User className="w-14 h-14 sm:w-20 sm:h-20 text-gray-300" />
                                         </div>
                                     </div>
-                                    <div className="absolute -bottom-1 -right-1 p-1.5 bg-emerald-500 rounded-full border-2 border-gray-900 text-white">
-                                        <ShieldCheck className="w-4 h-4" />
-                                    </div>
+                                    {connectionStatus === 'connected' && (
+                                        <div className="absolute -bottom-1 -right-1 p-1.5 bg-emerald-500 rounded-full border-2 border-gray-900 text-white shadow">
+                                            <ShieldCheck className="w-4 h-4" />
+                                        </div>
+                                    )}
                                 </div>
 
-                                <div className="mt-4 text-center">
+                                <div className="mt-4 text-center max-w-sm">
                                     <h3 className="text-base sm:text-lg font-black text-white">
-                                        {isDoctor ? appointment?.patientName : appointment?.doctorName}
+                                        {peerName || (isDoctor ? appointment?.patientName : appointment?.doctorName)}
                                     </h3>
-                                    <p className="text-xs text-emerald-400 font-bold flex items-center justify-center gap-1.5 mt-0.5">
-                                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                                        Conectado em Tempo Real • Áudio e Vídeo Ativos
-                                    </p>
-                                </div>
 
-                                {/* Ondas de Voz Simuladas */}
-                                <div className="flex items-center gap-1 mt-4">
-                                    <span className="w-1 h-3 bg-brand-orange rounded-full animate-bounce" />
-                                    <span className="w-1 h-5 bg-brand-orange rounded-full animate-bounce [animation-delay:0.15s]" />
-                                    <span className="w-1 h-7 bg-brand-orange rounded-full animate-bounce [animation-delay:0.3s]" />
-                                    <span className="w-1 h-4 bg-brand-orange rounded-full animate-bounce [animation-delay:0.45s]" />
-                                    <span className="w-1 h-2 bg-brand-orange rounded-full animate-bounce [animation-delay:0.2s]" />
+                                    {connectionStatus === 'connected' && peerVideoOff && (
+                                        <p className="text-xs text-amber-400 font-bold flex items-center justify-center gap-1.5 mt-1">
+                                            <VideoOff className="w-3.5 h-3.5" />
+                                            Participante desativou a câmera temporariamente
+                                        </p>
+                                    )}
+
+                                    {connectionStatus === 'waiting' && (
+                                        <p className="text-xs text-amber-400 font-bold flex items-center justify-center gap-1.5 mt-1">
+                                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                                            Aguardando entrada na sala de teleconsulta...
+                                        </p>
+                                    )}
+
+                                    {connectionStatus === 'reconnecting' && (
+                                        <p className="text-xs text-red-400 font-bold flex items-center justify-center gap-1.5 mt-1">
+                                            <AlertCircle className="w-3.5 h-3.5 animate-spin" />
+                                            Oscilação de rede detectada. Reconectando...
+                                        </p>
+                                    )}
+
+                                    {connectionStatus === 'acquiring' && (
+                                        <p className="text-xs text-blue-400 font-bold flex items-center justify-center gap-1.5 mt-1">
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                            Inicializando câmera e microfone...
+                                        </p>
+                                    )}
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="text-center p-6 text-gray-500">
-                                <VideoOff className="w-12 h-12 mx-auto mb-2 text-gray-600" />
-                                <p className="text-sm font-bold">Câmera desativada</p>
                             </div>
                         )}
 
-                        {/* Miniatura Picture-in-Picture do Usuário Local */}
-                        <div className="absolute bottom-4 right-4 w-28 sm:w-36 h-20 sm:h-24 bg-gray-800/90 backdrop-blur-xs rounded-2xl border border-gray-700/80 shadow-lg overflow-hidden flex items-center justify-center">
-                            <div className="text-center p-2">
-                                <div className="w-7 h-7 mx-auto rounded-full bg-brand-orange/20 text-brand-orange flex items-center justify-center text-xs font-black mb-1">
-                                    Você
-                                </div>
-                                <span className="text-[10px] text-gray-300 font-bold truncate block max-w-[100px]">
-                                    {user?.fullName || 'Participante'}
+                        {/* Badge de Status de Conexão no Canto Superior Direito */}
+                        <div className="absolute top-4 right-4 z-10">
+                            {connectionStatus === 'connected' && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 backdrop-blur-xs shadow-md">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                    P2P Criptografado Ativo
                                 </span>
+                            )}
+                            {connectionStatus === 'waiting' && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-950/80 text-amber-300 border border-amber-500/40 backdrop-blur-xs shadow-md">
+                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                                    Aguardando Participante
+                                </span>
+                            )}
+                            {connectionStatus === 'reconnecting' && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-red-950/80 text-red-300 border border-red-500/40 backdrop-blur-xs shadow-md">
+                                    <AlertCircle className="w-3 h-3 text-red-400 animate-spin" />
+                                    Reconectando...
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Badge de Aviso se o Par Remoto estiver Mutado */}
+                        {peerMuted && connectionStatus === 'connected' && (
+                            <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-red-950/85 border border-red-500/40 text-red-200 text-xs px-3 py-1.5 rounded-full backdrop-blur-xs shadow-md">
+                                <MicOff className="w-3.5 h-3.5 text-red-400" />
+                                <span>Microfone do par silenciado</span>
+                            </div>
+                        )}
+
+                        {/* Miniatura Picture-in-Picture do Feed Local */}
+                        <div className="absolute bottom-4 right-4 w-32 sm:w-44 h-24 sm:h-32 bg-gray-900/95 backdrop-blur-xs rounded-2xl border border-gray-700/80 shadow-2xl overflow-hidden flex items-center justify-center z-20">
+                            <video
+                                ref={localVideoRef}
+                                autoPlay
+                                playsInline
+                                muted
+                                className={`w-full h-full object-cover scale-x-[-1] rounded-2xl ${
+                                    !isVideoOff ? 'block' : 'hidden'
+                                }`}
+                            />
+                            {isVideoOff && (
+                                <div className="text-center p-2">
+                                    <VideoOff className="w-6 h-6 text-gray-500 mx-auto mb-1" />
+                                    <span className="text-[10px] text-gray-400 font-bold block">
+                                        Câmera Desligada
+                                    </span>
+                                </div>
+                            )}
+                            <div className="absolute bottom-1.5 left-2 right-2 flex items-center justify-between text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                                <span className="truncate">Você</span>
+                                {isMuted && <MicOff className="w-3 h-3 text-red-400 shrink-0" />}
                             </div>
                         </div>
                     </div>
@@ -728,7 +833,7 @@ export const TeleconsultaRoom: React.FC = () => {
                         {/* Botão Microfone */}
                         <button
                             type="button"
-                            onClick={() => setIsMuted((prev) => !prev)}
+                            onClick={toggleAudio}
                             className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
                                 isMuted
                                     ? 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30'
@@ -743,7 +848,7 @@ export const TeleconsultaRoom: React.FC = () => {
                         {/* Botão Câmera */}
                         <button
                             type="button"
-                            onClick={() => setIsVideoOff((prev) => !prev)}
+                            onClick={toggleVideo}
                             className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
                                 isVideoOff
                                     ? 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30'

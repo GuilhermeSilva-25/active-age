@@ -155,7 +155,8 @@ gantt
   4. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [EM ANDAMENTO 🚀]:**
      - **Micro Tarefa 16.1 [CONCLUÍDA ✅]:** Fundação do microsserviço `4-Semestre/ms-teleconsulta-signaling/` em Node.js LTS, TypeScript, Express, Socket.io, Dockerfile multi-stage, healthcheck (`GET /health`) e testes unitários Vitest.
      - **Micro Tarefa 16.2 [CONCLUÍDA ✅]:** Hub de sinalização WebRTC com isolamento de salas por `appointmentId`, trava de 2 participantes (CFM/LGPD), roteamento de SDP Offer/Answer e ICE Candidates e 10 testes automatizados (SPEC-16.2).
-     - **Micro Tarefa 16.3 [PRÓXIMO PASSO]:** Cliente WebRTC no Frontend React 19 (`TeleconsultaRoom.tsx`) com hook `useWebRTC.ts` e stream remoto P2P.
+     - **Micro Tarefa 16.3 [CONCLUÍDA ✅]:** Cliente WebRTC no Frontend React 19 (`TeleconsultaRoom.tsx`) com hook `useWebRTC.ts`, feeds de vídeo remoto e local PiP, sincronização de mute e STUN Google (SPEC-16.3).
+     - **Micro Tarefa 16.4 [PRÓXIMO PASSO]:** Resiliência de rede, fallback de permissões e workflow no GitHub Actions.
   5. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
      - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022).
   6. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
