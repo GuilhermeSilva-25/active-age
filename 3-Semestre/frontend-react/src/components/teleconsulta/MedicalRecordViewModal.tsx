@@ -36,6 +36,7 @@ export const MedicalRecordViewModal: React.FC<MedicalRecordViewModalProps> = ({
     const [loading, setLoading] = useState(true);
 
     const [selectedDocForPrint, setSelectedDocForPrint] = useState<MedicalDocument | null>(null);
+    const [activeTab, setActiveTab] = useState<'RECORD' | 'DOCS'>('RECORD');
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
 
     useEffect(() => {
@@ -125,6 +126,34 @@ export const MedicalRecordViewModal: React.FC<MedicalRecordViewModalProps> = ({
                         <X className="w-4 h-4" />
                     </button>
                 </header>
+
+                {/* Abas de Navegação: Prontuário Principal vs Documentos Oficiais (SPEC-17F) */}
+                <div className="flex items-center gap-2 border-b border-brand-pot/30 px-5 sm:px-8 pt-3 bg-brand-ice/40 shrink-0">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('RECORD')}
+                        className={`pb-3 px-3 text-xs sm:text-sm font-black border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+                            activeTab === 'RECORD'
+                                ? 'border-brand-orange text-brand-orange'
+                                : 'border-transparent text-brown-light hover:text-brown-dark'
+                        }`}
+                    >
+                        <FileText className="w-4 h-4" />
+                        <span>Prontuário Clínico Principal</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('DOCS')}
+                        className={`pb-3 px-3 text-xs sm:text-sm font-black border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+                            activeTab === 'DOCS'
+                                ? 'border-brand-orange text-brand-orange'
+                                : 'border-transparent text-brown-light hover:text-brown-dark'
+                        }`}
+                    >
+                        <FileSignature className="w-4 h-4" />
+                        <span>Documentos & Receitas (${documents.length})</span>
+                    </button>
+                </div>
 
                 {/* Conteúdo com Scroll */}
                 <main className="p-5 sm:p-8 overflow-y-auto space-y-6 text-brown-dark">

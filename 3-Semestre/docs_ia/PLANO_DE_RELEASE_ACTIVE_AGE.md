@@ -178,7 +178,16 @@ gantt
       - **Isolamento de Impressão Global:** Regra CSS `@media print` e `@page` em `index.css` com classe universal `.printable-document`, eliminando vazamento da página de fundo (`print leak`) em todos os modais imprimíveis;
       - **Comprovante P&B Oficial:** Reformulação de `ComprovantePagamentoModal.tsx` em Preto e Branco puro alinhado a `DocumentPrintModal.tsx` (receituários, laudos e atestados), com molduras pretas, cabeçalho institucional, tabela discriminatória de split direto e código de validação digital;
       - **Blindagem nos Demais Modais:** Aplicação da classe `.printable-document` em `DocumentPrintModal.tsx` e `ExtratoFinanceiroModal.tsx`.
-   9. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+   9. [x] **Limpeza de Cards de Teste no Checkout do Paciente (SPEC-17E) — [CONCLUÍDO ✅]:**
+      - Remoção dos alertas de sandbox na aba Pix e do card "Checkout Oficial (Link Seguro)" na aba Mercado Pago no `AgendarConsultaModal.tsx`.
+   10. [x] **Refinamentos de UX do Painel Médico, Central de Prontuários e Checkout SaaS (SPEC-17F) — [CONCLUÍDO ✅]:**
+      - **Identidade do Médico:** Remoção de `"(Médico Teste)"`, normalizando para `"Dr. Marcos Silveira"` no backend e semeador;
+      - **Padronização da Agenda:** Substituição dos fundos policromáticos por cards brancos clínicos neutros com badges harmoniosos em `MinhaAgenda.tsx`;
+      - **Limpeza do Dashboard Médico:** Remoção do card solto de sala de teleconsulta e do card de avaliação por estrelas (Res. CFM nº 2.336/2023), reorganizando para 3 métricas superiores;
+      - **Cronômetro Regressivo Vivo:** Contador regressivo em tempo real (dias, horas, minutos e segundos) baseado em `trialExpiresAt` no card de Assinatura SaaS;
+      - **Central de Prontuários & Documentos:** Trava de acesso para consultas não realizadas e separação em abas dedicadas no `MedicalRecordViewModal.tsx` entre Prontuário Clínico e Documentos/Receitas Oficiais;
+      - **Assinatura SaaS em Duas Etapas:** Eliminação de siglas na lista de benefícios, criação da Página 2 de pagamento com formulário transparente de cartão de crédito, Pix e Mercado Pago Pro, além de botão `← Voltar para o Plano`.
+   11. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---

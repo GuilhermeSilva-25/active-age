@@ -65,7 +65,7 @@ class DoctorScheduleAutomationServiceTest {
         testDoctor = new User();
         testDoctor.setId("doc-teste-123");
         testDoctor.setEmail("medico@teste.com");
-        testDoctor.setFullName("Dr. Marcos Silveira (Médico Teste)");
+        testDoctor.setFullName("Dr. Marcos Silveira");
         testDoctor.setCrm("123456");
         testDoctor.setUfCrm("SP");
         testDoctor.setRole(Role.ROLE_MEDICO);

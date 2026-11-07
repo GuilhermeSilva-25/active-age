@@ -324,7 +324,7 @@ export const MinhaAgenda: React.FC = () => {
                                 {st === 'TODOS' && (
                                     <span className="inline-flex items-center gap-1.5">
                                         <span>Todos os Horários</span>
-                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-brand-orange/15 text-brand-orange font-black">
+                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-gray-200 text-gray-800 font-bold">
                                             {slots.length}
                                         </span>
                                     </span>
@@ -332,7 +332,7 @@ export const MinhaAgenda: React.FC = () => {
                                 {st === 'LIVRE' && (
                                     <span className="inline-flex items-center gap-1.5">
                                         <span>Apenas Livres</span>
-                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-black">
+                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-gray-200 text-gray-800 font-bold">
                                             {slots.filter(s => s.status === 'LIVRE').length}
                                         </span>
                                     </span>
@@ -340,7 +340,7 @@ export const MinhaAgenda: React.FC = () => {
                                 {st === 'OCUPADO' && (
                                     <span className="inline-flex items-center gap-1.5">
                                         <span>Consultas Agendadas</span>
-                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-blue-100 text-blue-800 font-black">
+                                        <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-gray-200 text-gray-800 font-bold">
                                             {slots.filter(s => s.status === 'OCUPADO').length}
                                         </span>
                                     </span>

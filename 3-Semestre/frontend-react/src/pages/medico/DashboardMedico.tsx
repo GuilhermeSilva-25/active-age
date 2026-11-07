@@ -14,8 +14,7 @@ import {
     ArrowRight,
     LogOut,
     CreditCard,
-    Star,
-    Lock,
+        Lock,
     Loader2,
     Receipt
 } from 'lucide-react';
@@ -48,6 +47,7 @@ interface DoctorStats {
     totalAppointments: number;
     freeSlots: number;
     trialDaysRemaining: number;
+    trialExpiresAt?: string;
     subscriptionStatus?: string;
     subscriptionExpiresAt?: string;
 }
@@ -72,6 +72,40 @@ export function DashboardMedico() {
     const [selectedApptForRecord, setSelectedApptForRecord] = useState<DoctorTodayAppointment | null>(null);
     const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
     const [isRecordsManagerOpen, setIsRecordsManagerOpen] = useState(false);
+    const [saasTimeRemaining, setSaasTimeRemaining] = useState<string>('');
+
+    // Cronômetro funcional de assinatura / degustação regressivo segundo a segundo (SPEC-17F)
+    useEffect(() => {
+        const updateCountdown = () => {
+            let targetMs: number;
+            const expStr = stats?.subscriptionExpiresAt || stats?.trialExpiresAt || profile?.trialExpiresAt;
+            if (expStr && !isNaN(new Date(expStr).getTime())) {
+                targetMs = new Date(expStr).getTime();
+            } else {
+                const d = new Date();
+                d.setDate(d.getDate() + (stats?.trialDaysRemaining ?? 14));
+                d.setHours(23, 59, 59, 0);
+                targetMs = d.getTime();
+            }
+
+            const diff = targetMs - Date.now();
+            if (diff <= 0) {
+                setSaasTimeRemaining('Expirado');
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            setSaasTimeRemaining(`${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`);
+        };
+
+        updateCountdown();
+        const timer = setInterval(updateCountdown, 1000);
+        return () => clearInterval(timer);
+    }, [stats?.subscriptionExpiresAt, stats?.trialExpiresAt, stats?.trialDaysRemaining, profile?.trialExpiresAt]);
     const [isSaaSModalOpen, setIsSaaSModalOpen] = useState(false);
     const [isExtratoModalOpen, setIsExtratoModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -342,7 +376,7 @@ export function DashboardMedico() {
                 )}
 
                 {/* Grid de Métricas do Consultório Virtual */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
                     {/* Card 1: Consultas de Hoje */}
                     <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                         <div>
@@ -389,17 +423,14 @@ export function DashboardMedico() {
                             <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
                                 Assinatura SaaS
                             </span>
-                            <span className={`text-sm sm:text-base md:text-lg font-black mt-0.5 sm:mt-1 block ${
-                                stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
-                                    ? 'text-emerald-700'
-                                    : (stats?.trialDaysRemaining ?? 15) > 0
-                                        ? 'text-emerald-700'
-                                        : 'text-red-600'
-                            }`}>
-                                {stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
-                                    ? 'Plano Ativo'
-                                    : `Degustação ${stats?.trialDaysRemaining ?? 15}D`}
-                            </span>
+                            <div className="mt-0.5 sm:mt-1">
+                                <span className="text-sm sm:text-base md:text-lg font-black font-mono text-emerald-800 flex items-center gap-1.5">
+                                    <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
+                                    {stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
+                                        ? 'Ativo (30 Dias)'
+                                        : (saasTimeRemaining || 'Calculando...')}
+                                </span>
+                            </div>
                             <span className="text-[10px] sm:text-[11px] text-emerald-800 font-bold mt-0.5 block truncate group-hover:underline">
                                 {stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
                                     ? 'Consultório Digital Ativo'
@@ -408,27 +439,6 @@ export function DashboardMedico() {
                         </div>
                         <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 self-end sm:self-center group-hover:scale-105 transition-transform">
                             <CreditCard className="w-4 h-4 sm:w-6 sm:h-6" />
-                        </div>
-                    </div>
-
-                    {/* Card 4: Avaliação Média */}
-                    <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
-                        <div>
-                            <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
-                                Avaliação
-                            </span>
-                            <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1">
-                                <span className="text-xl sm:text-2xl md:text-3xl font-black text-brown-dark">
-                                    5.0
-                                </span>
-                                <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-500" />
-                            </div>
-                            <span className="text-[10px] sm:text-[11px] text-brown-light font-medium mt-0.5 block truncate">
-                                CFM 2.336/2023
-                            </span>
-                        </div>
-                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 self-end sm:self-center">
-                            <Star className="w-4 h-4 sm:w-6 sm:h-6" />
                         </div>
                     </div>
                 </div>
@@ -553,52 +563,7 @@ export function DashboardMedico() {
                             </div>
                         </div>
 
-                        {/* Ação 2: Sala de Teleconsulta WebRTC */}
-                        <div
-                            onClick={() => {
-                                if (!isApproved) {
-                                    handleFeatureNotice('Sala Bloqueada', 'A teleconsulta exige homologação formal do CRM antes de iniciar qualquer chamada.');
-                                    return;
-                                }
-                                if (todayAppointments.length > 0) {
-                                    navigate(`/teleconsulta/${todayAppointments[0].id}`);
-                                } else {
-                                    handleFeatureNotice('Sala de Teleconsulta', 'Você não possui consultas ativas no momento. As consultas do dia aparecem na tabela abaixo.');
-                                }
-                            }}
-                            role="button"
-                            tabIndex={0}
-                            className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
-                                isApproved
-                                    ? 'bg-white border-brand-pot/60 hover:border-brand-orange shadow-xs hover:shadow-md'
-                                    : 'bg-gray-100 border-gray-200 opacity-75'
-                            }`}
-                        >
-                            <div>
-                                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                                        <Video className="w-5 h-5 sm:w-6 sm:h-6" />
-                                    </div>
-                                    {!isApproved && (
-                                        <span className="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 text-[10px] sm:text-[11px] font-bold flex items-center gap-1">
-                                            <Lock className="w-3 h-3" /> Bloqueado
-                                        </span>
-                                    )}
-                                </div>
-                                <h4 className="text-base sm:text-lg font-black text-brown-dark">
-                                    Sala de Teleconsulta
-                                </h4>
-                                <p className="text-brown-light text-xs sm:text-sm mt-1 leading-snug">
-                                    Conexão direta de áudio e vídeo com o paciente, tela compartilhada e monitoramento geriátrico.
-                                </p>
-                            </div>
-                            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-blue-600">
-                                <span>Acessar Sala Virtual →</span>
-                                <span>Abrir Sala →</span>
-                            </div>
-                        </div>
-
-                        {/* Ação 3: Prontuário & Prescrição ICP-Brasil */}
+                        {/* Ação 2: Prontuário & Prescrição ICP-Brasil */}
                         <div
                             onClick={() => {
                                 if (!isApproved) {
@@ -627,7 +592,7 @@ export function DashboardMedico() {
                                     )}
                                 </div>
                                 <h4 className="text-base sm:text-lg font-black text-brown-dark">
-                                    Prontuário & ICP-Brasil
+                                    Prontuários & Prescrições
                                 </h4>
                                 <p className="text-brown-light text-xs sm:text-sm mt-1 leading-snug">
                                     Registro de evolução clínica, emissão de receitas, pedidos de exames e atestados com assinatura digital A1/A3.

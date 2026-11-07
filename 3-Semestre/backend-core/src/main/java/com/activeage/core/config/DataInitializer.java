@@ -86,7 +86,7 @@ public class DataInitializer implements CommandLineRunner {
         String rawPassword = "123456";
 
         seedApprovedDoctor(
-                "Dr. Marcos Silveira (Médico Teste)",
+                "Dr. Marcos Silveira",
                 email,
                 rawPassword,
                 "999999",

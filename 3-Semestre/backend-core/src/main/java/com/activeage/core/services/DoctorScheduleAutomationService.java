@@ -98,6 +98,11 @@ public class DoctorScheduleAutomationService {
         }
 
         User doctor = doctorOpt.get();
+        if (doctor.getFullName() != null && doctor.getFullName().contains("(Médico Teste)")) {
+            doctor.setFullName("Dr. Marcos Silveira");
+            doctor = userRepository.save(doctor);
+            logger.info(">>> [AUTOMAÇÃO] Nome do médico de teste atualizado para 'Dr. Marcos Silveira'.");
+        }
         String doctorId = doctor.getId();
 
         // 1. Garante a existência do paciente de teste

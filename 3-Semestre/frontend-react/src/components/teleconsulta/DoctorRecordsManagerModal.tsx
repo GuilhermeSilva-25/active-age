@@ -297,25 +297,42 @@ export const DoctorRecordsManagerModal: React.FC<DoctorRecordsManagerModalProps>
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            setSelectedApptForRecord(app);
-                                            setIsRecordModalOpen(true);
+                                            if (app.status === "REALIZADA") {
+                                                setSelectedApptForRecord(app);
+                                                setIsRecordModalOpen(true);
+                                            }
                                         }}
-                                        className="px-4 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer min-h-[40px]"
+                                        disabled={app.status !== "REALIZADA"}
+                                        title={app.status === "REALIZADA" ? "Visualizar prontuário clínico" : "Disponível apenas após o término do atendimento"}
+                                        className={`px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-xs transition-all min-h-[40px] ${
+                                            app.status === "REALIZADA"
+                                                ? "bg-brand-orange hover:bg-brand-orange/90 text-white cursor-pointer"
+                                                : "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed opacity-60"
+                                        }`}
                                     >
                                         <FileText className="w-3.5 h-3.5" />
-                                        <span>Ver Prontuário Clínico</span>
+                                        <span>{app.status === "REALIZADA" ? "Ver Prontuário Clínico" : "Prontuário Pendente"}</span>
                                     </button>
 
                                     <button
                                         type="button"
-                                        onClick={() => handleViewDocs(app)}
-                                        disabled={loadingDocsApptId === app.id}
-                                        className="px-4 py-2 rounded-xl bg-white hover:bg-brand-ice border border-brand-pot/40 text-brown-dark font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer min-h-[40px]"
+                                        onClick={() => {
+                                            if (app.status === "REALIZADA") {
+                                                handleViewDocs(app);
+                                            }
+                                        }}
+                                        disabled={app.status !== "REALIZADA" || loadingDocsApptId === app.id}
+                                        title={app.status === "REALIZADA" ? "Visualizar documentos e prescrições" : "Disponível apenas após o término do atendimento"}
+                                        className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all min-h-[40px] ${
+                                            app.status === "REALIZADA"
+                                                ? "bg-white hover:bg-brand-ice border border-brand-pot/40 text-brown-dark cursor-pointer"
+                                                : "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed opacity-60"
+                                        }`}
                                     >
                                         {loadingDocsApptId === app.id ? (
                                             <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-orange" />
                                         ) : (
-                                            <Printer className="w-3.5 h-3.5 text-brand-orange" />
+                                            <Printer className="w-3.5 h-3.5" />
                                         )}
                                         <span>Documentos & Receitas</span>
                                     </button>
