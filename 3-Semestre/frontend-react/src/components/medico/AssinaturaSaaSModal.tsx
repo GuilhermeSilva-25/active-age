@@ -9,7 +9,8 @@ import {
     CreditCard,
     QrCode,
     Sparkles,
-    Lock
+    Lock,
+    ExternalLink
 } from 'lucide-react';
 import { FeedbackModal } from '../common/FeedbackModal';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
@@ -33,10 +34,11 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
 }) => {
     useBodyScrollLock(isOpen);
 
-    const [step, setStep] = useState<'plan' | 'checkout'>('plan');
-    const [method, setMethod] = useState<'PIX' | 'CARTAO_CREDITO'>('PIX');
+    const [step, setStep] = useState<'plan' | 'checkout' | 'checkout_mp'>('plan');
+    const [method, setMethod] = useState<'PIX' | 'CARTAO_CREDITO' | 'MERCADO_PAGO_CHECKOUT'>('PIX');
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [mpCheckoutUrl, setMpCheckoutUrl] = useState<string | null>(null);
     const [pixData, setPixData] = useState<{
         qrCodePix: string;
         qrCodeBase64?: string;
@@ -85,14 +87,23 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
                     qrCodeBase64: data.qrCodeBase64,
                 });
                 setStep('checkout');
+            } else if (method === 'MERCADO_PAGO_CHECKOUT') {
+                const initPoint = data?.mpSandboxInitPoint || data?.mpInitPoint || 'https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=activeage-saas-' + doctorId;
+                setMpCheckoutUrl(initPoint);
+                setStep('checkout_mp');
             } else {
                 handleConfirmActivation();
             }
         } catch (err: any) {
-            // Em caso de proxy em dev, simula resposta positiva
-            const fakePix = `00020126580014br.gov.bcb.pix0136activeage-saas-assinatura-149-90-mensal520400005303986540149.905802BR5925ACTIVE AGE TECNOLOGIA6009SAO PAULO62070503***6304`;
-            setPixData({ qrCodePix: fakePix });
-            setStep('checkout');
+            if (method === 'MERCADO_PAGO_CHECKOUT') {
+                setMpCheckoutUrl('https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=activeage-saas-' + doctorId);
+                setStep('checkout_mp');
+            } else {
+                // Em caso de proxy em dev, simula resposta positiva
+                const fakePix = `00020126580014br.gov.bcb.pix0136activeage-saas-assinatura-149-90-mensal520400005303986540149.905802BR5925ACTIVE AGE TECNOLOGIA6009SAO PAULO62070503***6304`;
+                setPixData({ qrCodePix: fakePix });
+                setStep('checkout');
+            }
         } finally {
             setLoading(false);
         }
@@ -221,13 +232,13 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
                                 <label className="text-xs font-bold text-brown-light uppercase block">
                                     Forma de Pagamento
                                 </label>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                                     <button
                                         type="button"
                                         onClick={() => setMethod('PIX')}
-                                        className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer ${
+                                        className={`p-3 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
                                             method === 'PIX'
-                                                ? 'border-emerald-600 bg-emerald-50/70 text-emerald-900 shadow-xs'
+                                                ? 'border-emerald-600 bg-emerald-50 text-emerald-900 shadow-xs'
                                                 : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
                                         }`}
                                     >
@@ -237,19 +248,31 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
                                     <button
                                         type="button"
                                         onClick={() => setMethod('CARTAO_CREDITO')}
-                                        className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer ${
+                                        className={`p-3 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
                                             method === 'CARTAO_CREDITO'
-                                                ? 'border-emerald-600 bg-emerald-50/70 text-emerald-900 shadow-xs'
+                                                ? 'border-emerald-600 bg-emerald-50 text-emerald-900 shadow-xs'
                                                 : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
                                         }`}
                                     >
                                         <CreditCard className="w-4 h-4 text-emerald-700" />
                                         <span>Cartão de Crédito</span>
                                     </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setMethod('MERCADO_PAGO_CHECKOUT')}
+                                        className={`p-3 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
+                                            method === 'MERCADO_PAGO_CHECKOUT'
+                                                ? 'border-sky-600 bg-sky-50 text-sky-900 shadow-xs'
+                                                : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
+                                        }`}
+                                    >
+                                        <ExternalLink className="w-4 h-4 text-sky-700" />
+                                        <span>Mercado Pago Pro</span>
+                                    </button>
                                 </div>
                             </div>
                         </>
-                    ) : (
+                    ) : step === 'checkout' ? (
                         /* Etapa de Checkout Pix */
                         <div className="space-y-5 text-center">
                             <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-4">
@@ -324,6 +347,54 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
                                         <Sparkles className="w-4 h-4 text-emerald-300" />
                                     )}
                                     <span>⚡ Simular Confirmação do Pix (Modo Sandbox)</span>
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        /* Etapa de Checkout Pro / Mercado Pago */
+                        <div className="space-y-5 text-center">
+                            <div className="bg-sky-50 border border-sky-300 rounded-2xl p-5 text-left space-y-3">
+                                <div className="flex items-center gap-2 text-sky-900 font-black text-sm">
+                                    <ExternalLink className="w-5 h-5 text-sky-700" />
+                                    <span>Checkout Oficial Mercado Pago (Assinatura SaaS)</span>
+                                </div>
+                                <p className="text-xs text-sky-950 leading-relaxed font-medium">
+                                    Conclua a assinatura mensal do seu Consultório Digital Ativo no valor de <strong>R$ 149,90/mês</strong> diretamente na plataforma segura do Mercado Pago.
+                                </p>
+
+                                <div className="bg-white border border-sky-200 rounded-xl p-3.5 text-xs text-sky-950 space-y-1.5">
+                                    <span className="font-bold text-sky-900 flex items-center gap-1.5">
+                                        <Sparkles className="w-4 h-4 text-sky-600" />
+                                        Homologação com Conta de Teste:
+                                    </span>
+                                    <p className="text-[11px] text-brown-dark leading-relaxed">
+                                        No ambiente Sandbox, faça login com uma <strong>Conta de Teste de Comprador</strong> (disponível no menu Contas de teste do Mercado Pago Developers). Você poderá assinar utilizando saldo fictício ou cartões de teste sem qualquer cobrança financeira real.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => mpCheckoutUrl && window.open(mpCheckoutUrl, '_blank', 'noopener,noreferrer')}
+                                    className="w-full py-4 px-6 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-black text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[52px]"
+                                >
+                                    <ExternalLink className="w-5 h-5" />
+                                    <span>Abrir Mercado Pago para Pagar Assinatura (Nova Aba)</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={handleConfirmActivation}
+                                    disabled={loading}
+                                    className="w-full py-3.5 px-6 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                                >
+                                    {loading ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                                    )}
+                                    <span>⚡ Já Concluí o Pagamento no Mercado Pago (Ativar SaaS)</span>
                                 </button>
                             </div>
                         </div>

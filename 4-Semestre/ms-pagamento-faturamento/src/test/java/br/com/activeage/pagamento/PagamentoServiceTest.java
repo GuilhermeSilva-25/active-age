@@ -204,4 +204,61 @@ class PagamentoServiceTest {
         assertEquals(StatusPagamento.ESTORNADO, res.getStatus());
         verify(mercadoPagoGateway).estornarTransacao("MP-12345");
     }
+
+    @Test
+    @DisplayName("TFS: Deve criar cobrança via Checkout Pro do Mercado Pago com init_point")
+    void shouldCreateCheckoutProPayment() {
+        PagamentoConsultaRequest request = PagamentoConsultaRequest.builder()
+                .appointmentId("APPT-2")
+                .patientId("PAT-2")
+                .patientNome("Dona Maria")
+                .patientCpf("11144477735")
+                .doctorId("DOC-1")
+                .doctorNome("Dr. Turing")
+                .valor(BigDecimal.valueOf(250.00))
+                .metodo(MetodoPagamento.MERCADO_PAGO_CHECKOUT)
+                .build();
+
+        when(pagamentoRepository.findByReferenciaIdAndTipo("APPT-2", TipoPagamento.CONSULTA_TELEMEDICINA))
+                .thenReturn(Optional.empty());
+
+        when(mercadoPagoGateway.criarPreferenciaCheckoutPro(any(Pagamento.class)))
+                .thenReturn(new IMercadoPagoGateway.MercadoPagoPreferenciaResponse(
+                        "PREF-123", "https://mercadopago.com.br/checkout/123", "https://sandbox.mercadopago.com.br/checkout/123"
+                ));
+
+        when(pagamentoRepository.save(any(Pagamento.class))).thenAnswer(inv -> {
+            Pagamento p = inv.getArgument(0);
+            p.setId(20L);
+            return p;
+        });
+
+        PagamentoResponse response = pagamentoService.criarPagamentoConsulta(request);
+
+        assertNotNull(response);
+        assertEquals("PREF-123", response.getMpPreferenceId());
+        assertEquals("https://sandbox.mercadopago.com.br/checkout/123", response.getMpSandboxInitPoint());
+        assertEquals(MetodoPagamento.MERCADO_PAGO_CHECKOUT, response.getMetodo());
+    }
+
+    @Test
+    @DisplayName("TFS: Deve listar histórico por pagador e por beneficiário")
+    void shouldFindPaymentsByPagadorAndBeneficiario() {
+        Pagamento p1 = Pagamento.builder()
+                .id(1L)
+                .pagadorId("PAT-1")
+                .beneficiarioId("DOC-1")
+                .dataCriacao(LocalDateTime.now())
+                .valorTotal(BigDecimal.valueOf(250.00))
+                .build();
+
+        when(pagamentoRepository.findByPagadorId("PAT-1")).thenReturn(List.of(p1));
+        when(pagamentoRepository.findByBeneficiarioId("DOC-1")).thenReturn(List.of(p1));
+
+        List<PagamentoResponse> porPagador = pagamentoService.buscarPorPagador("PAT-1");
+        List<PagamentoResponse> porBeneficiario = pagamentoService.buscarPorBeneficiario("DOC-1");
+
+        assertEquals(1, porPagador.size());
+        assertEquals(1, porBeneficiario.size());
+    }
 }

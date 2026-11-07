@@ -191,5 +191,49 @@ class MercadoPagoGatewayTest {
 
         String fallbackCard = gateway.fallbackCriarPreferenciaCartao(pagamento, new RuntimeException("Connection refused"));
         assertEquals("CONTINGENCIA-PREF", fallbackCard);
+
+        IMercadoPagoGateway.MercadoPagoPreferenciaResponse fallbackPro =
+                gateway.fallbackCriarPreferenciaCheckoutPro(pagamento, new RuntimeException("Circuit open"));
+        assertNotNull(fallbackPro);
+        assertTrue(fallbackPro.preferenceId().startsWith("CONTINGENCIA-PREF-"));
+        assertTrue(fallbackPro.sandboxInitPoint().contains("mercadopago.com"));
+    }
+
+    @Test
+    @DisplayName("PCE: Deve criar preferência do Checkout Pro com initPoint e sandboxInitPoint")
+    @SuppressWarnings("unchecked")
+    void shouldCreateCheckoutProPreferenceLive() throws Exception {
+        HttpClient mockClient = mock(HttpClient.class);
+        HttpResponse<String> mockResponse = mock(HttpResponse.class);
+
+        String json = """
+                {
+                  "id": "PREF-PRO-999",
+                  "init_point": "https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=PREF-PRO-999",
+                  "sandbox_init_point": "https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=PREF-PRO-999"
+                }
+                """;
+
+        when(mockResponse.statusCode()).thenReturn(201);
+        when(mockResponse.body()).thenReturn(json);
+        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(mockResponse);
+
+        MercadoPagoGatewayImpl liveGateway = new MercadoPagoGatewayImpl(new ObjectMapper(), mockClient);
+        ReflectionTestUtils.setField(liveGateway, "accessToken", "TEST-0000000000000000-000000-00000000000000000000000000000000-000000000");
+
+        Pagamento pagamento = Pagamento.builder()
+                .referenciaId("APPT-300")
+                .pagadorNome("Dona Maria de Lourdes")
+                .pagadorCpfCnpj("11144477735")
+                .valorTotal(BigDecimal.valueOf(250.00))
+                .tipo(TipoPagamento.CONSULTA_TELEMEDICINA)
+                .build();
+
+        IMercadoPagoGateway.MercadoPagoPreferenciaResponse res = liveGateway.criarPreferenciaCheckoutPro(pagamento);
+
+        assertNotNull(res);
+        assertEquals("PREF-PRO-999", res.preferenceId());
+        assertEquals("https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=PREF-PRO-999", res.sandboxInitPoint());
     }
 }

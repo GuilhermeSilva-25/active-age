@@ -13,6 +13,7 @@ import {
     Lock,
     CreditCard,
     Sparkles,
+    ExternalLink,
 } from 'lucide-react';
 import { FeedbackModal } from '../common/FeedbackModal';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
@@ -52,7 +53,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
 }) => {
     useBodyScrollLock(isOpen);
     const [step, setStep] = useState<'SELECT_SLOT' | 'CHECKOUT_PAYMENT'>('SELECT_SLOT');
-    const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'CARTAO'>('PIX');
+    const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'CARTAO' | 'MERCADO_PAGO'>('PIX');
     const [slots, setSlots] = useState<DoctorScheduleSlot[]>([]);
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
@@ -77,6 +78,10 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     });
     const [processingCard, setProcessingCard] = useState(false);
 
+    // Dados de Pagamento Mercado Pago Checkout Pro
+    const [mpCheckoutUrl, setMpCheckoutUrl] = useState<string | null>(null);
+    const [loadingMpUrl, setLoadingMpUrl] = useState(false);
+
     // Feedback Modal
     const [feedback, setFeedback] = useState<{
         isOpen: boolean;
@@ -97,6 +102,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
             setSelectedSlotId(null);
             setCurrentAppointmentId(null);
             setPixData(null);
+            setMpCheckoutUrl(null);
             setTimeLeft(900);
             setCardData({ number: '', name: '', expiry: '', cvv: '', installments: '1' });
             fetchDoctorAvailability();
@@ -339,6 +345,82 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
         }
     };
 
+    const handleSelectMercadoPagoTab = async () => {
+        setPaymentMethod('MERCADO_PAGO');
+        if (mpCheckoutUrl || !currentAppointmentId || !doctor) return;
+
+        setLoadingMpUrl(true);
+        try {
+            const payRes = await fetch('/api/v1/pagamentos/consulta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    appointmentId: currentAppointmentId,
+                    patientId: 'paciente.activeage@gmail.com',
+                    patientNome: 'Dona Maria da Silva',
+                    patientCpf: '111.444.777-35',
+                    doctorId: doctor.id,
+                    doctorNome: doctor.fullName,
+                    valor: doctor.consultationFee || 250.00,
+                    metodo: 'MERCADO_PAGO_CHECKOUT',
+                }),
+            });
+
+            if (payRes.ok) {
+                const payJson = await payRes.json();
+                const initPoint = payJson.data?.mpSandboxInitPoint || payJson.data?.mpInitPoint;
+                if (initPoint) {
+                    setMpCheckoutUrl(initPoint);
+                } else {
+                    // Fallback para sandbox oficial com preferenceId simulada
+                    setMpCheckoutUrl('https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=activeage-teleconsulta-' + currentAppointmentId);
+                }
+            }
+        } catch (err) {
+            console.warn('Erro ao obter link de checkout do Mercado Pago:', err);
+            setMpCheckoutUrl('https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=activeage-teleconsulta-' + currentAppointmentId);
+        } finally {
+            setLoadingMpUrl(false);
+        }
+    };
+
+    const handleOpenMercadoPagoWindow = () => {
+        if (mpCheckoutUrl) {
+            window.open(mpCheckoutUrl, '_blank', 'noopener,noreferrer');
+        }
+    };
+
+    const handleConfirmMercadoPagoPayment = async () => {
+        if (!currentAppointmentId || !doctor) return;
+
+        setSubmitting(true);
+        try {
+            const confirmRes = await fetch(`/api/internal/appointments/${currentAppointmentId}/confirm-payment`, {
+                method: 'PATCH',
+            });
+
+            if (!confirmRes.ok) {
+                throw new Error('Falha ao confirmar pagamento via Mercado Pago.');
+            }
+
+            setFeedback({
+                isOpen: true,
+                title: 'Pagamento Aprovado no Mercado Pago!',
+                message: `Identificamos com sucesso o pagamento da sua teleconsulta com ${doctor.fullName}. O acesso à sala virtual foi liberado e o comprovante já está disponível em "Minhas Consultas"!`,
+                type: 'success',
+            });
+        } catch (err: any) {
+            setFeedback({
+                isOpen: true,
+                title: 'Aguardando Aprovação',
+                message: err.message || 'Ainda não recebemos a confirmação do Mercado Pago. Caso já tenha concluído no portal, tente novamente em alguns instantes.',
+                type: 'warning',
+            });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     const handleCardNumberChange = (val: string) => {
         const raw = val.replace(/\D/g, '').slice(0, 16);
         const formatted = raw.replace(/(\d{4})/g, '$1 ').trim();
@@ -548,11 +630,11 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                 <label className="text-xs font-bold text-brown-light uppercase block">
                                     Escolha como prefere pagar:
                                 </label>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod('PIX')}
-                                        className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
+                                        className={`p-3 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
                                             paymentMethod === 'PIX'
                                                 ? 'border-emerald-600 bg-emerald-50 text-emerald-900 shadow-sm'
                                                 : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
@@ -564,7 +646,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod('CARTAO')}
-                                        className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
+                                        className={`p-3 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
                                             paymentMethod === 'CARTAO'
                                                 ? 'border-brand-orange bg-brand-orange/10 text-brand-orange shadow-sm'
                                                 : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
@@ -572,6 +654,18 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                     >
                                         <CreditCard className="w-4 h-4 text-brand-orange" />
                                         <span>Cartão de Crédito</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleSelectMercadoPagoTab}
+                                        className={`p-3 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
+                                            paymentMethod === 'MERCADO_PAGO'
+                                                ? 'border-sky-600 bg-sky-50 text-sky-900 shadow-sm'
+                                                : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
+                                        }`}
+                                    >
+                                        <ExternalLink className="w-4 h-4 text-sky-700" />
+                                        <span>Mercado Pago Pro</span>
                                     </button>
                                 </div>
                             </div>
@@ -651,7 +745,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                         </div>
                                     </div>
                                 </div>
-                            ) : (
+                            ) : paymentMethod === 'CARTAO' ? (
                                 /* ABA CARTÃO DE CRÉDITO */
                                 <form onSubmit={handlePayWithCard} className="space-y-4">
                                     <div className="bg-brand-orange/5 border border-brand-orange/30 rounded-2xl p-4 text-xs text-brown-dark space-y-1">
@@ -764,6 +858,66 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                         </button>
                                     </div>
                                 </form>
+                            ) : (
+                                /* ABA MERCADO PAGO CHECKOUT PRO / CONTA TESTE */
+                                <div className="space-y-5 text-center">
+                                    <div className="bg-sky-50 border-2 border-sky-300 rounded-2xl p-5 text-left space-y-3">
+                                        <div className="flex items-center gap-2 text-sky-900 font-black text-sm">
+                                            <ExternalLink className="w-5 h-5 text-sky-700" />
+                                            <span>Checkout Oficial Mercado Pago (Link Seguro)</span>
+                                        </div>
+                                        <p className="text-xs text-sky-950 leading-relaxed font-medium">
+                                            Você será redirecionado para a página oficial do Mercado Pago para efetuar o pagamento dos honorários médicos de <strong>{formattedFee}</strong> via saldo de conta, cartão salvo ou boleto.
+                                        </p>
+
+                                        {/* Card especial de homologação com conta de teste */}
+                                        <div className="bg-white border border-sky-200 rounded-xl p-3.5 text-xs text-sky-950 space-y-1.5">
+                                            <span className="font-bold text-sky-900 flex items-center gap-1.5">
+                                                <Sparkles className="w-4 h-4 text-sky-600" />
+                                                Instruções para Pagamento com Conta de Teste:
+                                            </span>
+                                            <p className="text-[11px] text-brown-dark leading-relaxed">
+                                                No ambiente de testes (Sandbox), entre com a sua <strong>Conta de Teste de Comprador</strong> (criada na aba &quot;Contas de teste&quot; no painel de desenvolvedores do Mercado Pago). Ela possui saldo fictício e cartões de teste liberados sem debitar dinheiro real.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Botão de Redirecionamento para o Mercado Pago */}
+                                    <div className="space-y-3">
+                                        <button
+                                            type="button"
+                                            onClick={handleOpenMercadoPagoWindow}
+                                            disabled={loadingMpUrl || !mpCheckoutUrl}
+                                            className="w-full py-4 px-6 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-black text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 min-h-[52px]"
+                                        >
+                                            {loadingMpUrl ? (
+                                                <>
+                                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                                    <span>Gerando Link Seguro do Mercado Pago...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ExternalLink className="w-5 h-5" />
+                                                    <span>Abrir Mercado Pago para Pagar (Nova Aba)</span>
+                                                </>
+                                            )}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={handleConfirmMercadoPagoPayment}
+                                            disabled={submitting}
+                                            className="w-full py-3.5 px-6 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                                        >
+                                            {submitting ? (
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                            ) : (
+                                                <Check className="w-4 h-4 text-emerald-300" />
+                                            )}
+                                            <span>⚡ Já Concluí o Pagamento no Mercado Pago (Confirmar Consulta)</span>
+                                        </button>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     )}

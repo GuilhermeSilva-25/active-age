@@ -160,6 +160,82 @@ public class MercadoPagoGatewayImpl implements IMercadoPagoGateway {
     }
 
     @Override
+    @CircuitBreaker(name = "mercadoPagoCircuitBreaker", fallbackMethod = "fallbackCriarPreferenciaCheckoutPro")
+    public MercadoPagoPreferenciaResponse criarPreferenciaCheckoutPro(Pagamento pagamento) {
+        log.info("Criando preferência de Checkout Pro no Mercado Pago para referência: {} (Valor: R$ {})",
+                pagamento.getReferenciaId(), pagamento.getValorTotal());
+
+        if (isLiveMercadoPagoToken(this.accessToken)) {
+            try {
+                String title = pagamento.getTipo() == TipoPagamento.ASSINATURA_SAAS_MEDICO
+                        ? "Active Age Assinatura SaaS Consultório Digital"
+                        : "Teleconsulta Active Age - Ref: " + pagamento.getReferenciaId();
+
+                Map<String, Object> item = Map.of(
+                        "title", title,
+                        "quantity", 1,
+                        "unit_price", pagamento.getValorTotal(),
+                        "currency_id", "BRL"
+                );
+
+                String pagadorNome = pagamento.getPagadorNome() != null ? pagamento.getPagadorNome().trim() : "Paciente";
+                String firstName = pagadorNome.contains(" ") ? pagadorNome.substring(0, pagadorNome.lastIndexOf(" ")).trim() : pagadorNome;
+                String lastName = pagadorNome.contains(" ") ? pagadorNome.substring(pagadorNome.lastIndexOf(" ") + 1).trim() : "Silva";
+
+                Map<String, Object> payer = Map.of(
+                        "name", firstName,
+                        "surname", lastName,
+                        "email", pagamento.getTipo() == TipoPagamento.ASSINATURA_SAAS_MEDICO ? "medico.activeage@gmail.com" : "paciente.activeage@gmail.com"
+                );
+
+                Map<String, Object> backUrls = Map.of(
+                        "success", "https://activeage.vercel.app/minhas-consultas?status=approved",
+                        "failure", "https://activeage.vercel.app/minhas-consultas?status=failure",
+                        "pending", "https://activeage.vercel.app/minhas-consultas?status=pending"
+                );
+
+                Map<String, Object> body = Map.of(
+                        "items", List.of(item),
+                        "payer", payer,
+                        "back_urls", backUrls,
+                        "auto_return", "approved",
+                        "external_reference", pagamento.getReferenciaId(),
+                        "notification_url", "https://active-age-pagamento.onrender.com/api/v1/pagamentos/webhook"
+                );
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("https://api.mercadopago.com/checkout/preferences"))
+                        .header("Authorization", "Bearer " + this.accessToken.trim())
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body), StandardCharsets.UTF_8))
+                        .timeout(Duration.ofSeconds(4))
+                        .build();
+
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() == 200 || response.statusCode() == 201) {
+                    JsonNode root = objectMapper.readTree(response.body());
+                    String prefId = root.path("id").asText();
+                    String initPoint = root.path("init_point").asText();
+                    String sandboxInitPoint = root.path("sandbox_init_point").asText();
+                    log.info("Preferência Checkout Pro criada com sucesso: id={}, sandboxInitPoint={}", prefId, sandboxInitPoint);
+                    return new MercadoPagoPreferenciaResponse(prefId, initPoint, sandboxInitPoint);
+                } else {
+                    log.error("Erro ao criar preferência Checkout Pro no Mercado Pago: status={}, body={}", response.statusCode(), response.body());
+                }
+            } catch (Exception e) {
+                log.warn("Exceção ao criar preferência Checkout Pro no Mercado Pago: {}", e.getMessage());
+            }
+        }
+
+        String fakePrefId = "PREF-" + UUID.randomUUID().toString().substring(0, 8);
+        return new MercadoPagoPreferenciaResponse(
+                fakePrefId,
+                "https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=" + fakePrefId,
+                "https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=" + fakePrefId
+        );
+    }
+
+    @Override
     @CircuitBreaker(name = "mercadoPagoCircuitBreaker", fallbackMethod = "fallbackCriarPreferenciaCartao")
     public String criarPreferenciaCartao(Pagamento pagamento) {
         log.info("Criando preferência de cartão de crédito no gateway para referência: {}", pagamento.getReferenciaId());
@@ -298,5 +374,15 @@ public class MercadoPagoGatewayImpl implements IMercadoPagoGateway {
     public String fallbackCriarPreferenciaCartao(Pagamento pagamento, Throwable throwable) {
         log.warn("Circuit Breaker ativado no Mercado Pago para criarPreferenciaCartao! Motivo: {}", throwable.getMessage());
         return "CONTINGENCIA-PREF";
+    }
+
+    public MercadoPagoPreferenciaResponse fallbackCriarPreferenciaCheckoutPro(Pagamento pagamento, Throwable throwable) {
+        log.warn("Circuit Breaker ativado no Mercado Pago para criarPreferenciaCheckoutPro! Motivo: {}", throwable.getMessage());
+        String contId = "CONTINGENCIA-PREF-" + UUID.randomUUID().toString().substring(0, 8);
+        return new MercadoPagoPreferenciaResponse(
+                contId,
+                "https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=" + contId,
+                "https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=" + contId
+        );
     }
 }

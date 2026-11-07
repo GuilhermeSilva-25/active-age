@@ -99,6 +99,11 @@ public class PagamentoServiceImpl implements IPagamentoService {
             if (pixResponse.mpPaymentId().startsWith("CONTINGENCIA-")) {
                 pagamento.setStatus(StatusPagamento.PENDENTE_CONTINGENCIA);
             }
+        } else if (request.getMetodo() == MetodoPagamento.MERCADO_PAGO_CHECKOUT) {
+            IMercadoPagoGateway.MercadoPagoPreferenciaResponse pref = mercadoPagoGateway.criarPreferenciaCheckoutPro(pagamento);
+            pagamento.setMpPreferenceId(pref.preferenceId());
+            pagamento.setMpInitPoint(pref.initPoint());
+            pagamento.setMpSandboxInitPoint(pref.sandboxInitPoint());
         } else {
             String preferenceId = mercadoPagoGateway.criarPreferenciaCartao(pagamento);
             pagamento.setMpPreferenceId(preferenceId);
@@ -138,6 +143,11 @@ public class PagamentoServiceImpl implements IPagamentoService {
             pagamento.setMpPaymentId(pix.mpPaymentId());
             pagamento.setQrCodePix(pix.qrCodePix());
             pagamento.setQrCodeBase64(pix.qrCodeBase64());
+        } else if (request.getMetodo() == MetodoPagamento.MERCADO_PAGO_CHECKOUT) {
+            IMercadoPagoGateway.MercadoPagoPreferenciaResponse pref = mercadoPagoGateway.criarPreferenciaCheckoutPro(pagamento);
+            pagamento.setMpPreferenceId(pref.preferenceId());
+            pagamento.setMpInitPoint(pref.initPoint());
+            pagamento.setMpSandboxInitPoint(pref.sandboxInitPoint());
         } else {
             String preferenceId = mercadoPagoGateway.criarPreferenciaCartao(pagamento);
             pagamento.setMpPreferenceId(preferenceId);
@@ -161,6 +171,24 @@ public class PagamentoServiceImpl implements IPagamentoService {
         Pagamento p = pagamentoRepository.findByReferenciaIdAndTipo(appointmentId, TipoPagamento.CONSULTA_TELEMEDICINA)
                 .orElseThrow(() -> new PagamentoException("Nenhum pagamento registrado para a consulta: " + appointmentId, HttpStatus.NOT_FOUND));
         return mapToResponse(p);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<PagamentoResponse> buscarPorBeneficiario(String beneficiarioId) {
+        return pagamentoRepository.findByBeneficiarioId(beneficiarioId).stream()
+                .sorted((a, b) -> b.getDataCriacao().compareTo(a.getDataCriacao()))
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<PagamentoResponse> buscarPorPagador(String pagadorId) {
+        return pagamentoRepository.findByPagadorId(pagadorId).stream()
+                .sorted((a, b) -> b.getDataCriacao().compareTo(a.getDataCriacao()))
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override
@@ -291,6 +319,8 @@ public class PagamentoServiceImpl implements IPagamentoService {
                 .status(p.getStatus())
                 .mpPaymentId(p.getMpPaymentId())
                 .mpPreferenceId(p.getMpPreferenceId())
+                .mpInitPoint(p.getMpInitPoint())
+                .mpSandboxInitPoint(p.getMpSandboxInitPoint())
                 .qrCodePix(p.getQrCodePix())
                 .qrCodeBase64(p.getQrCodeBase64())
                 .dataCriacao(p.getDataCriacao())

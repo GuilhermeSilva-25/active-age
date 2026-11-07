@@ -58,6 +58,20 @@ public class PagamentoController {
         return ResponseEntity.ok(ApiResponseWrapper.success("Pagamento da consulta localizado.", response));
     }
 
+    @GetMapping("/medico/{doctorId}")
+    @Operation(summary = "Extrato financeiro do consultório do médico (recebíveis e faturas)")
+    public ResponseEntity<ApiResponseWrapper<java.util.List<PagamentoResponse>>> buscarPorMedico(@PathVariable String doctorId) {
+        java.util.List<PagamentoResponse> extrato = pagamentoService.buscarPorBeneficiario(doctorId);
+        return ResponseEntity.ok(ApiResponseWrapper.success("Extrato financeiro do médico gerado com sucesso.", extrato));
+    }
+
+    @GetMapping("/paciente/{patientId}")
+    @Operation(summary = "Histórico de pagamentos e comprovantes de teleconsulta do paciente")
+    public ResponseEntity<ApiResponseWrapper<java.util.List<PagamentoResponse>>> buscarPorPaciente(@PathVariable String patientId) {
+        java.util.List<PagamentoResponse> faturas = pagamentoService.buscarPorPagador(patientId);
+        return ResponseEntity.ok(ApiResponseWrapper.success("Histórico de pagamentos do paciente localizado.", faturas));
+    }
+
     @PostMapping("/{id}/estorno")
     @Operation(summary = "Realiza o cancelamento ético de consulta (> 24h) com estorno financeiro")
     public ResponseEntity<ApiResponseWrapper<PagamentoResponse>> estornarPagamento(@PathVariable Long id) {

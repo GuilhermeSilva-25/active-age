@@ -13,9 +13,14 @@ public interface IMercadoPagoGateway {
     MercadoPagoPixResponse gerarCobrancaPix(Pagamento pagamento);
 
     /**
-     * Cria preferência de pagamento com cartão de crédito.
+     * Cria preferência de pagamento com cartão de crédito transparente.
      */
     String criarPreferenciaCartao(Pagamento pagamento);
+
+    /**
+     * Cria preferência oficial do Checkout Pro do Mercado Pago (retorna init_point e sandbox_init_point).
+     */
+    MercadoPagoPreferenciaResponse criarPreferenciaCheckoutPro(Pagamento pagamento);
 
     /**
      * Consulta o status real de uma transação diretamente no gateway.
@@ -31,5 +36,11 @@ public interface IMercadoPagoGateway {
             String mpPaymentId,
             String qrCodePix,
             String qrCodeBase64
+    ) {}
+
+    record MercadoPagoPreferenciaResponse(
+            String preferenceId,
+            String initPoint,
+            String sandboxInitPoint
     ) {}
 }

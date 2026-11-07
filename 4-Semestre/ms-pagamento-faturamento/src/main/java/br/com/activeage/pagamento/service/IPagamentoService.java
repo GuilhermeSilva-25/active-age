@@ -18,6 +18,10 @@ public interface IPagamentoService {
 
     PagamentoResponse buscarPorConsulta(String appointmentId);
 
+    java.util.List<PagamentoResponse> buscarPorBeneficiario(String beneficiarioId);
+
+    java.util.List<PagamentoResponse> buscarPorPagador(String pagadorId);
+
     PagamentoResponse estornarPagamento(Long id);
 
     void processarWebhook(WebhookEventDto event);

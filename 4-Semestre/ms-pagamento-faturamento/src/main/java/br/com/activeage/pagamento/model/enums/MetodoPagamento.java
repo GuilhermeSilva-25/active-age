@@ -5,5 +5,6 @@ package br.com.activeage.pagamento.model.enums;
  */
 public enum MetodoPagamento {
     PIX,
-    CARTAO_CREDITO
+    CARTAO_CREDITO,
+    MERCADO_PAGO_CHECKOUT
 }

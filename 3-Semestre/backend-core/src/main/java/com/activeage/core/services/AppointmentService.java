@@ -332,6 +332,16 @@ public class AppointmentService {
                     scheduleSlotRepository.save(slot);
                 });
             }
+
+            auditService.log(
+                    appointment.getPatientId(),
+                    appointment.getPatientEmail(),
+                    "ROLE_PACIENTE",
+                    "PAYMENT_EXPIRED_CANCELLED",
+                    appointment.getId(),
+                    "Cancelamento automático por expiração do prazo de 15 minutos para liquidação no gateway.",
+                    "SYSTEM_EXPIRED"
+            );
         }
 
         return mapToResponse(appointment);

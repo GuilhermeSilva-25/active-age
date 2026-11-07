@@ -34,6 +34,8 @@ public class PagamentoResponse {
     private StatusPagamento status;
     private String mpPaymentId;
     private String mpPreferenceId;
+    private String mpInitPoint;
+    private String mpSandboxInitPoint;
     private String qrCodePix;
     private String qrCodeBase64;
     private LocalDateTime dataCriacao;

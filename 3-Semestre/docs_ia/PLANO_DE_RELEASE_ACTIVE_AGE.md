@@ -162,7 +162,13 @@ gantt
       - **Micro Tarefa 17.2 [CONCLUÍDA ✅]:** Entidades JPA (`Pagamento`, `AssinaturaMedico`), enums, DTOs, interfaces com DIP, estratégias de rateio OCP (`SplitDiretoConsultaStrategy` e `AssinaturaSaaSStrategy`), controladores REST magros e suíte de testes cobrindo classes de equivalência (PCE) e valores limite (AVL).
       - **Micro Tarefa 17.3 [CONCLUÍDA ✅]:** Integração com o gateway Mercado Pago (Pix instantâneo, QR Code Base64 e cartão de crédito), Circuit Breaker com Resilience4j (timeouts estritos de 2s) e contingência com fallback (`PENDENTE_CONTINGENCIA`).
       - **Micro Tarefa 17.4 [CONCLUÍDA ✅]:** Webhooks assíncronos do Mercado Pago, callbacks internos seguros no `backend-core` (`InternalCallbackController`), checkout Pix no `AgendarConsultaModal.tsx`, badges reativas em `MinhasConsultas.tsx`, gestão de assinaturas no `DashboardMedico.tsx` com `AssinaturaSaaSModal.tsx`, Dockerfile multi-stage, pipeline no GitHub Actions e suíte integrada de 215 testes backend automatizados (184 no Core + 31 no Pagamento, 0 falhas).
-  6. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+  6. [x] **Ecossistema Integral de Pagamentos Mercado Pago, Checkout Pro & Extratos (SPEC-17B) — [CONCLUÍDO ✅]:**
+     - **3 Opções de Pagamento no Paciente e no Médico:** Pix Instantâneo, Cartão de Crédito Transparente e Mercado Pago Checkout Pro (sandbox_init_point permitindo login com Conta de Teste de Comprador e saldo fictício sem custos reais);
+     - **Comprovante de Pagamento de Teleconsulta (ComprovantePagamentoModal.tsx):** Recibo financeiro oficial com código de autenticidade digital AA-REC-2026-XXXXXX, honorários médicos, dados do médico (CRM/UF) e paciente, proteção LGPD e conformidade CFM nº 2.314/2022 (Split Direto sem dicotomia);
+     - **Extrato Financeiro do Consultório Médico (ExtratoFinanceiroModal.tsx):** Balanço consolidado de recebíveis de consultas vs faturas SaaS da plataforma (R$ 149,90/mês), filtros por tipo e impressão direta;
+     - **Auditoria Administrativa Perimetral:** Rastreabilidade em audit_logs no InternalCallbackController e AppointmentService para confirmações e cancelamentos por expiração de tempo;
+     - **Expansão de Qualidade:** Suíte elevada para 39 testes no microsserviço de pagamento e 184 testes no core (total de 233 testes em todo o repositório, 100% aprovados).
+  7. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---

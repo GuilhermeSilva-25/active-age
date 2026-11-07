@@ -192,4 +192,38 @@ class PagamentoControllerTest {
                 .andExpect(jsonPath("$.status").value("SUCCESS"))
                 .andExpect(jsonPath("$.data.status").value("ESTORNADO"));
     }
+
+    @Test
+    @DisplayName("PCE: Deve buscar extrato do médico com 200 OK")
+    void shouldFindPaymentsByDoctor() throws Exception {
+        PagamentoResponse response = PagamentoResponse.builder()
+                .id(1L)
+                .beneficiarioId("DOC-1")
+                .valorTotal(BigDecimal.valueOf(250.00))
+                .build();
+
+        when(pagamentoService.buscarPorBeneficiario("DOC-1")).thenReturn(java.util.List.of(response));
+
+        mockMvc.perform(get("/api/v1/pagamentos/medico/DOC-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
+                .andExpect(jsonPath("$.data[0].id").value(1));
+    }
+
+    @Test
+    @DisplayName("PCE: Deve buscar histórico do paciente com 200 OK")
+    void shouldFindPaymentsByPatient() throws Exception {
+        PagamentoResponse response = PagamentoResponse.builder()
+                .id(2L)
+                .pagadorNome("Maria")
+                .valorTotal(BigDecimal.valueOf(250.00))
+                .build();
+
+        when(pagamentoService.buscarPorPagador("PAT-1")).thenReturn(java.util.List.of(response));
+
+        mockMvc.perform(get("/api/v1/pagamentos/paciente/PAT-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUCCESS"))
+                .andExpect(jsonPath("$.data[0].id").value(2));
+    }
 }

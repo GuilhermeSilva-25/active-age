@@ -13,9 +13,12 @@ import {
     Printer,
     CreditCard,
     X,
+    Receipt,
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { DocumentPrintModal } from '../../components/teleconsulta/DocumentPrintModal';
+import { ComprovantePagamentoModal } from '../../components/paciente/ComprovantePagamentoModal';
+import type { ComprovanteData } from '../../components/paciente/ComprovantePagamentoModal';
 import { Footer } from '../../components/home/Footer';
 import type { MedicalDocument } from '../../types/teleconsulta';
 
@@ -64,6 +67,10 @@ export const MinhasConsultas: React.FC = () => {
         doctorName: '',
         docs: [],
     });
+
+    // Comprovante de Pagamento (SPEC-17B)
+    const [receiptData, setReceiptData] = useState<ComprovanteData | null>(null);
+    const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
     // Feedback Modal
     const [feedback, setFeedback] = useState<{
@@ -211,6 +218,39 @@ export const MinhasConsultas: React.FC = () => {
         } finally {
             setCancelling(false);
         }
+    };
+
+    const handleOpenReceipt = async (app: AppointmentItem) => {
+        let paymentMethodStr = 'Pix Instantâneo';
+        let mpPaymentIdStr = 'MP-' + app.id.substring(0, 8);
+
+        try {
+            const res = await fetch(`/api/v1/pagamentos/consulta/${app.id}`);
+            if (res.ok) {
+                const json = await res.json();
+                if (json.data) {
+                    if (json.data.metodo === 'CARTAO_CREDITO') paymentMethodStr = 'Cartão de Crédito';
+                    else if (json.data.metodo === 'MERCADO_PAGO_CHECKOUT') paymentMethodStr = 'Mercado Pago Pro';
+                    if (json.data.mpPaymentId) mpPaymentIdStr = json.data.mpPaymentId;
+                }
+            }
+        } catch (e) {
+            console.warn('Erro ao consultar faturamento da consulta:', e);
+        }
+
+        setReceiptData({
+            appointmentId: app.id,
+            patientName: app.patientName,
+            doctorName: app.doctorName,
+            doctorCrm: app.doctorCrm,
+            doctorUfCrm: app.doctorUfCrm,
+            doctorSpecialty: app.doctorSpecialty,
+            startDateTime: app.startDateTime,
+            consultationFee: app.consultationFee,
+            paymentMethod: paymentMethodStr,
+            mpPaymentId: mpPaymentIdStr,
+        });
+        setIsReceiptModalOpen(true);
     };
 
     return (
@@ -454,6 +494,18 @@ export const MinhasConsultas: React.FC = () => {
                                             )}
                                             <span>Documentos & Receitas</span>
                                         </button>
+
+                                        {/* Botão de Comprovante Oficial de Pagamento (SPEC-17B) */}
+                                        {(app.status === 'AGENDADA' || app.status === 'REALIZADA') && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleOpenReceipt(app)}
+                                                className="px-4 py-2.5 rounded-xl border border-emerald-600/40 bg-emerald-50 hover:bg-emerald-100 text-emerald-950 font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer min-h-[44px]"
+                                            >
+                                                <Receipt className="w-4 h-4 text-emerald-700" />
+                                                <span>Comprovante de Pagamento</span>
+                                            </button>
+                                        )}
                                     </div>
 
                                     {app.status === 'AGENDADA' && (
@@ -553,6 +605,13 @@ export const MinhasConsultas: React.FC = () => {
                 isOpen={isPrintModalOpen}
                 onClose={() => setIsPrintModalOpen(false)}
                 document={selectedDocForPrint}
+            />
+
+            {/* Modal de Comprovante Oficial de Pagamento (SPEC-17B) */}
+            <ComprovantePagamentoModal
+                isOpen={isReceiptModalOpen}
+                onClose={() => setIsReceiptModalOpen(false)}
+                data={receiptData}
             />
 
             {/* Modal Acessível de Confirmação de Cancelamento */}

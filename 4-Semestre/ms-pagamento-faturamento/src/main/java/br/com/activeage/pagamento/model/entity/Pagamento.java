@@ -68,6 +68,12 @@ public class Pagamento {
     @Column(name = "mp_preference_id", length = 100)
     private String mpPreferenceId;
 
+    @Column(name = "mp_init_point", columnDefinition = "TEXT")
+    private String mpInitPoint;
+
+    @Column(name = "mp_sandbox_init_point", columnDefinition = "TEXT")
+    private String mpSandboxInitPoint;
+
     @Column(name = "qr_code_pix", columnDefinition = "TEXT")
     private String qrCodePix;
 

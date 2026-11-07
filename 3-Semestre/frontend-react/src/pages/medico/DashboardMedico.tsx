@@ -16,12 +16,14 @@ import {
     CreditCard,
     Star,
     Lock,
-    Loader2
+    Loader2,
+    Receipt
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { MedicalRecordViewModal } from '../../components/teleconsulta/MedicalRecordViewModal';
 import { DoctorRecordsManagerModal } from '../../components/teleconsulta/DoctorRecordsManagerModal';
 import { AssinaturaSaaSModal } from '../../components/medico/AssinaturaSaaSModal';
+import { ExtratoFinanceiroModal } from '../../components/medico/ExtratoFinanceiroModal';
 import { FileText } from 'lucide-react';
 import { Footer } from '../../components/home/Footer';
 import logoImg from '../../assets/logo-active-age.png';
@@ -71,6 +73,7 @@ export function DashboardMedico() {
     const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
     const [isRecordsManagerOpen, setIsRecordsManagerOpen] = useState(false);
     const [isSaaSModalOpen, setIsSaaSModalOpen] = useState(false);
+    const [isExtratoModalOpen, setIsExtratoModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -508,7 +511,7 @@ export function DashboardMedico() {
                         Ferramentas do Consultório Virtual
                     </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                         {/* Ação 1: Agenda & Horários */}
                         <div
                             onClick={() => {
@@ -635,6 +638,35 @@ export function DashboardMedico() {
                                 <span>Acessar Prontuários →</span>
                             </div>
                         </div>
+
+                        {/* Ação 4: Extrato Financeiro & Split Direto */}
+                        <div
+                            onClick={() => setIsExtratoModalOpen(true)}
+                            role="button"
+                            tabIndex={0}
+                            className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between bg-white border-brand-pot/60 hover:border-emerald-600 shadow-xs hover:shadow-md"
+                        >
+                            <div>
+                                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center">
+                                        <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    </div>
+                                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] sm:text-[11px] font-bold">
+                                        Split 100%
+                                    </span>
+                                </div>
+                                <h4 className="text-base sm:text-lg font-black text-brown-dark">
+                                    Extrato Financeiro
+                                </h4>
+                                <p className="text-brown-light text-xs sm:text-sm mt-1 leading-snug">
+                                    Acompanhe honorários de teleconsultas, faturamento da assinatura SaaS e balanço consolidado.
+                                </p>
+                            </div>
+                            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-emerald-800">
+                                <span>Mercado Pago IP</span>
+                                <span>Ver Extrato →</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -714,6 +746,17 @@ export function DashboardMedico() {
                 onClose={() => setIsRecordsManagerOpen(false)}
                 doctorName={profile?.fullName}
             />
+
+            {/* Extrato Financeiro & Split Direto (SPEC-17B) */}
+            <ExtratoFinanceiroModal
+                isOpen={isExtratoModalOpen}
+                onClose={() => setIsExtratoModalOpen(false)}
+                doctorId={profile?.id || ''}
+                doctorName={profile?.fullName || ''}
+            />
         </div>
     );
 }
+
+
+
