@@ -5,7 +5,7 @@
 **Disciplinas de Foco:** Sistemas Distribuídos (ILP-038) & Integração e Entrega Contínua (ISW-033)  
 **Líder Técnico & Product Owner (PO):** Guilherme Silva  
 **Arquiteto & Engenheiro de Software:** Antigravity (AI)  
-**Status da Spec:** Em Execução (Micro Tarefa 16.1 Concluída ✅) 🚀  
+**Status da Spec:** Em Execução (Micro Tarefas 16.1 e 16.2 Concluídas ✅) 🚀  
 **Data da Elaboração:** 03 de Novembro de 2026
 
 ---
@@ -126,11 +126,12 @@ flowchart LR
 - [x] Endpoint HTTP de healthcheck: `GET /health` retornando status UP, version, uptime e timestamp;
 - [x] Testes automatizados com Vitest e Supertest cobrindo rota raiz `/`, `/health` e rota inexistente (3 testes passando com 100% de sucesso).
 
-#### 📌 Micro Tarefa 16.2: Hub de Sinalização WebRTC & Gerenciamento de Salas
-- Lógica de isolamento de salas por `appointmentId`;
-- Limite seguro de 2 participantes ativos por sala de teleconsulta (Médico e Paciente/Cuidador);
-- Roteamento transparente de eventos `offer`, `answer`, `ice-candidate` e `toggle-media`;
-- Teste automatizado com dois clientes virtuais de socket simulando o handshake de conexão e desconexão.
+#### 📌 Micro Tarefa 16.2: Hub de Sinalização WebRTC & Gerenciamento de Salas — [CONCLUÍDA ✅]
+- [x] Lógica de isolamento de salas por `appointmentId` via `RoomManager`;
+- [x] Limite seguro de 2 participantes ativos por sala de teleconsulta (Médico e Paciente/Cuidador) com emissão de `room-full`;
+- [x] Roteamento transparente de eventos `offer`, `answer`, `ice-candidate` e `toggle-media`;
+- [x] Desalocação automática da sala em memória $\mathcal{O}(1)$ quando o último participante se desconecta;
+- [x] Teste automatizado com dois clientes virtuais de socket (`socket.io-client`) simulando handshake de conexão, troca de SDP/ICE, toggle-media e desconexão (10 testes totais no Vitest).
 
 #### 📌 Micro Tarefa 16.3: Integração no Frontend React 19 (`TeleconsultaRoom.tsx`)
 - Implementação do custom hook [`useWebRTC.ts`](../../3-Semestre/frontend-react/src/hooks/useWebRTC.ts);

@@ -1,6 +1,7 @@
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { app } from './app';
+import { registerSignalingHandlers } from './signaling/signalingHandler';
 
 const PORT = process.env.PORT || 3001;
 const corsOrigin = process.env.CORS_ORIGIN || '*';
@@ -14,12 +15,8 @@ export const io = new SocketIOServer(httpServer, {
   }
 });
 
-io.on('connection', (socket) => {
-  // Conexão inicial estabelecida - detalhamento das salas na Micro Tarefa 16.2
-  socket.on('disconnect', () => {
-    // Desconexão
-  });
-});
+// Registra os handlers de sinalização WebRTC e controle de salas
+registerSignalingHandlers(io);
 
 if (process.env.NODE_ENV !== 'test') {
   httpServer.listen(PORT, () => {
