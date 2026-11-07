@@ -133,6 +133,16 @@ public class User {
      */
     private LocalDateTime trialExpiresAt;
 
+    /**
+     * Situação da assinatura SaaS do consultório virtual do médico (SPEC-17).
+     */
+    private com.activeage.core.domain.enums.DoctorSubscriptionStatus subscriptionStatus;
+
+    /**
+     * Data de expiração da assinatura mensal ativa.
+     */
+    private LocalDateTime subscriptionExpiresAt;
+
     // ==========================================
     // IDENTIDADE VISUAL & AVATAR (RF014 / UC18)
     // ==========================================

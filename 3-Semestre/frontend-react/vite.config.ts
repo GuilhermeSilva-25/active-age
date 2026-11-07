@@ -21,6 +21,10 @@ export default defineConfig(({ mode }) => {
       : undefined,
     server: {
       proxy: {
+        "/api/v1": {
+          target: "http://localhost:8082",
+          changeOrigin: true,
+        },
         "/api": {
           target: "http://localhost:8080",
           changeOrigin: true,
@@ -29,4 +33,3 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
-

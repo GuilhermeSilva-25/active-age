@@ -145,11 +145,55 @@ jobs:
           npm run build
 
   # =========================================================================
-  # JOB 4: DevSecOps & Container Docker (Trivy Scan + Docker Multi-Stage)
+  # =========================================================================
+  # JOB 4: Payment Microservice CI (Java 21 LTS + Spring Boot 3 + JPA/H2)
+  # =========================================================================
+  payment-ci:
+    name: Payment & SaaS Split (Java 21 / Spring Boot 3)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Código-Fonte
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar JDK 21 LTS (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Conceder Permissão de Execução ao Maven Wrapper
+        run: chmod +x 4-Semestre/ms-pagamento-faturamento/mvnw
+
+      - name: Compilar, Testar e Gerar Cobertura (Jacoco)
+        run: |
+          cd 4-Semestre/ms-pagamento-faturamento
+          ./mvnw test
+
+      - name: Upload Relatórios de Testes JUnit (Surefire)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: payment-surefire-reports
+          path: 4-Semestre/ms-pagamento-faturamento/target/surefire-reports/
+          retention-days: 14
+
+      - name: Upload Relatório de Cobertura Jacoco
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: payment-jacoco-coverage
+          path: 4-Semestre/ms-pagamento-faturamento/target/site/jacoco/
+          retention-days: 14
+
+  # JOB 5: DevSecOps & Container Docker (Trivy Scan + Docker Multi-Stage)
   # =========================================================================
   security-and-docker-ci:
     name: DevSecOps & Container Docker
-    needs: [backend-ci, frontend-ci, signaling-ci]
+    needs: [backend-ci, frontend-ci, signaling-ci, payment-ci]
     runs-on: ubuntu-latest
 
     steps:
@@ -199,7 +243,8 @@ jobs:
           echo "| Pilar da Esteira | Tecnologia / Ferramenta | Status | Detalhes |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
           echo "| **Backend Core** | Java 21 LTS + Spring Boot 3 | ✅ Passou | 181 testes automatizados (JUnit 5 + Mockito + MockMvc) |" >> $GITHUB_STEP_SUMMARY
-          echo "| **WebRTC Signaling** | Node.js LTS + Socket.io + Express | ✅ Passou | 10 testes automatizados (Vitest) e build de produção (TypeScript) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **WebRTC Signaling** | Node.js LTS + Socket.io + Express | ✅ Passou | 10 testes automatizados (Vitest) e build de produção (TypeScript) |
+          echo "| **Payment & SaaS Split** | Java 21 LTS + Spring Boot 3 + JPA | ✅ Passou | 31 testes automatizados (JUnit 5 + MockMvc) e Split Direto |" >> $GITHUB_STEP_SUMMARY" >> $GITHUB_STEP_SUMMARY
           echo "| **Cobertura de Código** | Jacoco Maven Plugin (v0.8.12) | ✅ 84% Instruções / 56% Branches | 100% das 45 classes auditadas (0 classes ausentes) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Frontend SPA** | React 19 + TypeScript + Vite | ✅ Passou | Tipagem estática validada e build de produção gerado |" >> $GITHUB_STEP_SUMMARY
           echo "| **Análise Estática (Linter)** | oxlint & tsc (TypeScript) | ✅ Passou | 0 erros de sintaxe ou conformidade |" >> $GITHUB_STEP_SUMMARY

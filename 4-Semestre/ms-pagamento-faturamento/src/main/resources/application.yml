@@ -1,0 +1,73 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ms-pagamento-faturamento
+  datasource:
+    url: jdbc:h2:mem:pagamentodb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+# Configurações de Monitoramento e Métricas
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Documentação OpenAPI / Swagger UI
+springdoc:
+  swagger-ui:
+    path: /swagger-ui/index.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+# Configurações de Resiliência (Resilience4j)
+resilience4j:
+  circuitbreaker:
+    instances:
+      mercadoPagoCircuitBreaker:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-type: COUNT_BASED
+        automatic-transition-from-open-to-half-open-enabled: true
+  timelimiter:
+    instances:
+      mercadoPagoCircuitBreaker:
+        timeout-duration: 2s
+        cancel-running-future: true
+
+# Parâmetros de Integração com Mercado Pago & Core
+activeage:
+  mercadopago:
+    access-token: ${MP_ACCESS_TOKEN:TEST-ACTIVEAGE-MERCADOPAGO-TOKEN}
+    public-key: ${MP_PUBLIC_KEY:TEST-ACTIVEAGE-PUBLIC-KEY}
+    webhook-secret: ${MP_WEBHOOK_SECRET:TEST-WEBHOOK-SECRET}
+    marketplace-fee-percent: 0.00
+  core:
+    url: ${CORE_BACKEND_URL:http://localhost:8080}
+  saas:
+    plano-mensal-valor: 149.90
+    plano-nome: Consultorio Digital Ativo
+    trial-days: 15

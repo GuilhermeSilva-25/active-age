@@ -104,8 +104,13 @@ Antes de propor soluções ou executar tarefas, consulte os seguintes documentos
   - Pipeline de CI/CD Industrial no GitHub Actions (SPEC-15) [CONCLUÍDA / LIVE ✅]: Esteira com 9 Pilares, matriz paralela (Backend Java 21 / Frontend React 19), 37 testes automatizados JUnit 5/Mockito, cobertura de código Jacoco (HTML/XML), linter oxlint, scanner DevSecOps com Trivy CLI, build da imagem Docker multi-stage e GitHub Step Summary executivo em Markdown.
   - Blindagem de Testes Automatizados & Expansão JaCoCo (SPEC-15B) [CONCLUÍDA / LIVE ✅]: 180 testes automatizados (0 falhas/erros), cobertura geral elevada de 48% para 84% de instruções e 56% de branches; 14 controladores RESTful 100% blindados com MockMvc (96% instruções), serviços em 80%, exceptions e utils em 100%, 0 classes sem teste (45/45).
   - Ajustes de Usabilidade: Foto Humanizada, Modais Responsivos e Limpeza no Admin (SPEC-15C) [CONCLUÍDA / LIVE ✅]: Retrato acolhedor da Dona Maria (Wikimedia Commons) com resiliência no semeador, hook `useBodyScrollLock` e rolagem interna em todos os modais da aplicação, eliminação de cards redundantes no AdminDashboard e expansão para 181 testes automatizados (0 falhas).
-  - Marcos Concluídos do 4º Semestre: SPEC-15 (CI/CD GitHub Actions), SPEC-15B (Testes JaCoCo 84%), SPEC-15C (Ajustes de Usabilidade) e SPEC-16 (Microsserviço de Teleconsulta WebRTC Nativo — 100% Concluído e Live no Render com 10 testes Vitest, P2P real, ICE Restart, Docker Trivy CI, Fullscreen e Cockpit Responsivo de 2 Colunas Médico/Paciente ✅).
-  - Próximos Marcos do 4º Semestre: SPEC-17 (Microsserviço de Pagamento com Split Direto BACEN via API do Mercado Pago — Decisão do PO Homologada) e SPEC-18 (Orquestração com Docker Compose e Push GHCR).
+  - Marcos Concluídos do 4º Semestre:
+    - SPEC-15: Pipeline de CI/CD Industrial no GitHub Actions [LIVE ✅]
+    - SPEC-15B: Blindagem de Testes Automatizados & Expansão JaCoCo 84% [LIVE ✅]
+    - SPEC-15C: Usabilidade, Fotos Humanizadas e Rolagem Interna de Modais [LIVE ✅]
+    - SPEC-16: Microsserviço de Teleconsulta WebRTC Nativo P2P com Signaling [LIVE ✅]
+    - SPEC-17: Microsserviço de Pagamento com Split Direto BACEN e Gestão de Assinaturas SaaS do Médico via Mercado Pago [CONCLUÍDO ✅]: Novo serviço ms-pagamento-faturamento (Java 21 LTS + Spring Boot 3 + JPA/H2 + Resilience4j + Caffeine), 31 testes automatizados unitários/MockMvc (0 falhas), Split Direto 100% médico sem dicotomia (Res. CFM nº 2.314/2022), faturamento SaaS de consultório virtual (R$ 149,90/mês), Circuit Breaker com fallback de contingência, callbacks atômicos no backend-core (184 testes 100% aprovados), checkout Pix no paciente e modal AssinaturaSaaSModal.tsx no médico. Total de 215 testes backend automatizados!
+  - Próximos Marcos do 4º Semestre: SPEC-18 (Orquestração com Docker Compose e Deploy/Push GHCR) e SPEC-18 (Orquestração com Docker Compose e Push GHCR).
 - **5º Semestre — [FUTURO]:**
   - Aplicativo Mobile Multiplataforma (React Native) e Ingestão de Wearables de Saúde.
 

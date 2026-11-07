@@ -21,6 +21,7 @@ import {
 import { FeedbackModal } from '../../components/common/FeedbackModal';
 import { MedicalRecordViewModal } from '../../components/teleconsulta/MedicalRecordViewModal';
 import { DoctorRecordsManagerModal } from '../../components/teleconsulta/DoctorRecordsManagerModal';
+import { AssinaturaSaaSModal } from '../../components/medico/AssinaturaSaaSModal';
 import { FileText } from 'lucide-react';
 import { Footer } from '../../components/home/Footer';
 import logoImg from '../../assets/logo-active-age.png';
@@ -45,6 +46,8 @@ interface DoctorStats {
     totalAppointments: number;
     freeSlots: number;
     trialDaysRemaining: number;
+    subscriptionStatus?: string;
+    subscriptionExpiresAt?: string;
 }
 
 interface DoctorTodayAppointment {
@@ -67,6 +70,7 @@ export function DashboardMedico() {
     const [selectedApptForRecord, setSelectedApptForRecord] = useState<DoctorTodayAppointment | null>(null);
     const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
     const [isRecordsManagerOpen, setIsRecordsManagerOpen] = useState(false);
+    const [isSaaSModalOpen, setIsSaaSModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -373,19 +377,33 @@ export function DashboardMedico() {
                     </div>
 
                     {/* Card 3: Assinatura SaaS / Degustação Gratuita */}
-                    <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+                    <div
+                        onClick={() => setIsSaaSModalOpen(true)}
+                        className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 cursor-pointer hover:border-emerald-600 transition-all group"
+                        title="Gerenciar assinatura do consultório virtual"
+                    >
                         <div>
                             <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
                                 Assinatura SaaS
                             </span>
-                            <span className="text-sm sm:text-base md:text-lg font-black text-emerald-700 mt-0.5 sm:mt-1 block">
-                                Degustação {stats?.trialDaysRemaining ?? 15}D
+                            <span className={`text-sm sm:text-base md:text-lg font-black mt-0.5 sm:mt-1 block ${
+                                stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
+                                    ? 'text-emerald-700'
+                                    : (stats?.trialDaysRemaining ?? 15) > 0
+                                        ? 'text-emerald-700'
+                                        : 'text-red-600'
+                            }`}>
+                                {stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
+                                    ? 'Plano Ativo'
+                                    : `Degustação ${stats?.trialDaysRemaining ?? 15}D`}
                             </span>
-                            <span className="text-[10px] sm:text-[11px] text-emerald-800 font-bold mt-0.5 block truncate">
-                                100% honorários médico
+                            <span className="text-[10px] sm:text-[11px] text-emerald-800 font-bold mt-0.5 block truncate group-hover:underline">
+                                {stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
+                                    ? 'Consultório Digital Ativo'
+                                    : '100% honorários • Assinar Plano'}
                             </span>
                         </div>
-                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 self-end sm:self-center">
+                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 self-end sm:self-center group-hover:scale-105 transition-transform">
                             <CreditCard className="w-4 h-4 sm:w-6 sm:h-6" />
                         </div>
                     </div>
@@ -653,6 +671,20 @@ export function DashboardMedico() {
             </main>
 
             {/* Modal de Feedback Acessível */}
+            <AssinaturaSaaSModal
+                isOpen={isSaaSModalOpen}
+                onClose={() => setIsSaaSModalOpen(false)}
+                onSuccess={() => {
+                    fetch('/api/doctor/stats')
+                        .then(r => r.ok && r.json())
+                        .then(d => d && setStats(d))
+                        .catch(console.error);
+                }}
+                doctorId={profile?.id || ''}
+                doctorName={profile?.fullName || ''}
+                doctorEmail={profile?.email}
+            />
+
             <FeedbackModal
                 isOpen={feedback.isOpen}
                 type={feedback.type}

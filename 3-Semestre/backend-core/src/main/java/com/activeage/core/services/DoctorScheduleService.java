@@ -238,6 +238,8 @@ public class DoctorScheduleService {
                 .totalAppointments(totalAppointments)
                 .freeSlots(freeSlots)
                 .trialDaysRemaining(trialDaysRemaining)
+                .subscriptionStatus(doctor.getSubscriptionStatus() != null ? doctor.getSubscriptionStatus().name() : (trialDaysRemaining > 0 ? "TRIAL_ATIVO" : "ASSINATURA_EXPIRADA"))
+                .subscriptionExpiresAt(doctor.getSubscriptionExpiresAt())
                 .build();
     }
 

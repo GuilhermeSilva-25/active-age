@@ -11,6 +11,7 @@ import {
     CalendarX,
     FileText,
     Printer,
+    CreditCard,
     X,
 } from 'lucide-react';
 import { FeedbackModal } from '../../components/common/FeedbackModal';
@@ -32,7 +33,7 @@ interface AppointmentItem {
     endDateTime: string;
     durationMinutes: number;
     consultationFee: number;
-    status: 'AGENDADA' | 'REALIZADA' | 'CANCELADA_PELO_PACIENTE' | 'CANCELADA_PELO_MEDICO';
+    status: 'AGUARDANDO_PAGAMENTO' | 'AGENDADA' | 'REALIZADA' | 'CANCELADA_PELO_PACIENTE' | 'CANCELADA_PELO_MEDICO' | 'CANCELADA_FALTA_PAGAMENTO';
     patientNotes?: string;
     meetRoomId?: string;
     canCancel: boolean;
@@ -99,11 +100,11 @@ export const MinhasConsultas: React.FC = () => {
     }, []);
 
     const upcomingAppointments = appointments.filter(
-        a => a.status === 'AGENDADA' && new Date(a.startDateTime) >= new Date()
+        a => (a.status === 'AGENDADA' || a.status === 'AGUARDANDO_PAGAMENTO') && new Date(a.startDateTime) >= new Date()
     );
 
     const historyAppointments = appointments.filter(
-        a => a.status !== 'AGENDADA' || new Date(a.startDateTime) < new Date()
+        a => (a.status !== 'AGENDADA' && a.status !== 'AGUARDANDO_PAGAMENTO') || new Date(a.startDateTime) < new Date()
     );
 
     const formatFullDate = (isoStr: string) => {
@@ -331,6 +332,17 @@ export const MinhasConsultas: React.FC = () => {
 
                                     {/* Status Badge */}
                                     <div className="self-start sm:self-auto">
+                                        {app.status === 'AGUARDANDO_PAGAMENTO' && (
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-amber-100 text-amber-900 border border-amber-300">
+                                                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                                                Aguardando Pagamento Pix
+                                            </span>
+                                        )}
+                                        {app.status === 'CANCELADA_FALTA_PAGAMENTO' && (
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-red-100 text-red-800 border border-red-300">
+                                                Cancelada (Pagamento Expirado)
+                                            </span>
+                                        )}
                                         {app.status === 'AGENDADA' && (
                                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
                                                 <CalendarCheck className="w-3.5 h-3.5 text-emerald-600" />
@@ -400,6 +412,23 @@ export const MinhasConsultas: React.FC = () => {
                                 {/* Ações do Card */}
                                 <div className="pt-3 border-t border-brand-pot/20 flex flex-col sm:flex-row items-center justify-between gap-3">
                                     <div className="flex flex-wrap items-center gap-2 text-xs w-full sm:w-auto">
+                                        {app.status === 'AGUARDANDO_PAGAMENTO' && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setFeedback({
+                                                        isOpen: true,
+                                                        title: 'Pagamento Pix da Teleconsulta',
+                                                        message: `Para confirmar sua consulta com ${app.doctorName}, realize a transferência Pix no valor de R$ ${Number(app.consultationFee).toFixed(2).replace('.', ',')}. O repasse é 100% destinado ao médico sem cobrança de taxas clínicas.`,
+                                                        type: 'info',
+                                                    });
+                                                }}
+                                                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer min-h-[44px]"
+                                            >
+                                                <CreditCard className="w-4 h-4" />
+                                                <span>Pagar via Pix</span>
+                                            </button>
+                                        )}
                                         {app.status === 'AGENDADA' && (
                                             <button
                                                 type="button"

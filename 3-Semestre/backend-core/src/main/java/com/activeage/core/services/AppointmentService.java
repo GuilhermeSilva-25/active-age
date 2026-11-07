@@ -275,6 +275,68 @@ public class AppointmentService {
         return mapToResponse(appointment);
     }
 
+    /**
+     * Confirma o pagamento da teleconsulta recebido via Webhook do gateway (SPEC-17).
+     */
+    public AppointmentResponse confirmPayment(String appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada com ID: " + appointmentId));
+
+        if (appointment.getStatus() == AppointmentStatus.AGUARDANDO_PAGAMENTO) {
+            appointment.setStatus(AppointmentStatus.AGENDADA);
+            appointment.setUpdatedAt(LocalDateTime.now());
+            appointment = appointmentRepository.save(appointment);
+
+            if (appointment.getSlotId() != null) {
+                scheduleSlotRepository.findById(appointment.getSlotId()).ifPresent(slot -> {
+                    slot.setStatus(SlotStatus.OCUPADO);
+                    slot.setUpdatedAt(LocalDateTime.now());
+                    scheduleSlotRepository.save(slot);
+                });
+            }
+
+            auditService.log(
+                    appointment.getPatientId(),
+                    appointment.getPatientEmail(),
+                    "ROLE_PACIENTE",
+                    "PAYMENT_CONFIRMED",
+                    appointment.getId(),
+                    "Pagamento da teleconsulta liquidado com sucesso via Mercado Pago (Split 100% Médico).",
+                    "GATEWAY_INTERNAL"
+            );
+        }
+
+        return mapToResponse(appointment);
+    }
+
+    /**
+     * Cancela agendamento pendente por expiração do prazo de pagamento e devolve o slot (SPEC-17).
+     */
+    public AppointmentResponse cancelExpiredPayment(String appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada com ID: " + appointmentId));
+
+        if (appointment.getStatus() == AppointmentStatus.AGUARDANDO_PAGAMENTO) {
+            appointment.setStatus(AppointmentStatus.CANCELADA_FALTA_PAGAMENTO);
+            appointment.setCancellationReason("Cancelamento automático por falta de liquidação no prazo de 15 minutos.");
+            appointment.setUpdatedAt(LocalDateTime.now());
+            appointment = appointmentRepository.save(appointment);
+
+            if (appointment.getSlotId() != null) {
+                scheduleSlotRepository.findById(appointment.getSlotId()).ifPresent(slot -> {
+                    slot.setStatus(SlotStatus.LIVRE);
+                    slot.setPatientId(null);
+                    slot.setPatientName(null);
+                    slot.setAppointmentId(null);
+                    slot.setUpdatedAt(LocalDateTime.now());
+                    scheduleSlotRepository.save(slot);
+                });
+            }
+        }
+
+        return mapToResponse(appointment);
+    }
+
     private AppointmentResponse mapToResponse(Appointment appointment) {
         boolean canCancel = appointment.getStatus() == AppointmentStatus.AGENDADA &&
                 appointment.getStartDateTime().isAfter(LocalDateTime.now().plusHours(24));
