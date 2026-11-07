@@ -10,11 +10,11 @@
 
 A pipeline de **Integração e Entrega Contínua (CI/CD)** do ecossistema **Active Age** foi projetada para garantir qualidade de código contínua, detecção precoce de vulnerabilidades de segurança, validação rigorosa de regras ético-médicas e automação do ciclo de vida de entrega de software.
 
-A esteira atua diretamente sobre o repositório multi-projetos, executando validações em paralelo sobre o **Core construído no 3º Semestre** (`backend-core` em Spring Boot / Java 21 e `frontend-react` em React 19 / TypeScript / Vite) e preparando o ambiente para os **novos microsserviços do 4º Semestre**.
+A esteira atua diretamente sobre o repositório multi-projetos, executando validações em paralelo sobre o **Core** (`backend-core` em Spring Boot / Java 21 e `frontend-react` em React 19 / TypeScript / Vite) e os **microsserviços satélites do 4º Semestre** (`ms-teleconsulta-signaling` em Node.js / Socket.io e `ms-pagamento-faturamento` em Java 21 / Spring Boot 3).
 
 ---
 
-### 2. Diagrama Conceitual da Pipeline (9 Pilares)
+### 2. Diagrama Conceitual da Pipeline Completa (CI/CD)
 
 ```mermaid
 flowchart TD
@@ -25,37 +25,42 @@ flowchart TD
     end
 
     subgraph P2["2. Runners & Setup"]
-        RUNNER["GitHub Runner (ubuntu-latest)"]
+        RUNNER["GitHub Runners (ubuntu-latest)"]
         CHECKOUT["Checkout do Código (fetch-depth: 0)"]
         CACHE["Estratégia de Cache (.m2 / .npm)"]
     end
 
-    subgraph P3["3. Matriz de Execução Paralela"]
-        JOB_BACK["Job: Backend Core (Java 21 / Maven)"]
-        JOB_FRONT["Job: Frontend SPA (Node 22 / React 19)"]
+    subgraph P3["3. Matriz de Execução Paralela (CI)"]
+        JOB_BACK["Job 1: Backend Core (Java 21 / Maven / 184 testes)"]
+        JOB_FRONT["Job 2: Frontend SPA (Node 22 / Vite / oxlint)"]
+        JOB_SIG["Job 3: Signaling WebRTC (Node 22 / Vitest / 10 testes)"]
+        JOB_PAG["Job 4: Payment & SaaS (Java 21 / Spring Boot / 39 testes)"]
     end
 
     subgraph P4["4. Quality Gates Perimetrais"]
-        LINT["Linter & Tipagem Estática (tsc / Checkstyle)"]
-        TESTS["Testes Automatizados (JUnit 5 / Mockito)"]
-        COV["Cobertura de Código (Jacoco XML)"]
-        SEC["Scanners de Segurança (Trivy / OWASP / CodeQL)"]
+        LINT["Linter & Tipagem Estática (tsc / oxlint)"]
+        TESTS["233 Testes Automatizados (JUnit 5 / MockMvc / Vitest)"]
+        COV["Cobertura JaCoCo (84% Instruções / 56% Branches)"]
+        SEC["Scanners de Segurança Trivy (Aqua Security)"]
     end
 
-    subgraph P5["5. Artefatos & Containers"]
-        ARTIFACTS["Upload de Relatórios de Testes & Cobertura"]
-        DOCKER["Validação do Container Docker Multi-Stage"]
+    subgraph P5["5. Continuous Delivery (CD) & Orquestração"]
+        COMPOSE["Validação Sintática: docker compose config"]
+        DOCKER["Build Multi-Stage dos 4 Containers"]
+        GHCR["Publicação Oficial no GitHub Container Registry (ghcr.io)"]
     end
 
     subgraph P6["6. Feedback & Observabilidade"]
-        SUMMARY["GitHub Step Summary (Markdown no PR/Job)"]
-        NOTIFY["Notificação de Status & Quality Gate Pass/Fail"]
+        SUMMARY["GitHub Step Summary (Markdown com Relatório Executivo)"]
+        NOTIFY["Quality Gates 100% Verdes"]
     end
 
     P1 --> P2
     P2 --> P3
     JOB_BACK --> P4
     JOB_FRONT --> P4
+    JOB_SIG --> P4
+    JOB_PAG --> P4
     P4 --> P5
     P5 --> P6
 ```
@@ -65,68 +70,42 @@ flowchart TD
 ### 3. Detalhamento dos 9 Componentes da Esteira
 
 #### 1. Gatilho (Trigger)
-* `push` nas branches `main` e `develop` quando houver alterações em:
-  * `3-Semestre/**`
-  * `4-Semestre/**`
-  * `.github/workflows/**`
+* `push` nas branches `main` e `develop` monitorando alterações em `3-Semestre/**`, `4-Semestre/**`, `.github/workflows/**`, `docker-compose.yml` e `.env.example`;
 * `pull_request` apontando para `main` para validação pré-merge de qualidade;
-* `workflow_dispatch` permitindo disparo manual sob demanda pela interface do GitHub para testes e homologação assistida.
+* `workflow_dispatch` permitindo disparo manual sob demanda pela interface do GitHub.
 
 #### 2. Ambiente de Execução (Runner)
-* Utilização de runners virtuais isolados baseados em **`ubuntu-latest`** fornecidos pelo GitHub Actions, garantindo ambiente limpo e reprodutível a cada execução.
+* Utilização de runners virtuais isolados baseados em **`ubuntu-latest`** fornecidos pelo GitHub Actions.
 
 #### 3. Obtenção do Código (Checkout)
-* Utilização da action oficial `actions/checkout@v4` com **`fetch-depth: 0`**, preservando o histórico git completo para cálculos de cobertura diferencial, scanners de segredos e métricas de qualidade.
+* Utilização da action oficial `actions/checkout@v4` com **`fetch-depth: 0`**, preservando o histórico git completo.
 
 #### 4. Preparação do Ambiente e Dependências (Build/Setup)
-* **Backend:** Setup de **Java 21 LTS** (distribuição Eclipse Temurin) via `actions/setup-java@v4`;
-* **Frontend:** Setup de **Node.js 22 LTS** via `actions/setup-node@v4`;
-* Configuração do Maven Wrapper com permissões executáveis (`chmod +x ./mvnw`).
+* **Backend Core & Pagamentos:** Setup de **Java 21 LTS** (distribuição Eclipse Temurin) via `actions/setup-java@v4` com cache Maven (`~/.m2`);
+* **Frontend & Signaling:** Setup de **Node.js 22 LTS** via `actions/setup-node@v4` com cache npm;
+* Permissões executáveis para wrappers Maven (`mvnw`).
 
 #### 5. Quality Gates (Portões de Qualidade e Segurança)
-A esteira atua como um portão rígido de aceitação. Se qualquer um dos quality gates falhar, a pipeline é imediatamente interrompida (vermelho):
-* **Análise Estática & Linter:** 
-  * Verificação rigorosa de tipagem estática no frontend com TypeScript (`tsc -b`), impedindo bugs de compilação em runtime.
-* **Testes Automatizados:** 
-  * Execução dos testes unitários e de integração no backend com JUnit 5 e Mockito (`./mvnw test`), validando isolamento de regras de prontuário, auditoria e autenticação.
-* **Cobertura de Código:** 
-  * Geração do relatório XML via **Jacoco** (*Java Code Coverage*) no Maven, permitindo aferição do percentual de cobertura das classes de serviço.
-* **Análise de Segurança (DevSecOps):** 
-  * Scanner de dependências com `npm audit` no frontend;
-  * Scanner de vulnerabilidades e CVEs conhecidas em bibliotecas e containers via **Trivy (Aqua Security)**.
-* **Análise Avançada de Qualidade:** 
-  * Estruturação preparada para auditoria estática SonarCloud / CodeQL.
+* **Análise Estática & Linter:** `oxlint` no frontend e `tsc -b` para validação rigorosa de tipagem estática;
+* **233 Testes Automatizados:** 184 testes no Backend Core + 39 testes no Microsserviço de Pagamento + 10 testes no Signaling WebRTC (0 falhas);
+* **Cobertura de Código:** JaCoCo no Core atingindo **84% de cobertura de instruções** e 56% de branches em 45/45 classes auditadas;
+* **DevSecOps (SCA):** Scanner de dependências (`npm audit`) e scanner de CVEs em arquivos e containers via **Trivy CLI**.
 
 #### 6. Estratégia de Matriz e Cache (Otimização)
-* **Execução em Paralelo:** A esteira divide o trabalho em jobs simultâneos (`backend-core-validation` e `frontend-react-validation`), reduzindo pela metade o tempo total de espera;
-* **Caching de Dependências:** 
-  * Cache do repositório Maven local (`~/.m2/repository`);
-  * Cache do gerenciador de pacotes npm (`~/.npm`);
-  * Redução estimada do tempo de execução de ~5 minutos para **menos de 1 minuto e meio**.
+* A esteira divide o trabalho em **4 jobs paralelos** (`backend-ci`, `frontend-ci`, `signaling-ci`, `payment-ci`), otimizando tempo e recursos com cache de pacotes.
 
-#### 7. Geração e Publicação de Artefatos / Containers
-* **Armazenamento de Relatórios:** Coleta dos relatórios de testes JUnit (`target/surefire-reports/`) e relatórios de cobertura Jacoco como artefatos baixáveis (`actions/upload-artifact@v4`);
-* **Validação de Container Docker:** Execução do build do `Dockerfile` multi-stage do backend (`docker build -t active-age-backend-core:test .`), garantindo que a imagem de produção compila sem quebras antes do deploy no Render.
+#### 7. Orquestração Multi-Container & Docker
+* Validação automática do arquivo de orquestração raiz via `docker compose config`;
+* Construção automatizada dos 4 containers multi-stage (`backend-core`, `frontend-react`, `ms-teleconsulta-signaling`, `ms-pagamento-faturamento`).
 
-#### 8. Ambientes e Controle de Mudança (Continuous Delivery)
-* Separação conceitual entre branches de integração (`develop`) e branch de entrega homologada (`main`);
-* Travas para impedir merge se os Quality Gates não estiverem 100% verdes (*Branch Protection Rules*).
+#### 8. Entrega Contínua (Continuous Delivery - CD no GHCR)
+* Login seguro no **GitHub Container Registry (GHCR)** via `secrets.GITHUB_TOKEN`;
+* Tagging e publicação oficial das imagens versionadas com as tags `:latest` e `:${{ github.sha }}`.
 
 #### 9. Feedback e Observabilidade
-* **GitHub Step Summary (`$GITHUB_STEP_SUMMARY`):** Ao término de cada execução, a pipeline gera automaticamente uma tabela visual formatada em Markdown no painel da Action informando:
-  * Status da compilação do Backend e Frontend;
-  * Quantidade de testes executados e aprovados;
-  * Percentual de cobertura de código;
-  * Status dos scanners de vulnerabilidades;
-  * Tempo total de processamento.
+* **GitHub Step Summary (`$GITHUB_STEP_SUMMARY`):** Geração automática de relatório executivo em Markdown com tabelas consolidando o status de CI (testes, cobertura, scanners) e CD (containers e imagens publicadas).
 
 ---
 
 ### 4. Relação Pedagógica com a Matriz da Fatec Diadema
-Esta arquitetura atende 100% das competências previstas na disciplina **Integração e Entrega Contínua (ISW-033)** do 4º semestre de DSM:
-1. *Automação de ciclo de testes e builds*;
-2. *Configuração de esteiras no GitHub Actions com runners em nuvem*;
-3. *Implementação de testes de segurança estática (SAST) e análise de composição de software (SCA)*;
-4. *Containerização e empacotamento com Docker multi-stage*;
-5. *Relatórios executivos e métricas de qualidade de software*.
-
+Esta arquitetura atende 100% das competências previstas na disciplina **Integração e Entrega Contínua (ISW-033)** e **Sistemas Distribuídos (ILP-038)** do 4º semestre de DSM.

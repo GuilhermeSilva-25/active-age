@@ -19,9 +19,9 @@ Ao abrir o projeto no Antigravity em uma máquina nova (ou iniciar uma nova conv
 > *"Olá! Estou iniciando o desenvolvimento nesta máquina. Por favor, leia o `GEMINI.md` e o `3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md`, verifique o estado atual do repositório e me diga exatamente onde paramos e qual é o próximo passo a ser executado."*
 
 Com essa instrução simples, o Antigravity:
-- Identificará que o **3º Semestre está 100% concluído em produção (v0.1.0 a v0.4.0)**;
-- Identificará que o **4º Semestre está em andamento ativo**, com a **SPEC-15 (CI/CD GitHub Actions)**, **SPEC-15B (Blindagem de Testes & JaCoCo 84% com 180 testes)** e **SPEC-15C (Ajustes de Usabilidade em Modais e Foto)** 100% concluídas e live;
-- Identificará que no **4º Semestre**, a **SPEC-15 (CI/CD)**, **SPEC-15B (Testes JaCoCo 84%)**, **SPEC-15C (Usabilidade)** e a **SPEC-16 (Microsserviço de Teleconsulta WebRTC Nativo com 10 testes Vitest, P2P real, ICE Restart e Docker Trivy CI)** estão 100% concluídas e live, sendo o próximo passo o planejamento da **SPEC-17 (Microsserviço de Gateway de Pagamento & Split Direto BACEN)**.
+- Identificará que o **3º e o 4º Semestres estão 100% concluídos e homologados em produção (v0.1.0 a v0.4.0 e SPEC-15 a SPEC-18)**;
+- Identificará que no **4º Semestre**, todas as frentes foram entregues com sucesso: **SPEC-15 & SPEC-15B (CI/CD GitHub Actions com 233 testes e JaCoCo 84%)**, **SPEC-15C (Usabilidade)**, **SPEC-16 (WebRTC Signaling)**, **SPEC-17 a SPEC-17K (Gateway de Pagamento com Split BACEN & Faturamento SaaS Mercado Pago)** e **SPEC-18 (Orquestração Docker Compose e CD no GHCR)**;
+
 - Identificará que as credenciais universais para testes bilaterais são:
   - **Administrador:** `admin@activeage.com` / `AdminPassword2026!`
   - **Médico Teste:** `medico@teste.com` / `123456` (com consulta confirmada para hoje)

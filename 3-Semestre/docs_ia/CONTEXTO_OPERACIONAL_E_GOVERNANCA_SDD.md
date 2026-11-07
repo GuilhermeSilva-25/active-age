@@ -135,7 +135,7 @@ Uma micro tarefa só é considerada **CONCLUÍDA** quando todos os itens abaixo 
 | **M3: Vitrine & Agendamento** | UC08, UC09, UC10 | Vitrine neutra de especialistas (Res. CFM nº 2.336/2023), gestão de turnos médicos, agendamento concorrente atômico (sem double-booking) e cancelamento ético com mais de 24h | **Concluído e Live** ✅ |
 | **M4: Prontuário & Documentos** | UC11, UC13, UC14, UC15, UC16 | Submissão e visualização de exames no GridFS, prontuário imutável com hash SHA-256, emissão de prescrições ICP-Brasil limpas em P&B, painel do paciente e validador público | **Concluído e Live** ✅ |
 | **M5: Cockpit de Teleconsulta & Sala Virtual** | UC12-Demo | Cockpit bilateral de teleconsulta computador/mobile, timer em tempo real, controles audiovisuais, fluxo seguro de saída e encerramento | **Concluído e Live** ✅ |
-| **M6: Teleconsulta Nativa, Finanças & Mensageria** | UC06, UC07, UC12, UC17 | Microsserviços de WebRTC nativo, Gateway com Split Direto regulado pelo BACEN, mensageria assíncrona (RabbitMQ) e avaliação pós-consulta | **Foco do 4º Semestre** 📅 |
+| **M6: Teleconsulta Nativa, Finanças & Orquestração** | UC06, UC07, UC12 | Microsserviço WebRTC nativo P2P (Signaling), Gateway com Split Direto BACEN e faturas SaaS via Mercado Pago, e Orquestração Docker Compose com CD no GHCR | **Concluído e Homologado no 4º Semestre** ✅ |
 | **M6: Governança & Auditoria Global** | UC04, UC05, UC09, UC10 | Trilha de auditoria indelével em `audit_logs`, métricas em tempo real no Dashboard Admin e automação de horários | **Concluído e Live** ✅ |
 
 ---

@@ -1,44 +1,91 @@
-# ⚙️ 4º Semestre: DevOps, CI/CD & Microsserviços Distribuídos
+# ⚙️ 4º Semestre: DevOps, CI/CD Industrial & Sistemas Distribuídos
 
-**Status: Em Desenvolvimento** 🚀 | **Foco: Pipeline Industrial de CI/CD & Arquitetura de Microsserviços**
+**Status: Concluído** ✅ | **233 Testes Automatizados (0 Falhas) | JaCoCo 84% | Orquestração Docker Compose** 🏆
 
-## 🎯 Objetivo do Semestre
-Elevar a maturidade corporativa do ecossistema **Active Age**, implementando uma esteira de **Integração e Entrega Contínua (CI/CD)** com múltiplos *Quality Gates* (análise estática, testes automatizados, cobertura, segurança e observabilidade) aplicada sobre a base construída no 3º Semestre, e desenhar/implementar os novos **Microsserviços Distribuídos Satélites** (Teleconsulta Real com WebRTC nativo e Gateway de Pagamentos com Split Direto regulado pelo BACEN).
+---
+
+## 🎯 Objetivo Concluído
+Elevar a maturidade corporativa e arquitetural do ecossistema **Active Age**, implementando:
+1. Uma esteira de **Integração e Entrega Contínua (CI/CD)** com múltiplos *Quality Gates* (análise estática, testes automatizados, cobertura JaCoCo, segurança DevSecOps com Trivy, build multi-stage e publicação no GHCR);
+2. A transição para uma **Arquitetura de Microsserviços Distribuídos Satélites** com desacoplamento de responsabilidades:
+   - **Microsserviço de Teleconsulta WebRTC Nativo (`ms-teleconsulta-signaling`):** Sinalização em tempo real (Socket.io) para vídeo/áudio P2P de altíssimo desempenho;
+   - **Microsserviço de Pagamento com Split Direto & SaaS (`ms-pagamento-faturamento`):** Gateway financeiro regulado pelo BACEN com liquidação instantânea sem dicotomia médica (Res. CFM nº 2.314/2022) e faturamento SaaS;
+3. **Orquestração Multi-Container (`docker-compose.yml`):** Unificação de todos os 4 serviços em rede privada (`active-age-net`) com inicialização por comando único.
 
 ---
 
 ## 🛠️ Disciplinas Integradas (Fatec Diadema - DSM)
 * **Integração e Entrega Contínua (CI/CD / DevOps - ISW-033):**
-  * Construção e orquestração de pipelines automatizadas via **GitHub Actions**;
-  * Definição de *Quality Gates* perimetrais (Linters, Testes Unitários e BDD, Cobertura com Jacoco, Scanners de Vulnerabilidades SAST/SCA);
-  * Caching inteligente e matriz de execução paralela para otimização de tempo e recursos;
-  * Geração e validação de containers Docker multi-stage e relatórios de observabilidade com `GITHUB_STEP_SUMMARY`.
+  * Construção e orquestração de pipelines automatizadas via **GitHub Actions** ([`.github/workflows/ci-active-age.yml`](../.github/workflows/ci-active-age.yml));
+  * Matriz paralela com caching inteligente (`.m2` e `npm`), reduzindo o tempo de esteira;
+  * Quality Gates: linters (`oxlint`), 233 testes automatizados (JUnit 5 + MockMvc + Vitest), cobertura de código JaCoCo (84% de instruções e 56% de branches em 45 classes);
+  * DevSecOps: Scanner de segurança estática e CVEs de bibliotecas/containers via **Trivy CLI**;
+  * Continuous Delivery (CD): Empacotamento Docker multi-stage dos 4 serviços e publicação contínua no **GitHub Container Registry (GHCR)**;
+  * Observabilidade executiva automatizada com tabelas em Markdown no `GITHUB_STEP_SUMMARY`.
 * **Arquitetura Orientada a Serviços / Sistemas Distribuídos (ILP-038):**
   * Desacoplamento da aplicação core e criação de microsserviços satélites independentes;
-  * **Microsserviço de Teleconsulta WebRTC:** Servidor de sinalização dedicado (*Signaling Server* em Node.js/Socket.io com STUN/TURN) para vídeo/áudio P2P em tempo real de altíssima performance;
-  * **Microsserviço de Gateway & Split Direto:** Liquidação financeira instantânea com conformidade BACEN e vedação absoluta à dicotomia médica (Res. CFM nº 2.314/2022).
+  * Servidor de sinalização WebRTC dedicado em Node.js 22 LTS / TypeScript com salas efêmeras e troca SDP/ICE;
+  * Gateway financeiro independente em Java 21 LTS / Spring Boot 3 com Circuit Breaker (Resilience4j), cache Caffeine e integração com a API Oficial do Mercado Pago;
+  * Orquestração de infraestrutura com rede bridge privada no Docker Compose.
 * **Metodologia Ágil & Governança SDD:**
-  * Continuidade obrigatória da metodologia **Spec-Driven Development (SDD)**, com catalogação de especificações técnicas (`4-Semestre/docs_ia/specs/`), commits convencionais em português e revisões de qualidade passo a passo.
+  * Continuidade obrigatória da metodologia **Spec-Driven Development (SDD)**, com catálogo de especificações técnicas ([`4-Semestre/docs_ia/specs/`](./docs_ia/specs)), commits convencionais em português e validações passo a passo.
 
 ---
 
-## 📦 Entregas Planejadas do 4º Semestre
-1. **Pipeline de CI/CD Industrial no GitHub Actions (Core 3º Semestre + Novos Serviços):**
-   * Gatilhos (`push`, `pull_request`, `workflow_dispatch`);
-   * Runners Ubuntu com isolamento;
-   * Checkout inteligente (`fetch-depth: 0`);
-   * Setup de ambientes Java 21 LTS e Node.js 22 com caching de dependências (`.m2` e `npm`);
-   * Quality Gates: Linters, Testes Maven/Vite, Cobertura de Código (Jacoco), Scanners de Segurança (Trivy / OWASP / CodeQL) e Docker Build multi-stage;
-   * Matriz paralela de execução e sumário executivo de observabilidade (`GITHUB_STEP_SUMMARY`).
-2. **Microsserviço de Teleconsulta WebRTC Nativo:**
-   * Servidor de sinalização e comunicação em tempo real P2P para a sala virtual do Active Age.
-3. **Microsserviço de Pagamento com Split Direto:**
-   * Gateway de pagamento regulado pelo BACEN sem retenção de honorários na plataforma.
+## 📦 Entregas Realizadas no 4º Semestre
+
+1. **Pipeline de CI/CD Industrial no GitHub Actions (SPEC-15 & SPEC-15B):**
+   * Esteira com 9 pilares, runners Ubuntu, matriz paralela, 184 testes no Core, JaCoCo 84% de cobertura e scanner Trivy;
+2. **Refinamentos de Usabilidade IHC & WCAG 2.1 AA (SPEC-15C):**
+   * Retrato humanizado da Dona Maria, hook `useBodyScrollLock` contra scroll fantasma em modais táteis e higienização visual no painel do administrador;
+3. **Microsserviço de Teleconsulta WebRTC Nativo (SPEC-16):**
+   * Servidor de sinalização `ms-teleconsulta-signaling` com 10 testes automatizados Vitest, hook `useWebRTC.ts`, feeds remoto/local PiP, reconexão automática e resiliência de rede;
+4. **Microsserviço de Pagamento com Split Direto BACEN & Gestão SaaS (SPEC-17 a SPEC-17K):**
+   * Microsserviço `ms-pagamento-faturamento` com 39 testes JUnit/MockMvc;
+   * 3 opções de pagamento para pacientes e médicos: Pix Instantâneo, Cartão de Crédito Transparente e Mercado Pago Checkout Pro;
+   * Comprovante oficial de teleconsulta em Preto e Branco (P&B) timbrado com autenticação `AA-REC-2026-XXXXXX`;
+   * Extrato financeiro contábil exclusivo de faturas SaaS (R$ 149,90) para o médico com código `AA-SAAS-2026-XXXXXX` e prevenção de re-assinatura;
+   * Total de 233 testes automatizados em todo o repositório com 0 falhas!
+5. **Orquestração Multi-Container & Entrega Contínua no GHCR (SPEC-18):**
+   * Arquivo [`docker-compose.yml`](../docker-compose.yml) e template de ambiente [`.env.example`](../.env.example);
+   * Containerização multi-stage do frontend com Nginx 1.27 Alpine;
+   * Publicação contínua de imagens Docker no GitHub Container Registry (`ghcr.io/guilhermesilva-25/...`).
 
 ---
 
 ## 📂 Estrutura de Pastas do 4º Semestre
-* [📁 `/devops`](./devops) — Documentação da pipeline, arquivos Docker Compose orquestrados e infraestrutura.
-* [📁 `/microsservicos`](./microsservicos) — Código-fonte dos novos microsserviços do 4º Semestre.
-* [📁 `/docs`](./docs) — Documentação técnica, arquitetura de sistemas distribuídos e modelos.
-* [📋 `/docs_ia`](./docs_ia) — Governança SDD, Contexto Operacional do 4º Semestre e Catálogo de Especificações Técnicas (SPEC-15 em diante).
+* [📁 `/devops`](./devops) — Documentação da pipeline de CI/CD, cópia de referência do workflow e guias de Quality Gates.
+* [📁 `/docs`](./docs) — Arquitetura de sistemas distribuídos, diagrama de esteira e especificações de engenharia.
+* [📁 `/docs_ia`](./docs_ia) — Governança SDD do 4º Semestre, Contexto Operacional e Catálogo de Specs (SPEC-15 a SPEC-18).
+* [📁 `/ms-teleconsulta-signaling`](./ms-teleconsulta-signaling) — Microsserviço de sinalização WebRTC em Node.js 22 LTS / Socket.io.
+* [📁 `/ms-pagamento-faturamento`](./ms-pagamento-faturamento) — Microsserviço de Gateway de Pagamento, Split BACEN e Gestão SaaS em Java 21 / Spring Boot 3.
+
+---
+
+## 🚀 Como Executar o Ecossistema do 4º Semestre
+
+### Opção 1: Via Docker Compose (Recomendado — Comando Único)
+```bash
+# Na raiz do repositório:
+cp .env.example .env
+docker compose up --build
+```
+
+### Opção 2: Execução Individual dos Novos Microsserviços
+
+```bash
+# 1. Microsserviço de Sinalização WebRTC (Node.js)
+cd 4-Semestre/ms-teleconsulta-signaling
+npm install
+npm run test     # Executa os 10 testes Vitest
+npm run dev      # Roda na porta 3001
+
+# 2. Microsserviço de Pagamento & SaaS (Spring Boot)
+cd 4-Semestre/ms-pagamento-faturamento
+./mvnw test      # Executa os 39 testes JUnit/MockMvc
+./mvnw spring-boot:run # Roda na porta 8082
+```
+
+---
+*Projeto Integrador Active Age — Fatec Diadema DSM 2026.*  
+*Tech Lead & Product Owner: Guilherme Silva.*

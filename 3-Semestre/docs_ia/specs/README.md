@@ -46,7 +46,11 @@ Neste projeto, **nenhuma funcionalidade é codificada sem uma Especificação T�
 
 ---
 
-### 3. Próximas Etapas no Roadmap (4º e 5º Semestres)
+### 3. Continuidade da Governança no 4º Semestre
 
-* **4º Semestre:** Microsserviços de Teleconsulta Real (WebRTC Nativo), Gateway de Pagamento com Split Direto e Mensageria Assíncrona para Notificações/Alertas (UC06, UC07, UC12, UC17).
-* **5º Semestre:** Aplicativo Mobile Multiplataforma (React Native), Nuvem Avançada e Ingestão de Dados de Wearables de Saúde.
+As especificações técnicas a partir da **SPEC-15** dão continuidade à governança SDD no **4º Semestre (DevOps, CI/CD Industrial & Microsserviços Distribuídos)**:
+* Acesse o catálogo completo em: [Catálogo de Specs do 4º Semestre](../../4-Semestre/docs_ia/specs/README.md) (SPEC-15 a SPEC-18 — **100% Concluídas ✅**).
+
+---
+*Catálogo oficial de especificações técnicas do 3º Semestre.*  
+*Projeto Integrador Active Age — Fatec Diadema DSM 2026.*
