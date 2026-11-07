@@ -151,7 +151,7 @@ export const MedicalRecordViewModal: React.FC<MedicalRecordViewModalProps> = ({
                         }`}
                     >
                         <FileSignature className="w-4 h-4" />
-                        <span>Documentos & Receitas (${documents.length})</span>
+                        <span>Documentos & Receitas ({documents.length})</span>
                     </button>
                 </div>
 

@@ -191,7 +191,6 @@ gantt
       - **Remoção da Tag Split:** Exclusão da tag "Split 100%" no card de atalho de extrato em `DashboardMedico.tsx`;
       - **Geração e Persistência do Extrato SaaS:** Atualização do backend `PagamentoServiceImpl.java` para retornar tanto recebíveis (`beneficiarioId`) quanto faturas de SaaS (`pagadorId`), aprovação automática de cartão simulado, e persistência multi-origem resiliente (`localStorage` + appointments do core) no `AssinaturaSaaSModal.tsx` e `ExtratoFinanceiroModal.tsx`;
       - **Padrão P&B Oficial Alinhado ao Paciente:** Reformulação visual completa do `ExtratoFinanceiroModal.tsx` para Preto e Branco Puro (P&B) idêntico a `ComprovantePagamentoModal.tsx`, com métricas consolidadas, discriminativo de transações, notas regulatórias (CFM 2.314/2022) e autenticação digital `AA-EXT-2026-XXXXXX`.
-   12. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
    12. [x] **Status de Assinatura Ativa & Extrato Exclusivo SaaS do Médico (SPEC-17H) — [CONCLUÍDO ✅]:**
       - **Blindagem do Status Ativo e Trava de Re-assinatura:** Implementação do endpoint autenticado `POST /api/doctor/subscription/activate`, suporte a ativação resiliente no Core, identificação de plano ativo no Dashboard (`isSubscribed`) com badge "Ativo" e bloqueio de reingresso no formulário de pagamento para médicos com plano regularizado;
       - **Extrato Exclusivo de Faturas SaaS:** Remoção de consultas clínicas e repasse de honorários do extrato do médico no 4º semestre, concentrando 100% do demonstrativo contábil nas faturas de licenciamento tecnológico SaaS (R$ 149,90) em Preto e Branco Puro (P&B) com autenticação `AA-SAAS-2026-XXXXXX`.
@@ -201,7 +200,9 @@ gantt
    14. [x] **Padronização Visual do Modal de Extrato & Prevenção de Flash de Conteúdo (SPEC-17J) — [CONCLUÍDO ✅]:**
       - **Eliminação de FOUC:** Inicialização de `loading` protegida e exibição de spinner `Loader2` acessível enquanto consulta o backend, impedindo qualquer flash de tela antes da verificação da assinatura;
       - **Alinhamento ao Design System:** Refatoração do modal de estado vazio para seguir estritamente o `FeedbackModal.tsx` (`rounded-3xl`, `border-2 border-brand-pot/40`, ícone de recibo `w-20 h-20 bg-amber-50`, tipografia `text-2xl font-extrabold text-brown-dark` e botões táteis ampliados `min-h-[50px]`).
-   15. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+    15. [x] **Refinamento do Modal de Prontuário Clínico (SPEC-17K) — [CONCLUÍDO ✅]:**
+       - **Correção de Tipografia JSX:** Remoção do caractere cifrão (`$`) residual na aba de "Documentos & Receitas" em `MedicalRecordViewModal.tsx`, exibindo a contagem limpa e numérica `({documents.length})`.
+    16. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
 #### 📅 5º Semestre — Aplicativo Mobile Multiplataforma, Mensageria & Saúde 4.0 — [FUTURO]
 * **Objetivo:** Desenvolvimento do ecossistema mobile e mensageria avançada:
   1. **Aplicativo Mobile Multiplataforma (React Native / Expo):** Focado no idoso e cuidador familiar (acessibilidade, receitas offline e botão SOS).
