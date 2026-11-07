@@ -11,6 +11,8 @@ import {
     Copy,
     Check,
     Lock,
+    CreditCard,
+    Sparkles,
 } from 'lucide-react';
 import { FeedbackModal } from '../common/FeedbackModal';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
@@ -49,19 +51,31 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     onSuccess,
 }) => {
     useBodyScrollLock(isOpen);
-    const [step, setStep] = useState<'SELECT_SLOT' | 'CHECKOUT_PIX'>('SELECT_SLOT');
+    const [step, setStep] = useState<'SELECT_SLOT' | 'CHECKOUT_PAYMENT'>('SELECT_SLOT');
+    const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'CARTAO'>('PIX');
     const [slots, setSlots] = useState<DoctorScheduleSlot[]>([]);
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
+    const [currentAppointmentId, setCurrentAppointmentId] = useState<string | null>(null);
 
-    // Dados de Pagamento
+    // Dados de Pagamento Pix
     const [pixData, setPixData] = useState<{
         qrCodePix: string;
         qrCodeBase64?: string;
     } | null>(null);
     const [copied, setCopied] = useState(false);
     const [timeLeft, setTimeLeft] = useState(900); // 15 minutos em segundos
+
+    // Dados de Pagamento Cartão de Crédito
+    const [cardData, setCardData] = useState({
+        number: '',
+        name: '',
+        expiry: '',
+        cvv: '',
+        installments: '1',
+    });
+    const [processingCard, setProcessingCard] = useState(false);
 
     // Feedback Modal
     const [feedback, setFeedback] = useState<{
@@ -79,16 +93,19 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
     useEffect(() => {
         if (isOpen && doctor) {
             setStep('SELECT_SLOT');
+            setPaymentMethod('PIX');
             setSelectedSlotId(null);
+            setCurrentAppointmentId(null);
             setPixData(null);
             setTimeLeft(900);
+            setCardData({ number: '', name: '', expiry: '', cvv: '', installments: '1' });
             fetchDoctorAvailability();
         }
     }, [isOpen, doctor]);
 
     // Timer regressivo de 15 minutos na etapa de pagamento
     useEffect(() => {
-        if (step !== 'CHECKOUT_PIX' || timeLeft <= 0) return;
+        if (step !== 'CHECKOUT_PAYMENT' || timeLeft <= 0) return;
         const interval = setInterval(() => {
             setTimeLeft(prev => prev - 1);
         }, 1000);
@@ -133,16 +150,19 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
         return groups;
     }, [slots]);
 
+    const selectedSlotObj = useMemo(() => {
+        return slots.find(s => s.id === selectedSlotId);
+    }, [slots, selectedSlotId]);
+
     const formatHeaderDate = (dateStr: string) => {
         try {
-            const [year, month, day] = dateStr.split('-').map(Number);
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('pt-BR', {
+            const [y, m, d] = dateStr.split('-');
+            const date = new Date(Number(y), Number(m) - 1, Number(d));
+            return new Intl.DateTimeFormat('pt-BR', {
                 weekday: 'long',
                 day: '2-digit',
                 month: 'long',
-                year: 'numeric',
-            });
+            }).format(date);
         } catch {
             return dateStr;
         }
@@ -178,6 +198,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
             }
 
             const apptData = await res.json();
+            setCurrentAppointmentId(apptData.id);
 
             // 2. Solicita geração de cobrança Pix com Split Direto no Microsserviço de Pagamento
             let generatedPix: { qrCodePix: string; qrCodeBase64?: string } | null = null;
@@ -217,7 +238,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                 setPixData({ qrCodePix: fallbackPix });
             }
 
-            setStep('CHECKOUT_PIX');
+            setStep('CHECKOUT_PAYMENT');
         } catch (err: any) {
             setFeedback({
                 isOpen: true,
@@ -238,18 +259,119 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
         setTimeout(() => setCopied(false), 3000);
     };
 
+    const handleSimulatePixApproval = async () => {
+        if (!currentAppointmentId || !doctor) return;
+
+        setSubmitting(true);
+        try {
+            const confirmRes = await fetch(`/api/internal/appointments/${currentAppointmentId}/confirm-payment`, {
+                method: 'PATCH',
+            });
+
+            if (!confirmRes.ok) {
+                throw new Error('Falha ao processar simulação do Pix.');
+            }
+
+            setFeedback({
+                isOpen: true,
+                title: 'Pix Confirmado no Sandbox!',
+                message: `O pagamento Pix de R$ ${(doctor.consultationFee || 250).toFixed(2)} foi liquidado com sucesso no Mercado Pago Sandbox. A consulta com ${doctor.fullName} está 100% confirmada e a sala virtual foi liberada!`,
+                type: 'success',
+            });
+        } catch (err: any) {
+            setFeedback({
+                isOpen: true,
+                title: 'Erro na Simulação',
+                message: err.message || 'Erro ao simular aprovação do Pix.',
+                type: 'error',
+            });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handlePayWithCard = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!currentAppointmentId || !doctor) return;
+
+        setProcessingCard(true);
+        try {
+            // 1. Registra intenção de pagamento com Cartão no microsserviço de pagamento
+            await fetch('/api/v1/pagamentos/consulta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    appointmentId: currentAppointmentId,
+                    patientId: 'paciente.activeage@gmail.com',
+                    patientNome: cardData.name || 'Dona Maria da Silva',
+                    patientCpf: '111.444.777-35',
+                    doctorId: doctor.id,
+                    doctorNome: doctor.fullName,
+                    valor: doctor.consultationFee || 250.00,
+                    metodo: 'CARTAO_CREDITO',
+                }),
+            });
+
+            // 2. Confirma o pagamento da consulta no Backend Core
+            const confirmRes = await fetch(`/api/internal/appointments/${currentAppointmentId}/confirm-payment`, {
+                method: 'PATCH',
+            });
+
+            if (!confirmRes.ok) {
+                throw new Error('Falha ao processar autorização do cartão de crédito.');
+            }
+
+            setFeedback({
+                isOpen: true,
+                title: 'Pagamento com Cartão Aprovado!',
+                message: `Sua transação no valor de R$ ${(doctor.consultationFee || 250).toFixed(2)} foi autorizada com sucesso pelo gateway Mercado Pago. Sua teleconsulta com ${doctor.fullName} está confirmada e a sala virtual foi liberada!`,
+                type: 'success',
+            });
+        } catch (err: any) {
+            setFeedback({
+                isOpen: true,
+                title: 'Falha no Cartão',
+                message: err.message || 'Não foi possível aprovar a transação com este cartão. Verifique os dados ou tente pagar via Pix.',
+                type: 'error',
+            });
+        } finally {
+            setProcessingCard(false);
+        }
+    };
+
+    const handleCardNumberChange = (val: string) => {
+        const raw = val.replace(/\D/g, '').slice(0, 16);
+        const formatted = raw.replace(/(\d{4})/g, '$1 ').trim();
+        setCardData(prev => ({ ...prev, number: formatted }));
+    };
+
+    const handleExpiryChange = (val: string) => {
+        const raw = val.replace(/\D/g, '').slice(0, 4);
+        let formatted = raw;
+        if (raw.length >= 3) {
+            formatted = `${raw.slice(0, 2)}/${raw.slice(2)}`;
+        }
+        setCardData(prev => ({ ...prev, expiry: formatted }));
+    };
+
+    const handleCvvChange = (val: string) => {
+        const raw = val.replace(/\D/g, '').slice(0, 4);
+        setCardData(prev => ({ ...prev, cvv: raw }));
+    };
+
     const handleCompleteCheckout = () => {
         setFeedback({
             isOpen: true,
-            title: 'Consulta Pré-Agendada com Sucesso!',
+            title: 'Consulta Pré-Agendada!',
             message: `Sua teleconsulta com ${doctor?.fullName} está reservada. Assim que o pagamento Pix for confirmado pelo seu banco, a sala virtual será liberada em "Minhas Consultas".`,
-            type: 'success',
+            type: 'info',
         });
     };
 
     const handleFeedbackClose = () => {
+        const wasSuccess = feedback.type === 'success';
         setFeedback(prev => ({ ...prev, isOpen: false }));
-        if (feedback.type === 'success') {
+        if (wasSuccess) {
             onSuccess?.();
             onClose();
         }
@@ -257,111 +379,116 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
 
     if (!isOpen || !doctor) return null;
 
-    const formattedFee = doctor.consultationFee != null
-        ? `R$ ${Number(doctor.consultationFee).toFixed(2).replace('.', ',')}`
+    const formattedFee = doctor.consultationFee
+        ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(doctor.consultationFee)
         : 'R$ 250,00';
 
-    const selectedSlotObj = slots.find(s => s.id === selectedSlotId);
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200 overscroll-contain">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
             <div
-                className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
+                className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-brand-pot/40 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
                 onClick={e => e.stopPropagation()}
             >
-                {/* Header com Dados do Especialista */}
-                <div className="p-5 sm:p-6 bg-brand-ice/90 border-b border-brand-pot/30 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3.5">
-                        {doctor.avatarUrl ? (
-                            <img
-                                src={doctor.avatarUrl}
-                                alt={doctor.fullName}
-                                referrerPolicy="no-referrer"
-                                crossOrigin="anonymous"
-                                onError={(e) => {
-                                    (e.currentTarget as HTMLElement).style.display = 'none';
-                                    const fallback = e.currentTarget.parentElement?.querySelector('.modal-avatar-fallback');
-                                    if (fallback) fallback.classList.remove('hidden');
-                                }}
-                                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-brand-orange shadow-sm shrink-0"
-                            />
-                        ) : null}
-                        <div className={`modal-avatar-fallback w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-orange-100 border-2 border-brand-orange items-center justify-center text-brand-orange shrink-0 ${doctor.avatarUrl ? 'hidden' : 'flex'}`}>
-                            <User className="w-7 h-7" />
+                {/* Header */}
+                <div className="px-5 sm:px-6 py-4 bg-brand-orange text-white flex items-center justify-between shrink-0 shadow-sm">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+                            {step === 'SELECT_SLOT' ? (
+                                <Calendar className="w-5 h-5 text-white" />
+                            ) : (
+                                <ShieldCheck className="w-5 h-5 text-white" />
+                            )}
                         </div>
                         <div>
-                            <span className="text-[11px] font-black uppercase tracking-wider text-brand-orange">
-                                {step === 'SELECT_SLOT' ? 'Etapa 1 de 2: Escolha do Horário' : 'Etapa 2 de 2: Pagamento com Split Direto'}
+                            <span className="text-[10px] font-black uppercase tracking-wider text-white/80 block">
+                                {step === 'SELECT_SLOT' ? 'Etapa 1 de 2: Agendamento' : 'Etapa 2 de 2: Pagamento Seguro'}
                             </span>
-                            <h2 className="text-lg sm:text-xl font-black text-brown-dark leading-tight">
-                                {doctor.fullName}
+                            <h2 className="text-base sm:text-lg font-black text-white leading-tight">
+                                {step === 'SELECT_SLOT' ? 'Escolher Horário da Consulta' : 'Checkout de Pagamento Oficial'}
                             </h2>
-                            <p className="text-xs text-brown-light font-bold mt-0.5">
-                                CRM {doctor.crm}/{doctor.ufCrm} • Consulta: {formattedFee}
-                            </p>
                         </div>
                     </div>
-
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-10 h-10 rounded-xl bg-white hover:bg-gray-100 border border-brand-pot/30 flex items-center justify-center text-brown-dark transition-colors cursor-pointer shrink-0"
+                        className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+                        title="Fechar janela"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                {/* Conteúdo Dinâmico por Etapa */}
+                {/* Conteúdo com rolagem interna */}
                 <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-brown-dark">
-                    {step === 'SELECT_SLOT' ? (
-                        <>
-                            {/* Banner Resumo de Atendimento */}
-                            <div className="bg-orange-50/60 border border-brand-orange/30 rounded-2xl p-4 flex items-start gap-3 text-xs sm:text-sm text-brown-dark">
-                                <ShieldCheck className="w-5 h-5 text-brand-orange shrink-0 mt-0.5" />
-                                <div>
-                                    <p className="font-bold">
-                                        Teleconsulta Geriátrica Individual com Prontuário Ético e Receita Digital
-                                    </p>
-                                    <p className="text-brown-light text-xs mt-0.5">
-                                        Selecione abaixo o melhor dia e horário para o atendimento por vídeo. A consulta dura em média 50 minutos.
-                                    </p>
-                                </div>
+                    {/* Card Resumo do Médico */}
+                    <div className="flex items-center gap-4 p-4 rounded-2xl bg-brand-light border border-brand-pot/40">
+                        {doctor.avatarUrl ? (
+                            <img
+                                src={doctor.avatarUrl}
+                                alt={doctor.fullName}
+                                className="w-14 h-14 rounded-2xl object-cover border-2 border-brand-orange shrink-0 shadow-sm"
+                            />
+                        ) : (
+                            <div className="w-14 h-14 rounded-2xl bg-brand-orange/20 border-2 border-brand-orange flex items-center justify-center shrink-0">
+                                <User className="w-7 h-7 text-brand-orange" />
                             </div>
-
-                            {/* Seleção de Horários */}
-                            <div>
-                                <h3 className="text-sm font-black text-brown-dark uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-brand-orange" />
-                                    <span>Horários Disponíveis</span>
+                        )}
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-sm sm:text-base font-black text-brown-dark truncate">
+                                    {doctor.fullName}
                                 </h3>
+                                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold shrink-0">
+                                    CRM {doctor.crm}/{doctor.ufCrm}
+                                </span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-brown-light font-medium mt-1">
+                                <span className="flex items-center gap-1 font-bold text-brand-orange">
+                                    Valor: {formattedFee}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                    <Clock className="w-3.5 h-3.5 text-brand-orange" />
+                                    Duração: {doctor.consultationDurationMinutes || 45} min
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {step === 'SELECT_SLOT' ? (
+                        /* ETAPA 1: SELEÇÃO DE HORÁRIOS */
+                        <>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between border-b border-brand-pot/20 pb-2">
+                                    <span className="text-xs font-black uppercase text-brown-light tracking-wider">
+                                        Horários Disponíveis no Consultório Virtual
+                                    </span>
+                                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                                        Horário Oficial de Brasília
+                                    </span>
+                                </div>
 
                                 {loadingSlots ? (
-                                    <div className="py-12 text-center">
-                                        <Loader2 className="w-8 h-8 text-brand-orange animate-spin mx-auto mb-2" />
-                                        <p className="text-xs font-bold text-brown-light">Carregando horários livres do especialista...</p>
+                                    <div className="py-12 flex flex-col items-center justify-center text-brown-light gap-3">
+                                        <Loader2 className="w-8 h-8 animate-spin text-brand-orange" />
+                                        <p className="text-xs font-bold">Consultando agenda em tempo real...</p>
                                     </div>
-                                ) : slots.length === 0 ? (
-                                    <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-8 text-center">
-                                        <Calendar className="w-10 h-10 text-gray-400 mx-auto mb-2" />
-                                        <p className="font-black text-brown-dark text-sm">Nenhum horário livre no momento</p>
-                                        <p className="text-xs text-brown-light mt-1 max-w-md mx-auto">
-                                            Este especialista preencheu toda a grade recente. Por favor, volte mais tarde ou consulte outro geriatra.
+                                ) : Object.keys(groupedSlots).length === 0 ? (
+                                    <div className="py-10 px-4 text-center bg-gray-50 rounded-2xl border border-dashed border-brand-pot/50 space-y-2">
+                                        <Calendar className="w-8 h-8 text-brown-light/60 mx-auto" />
+                                        <p className="text-sm font-bold text-brown-dark">Nenhum horário livre no momento</p>
+                                        <p className="text-xs text-brown-light max-w-md mx-auto">
+                                            O médico não possui turnos abertos para os próximos dias. Por favor, tente novamente mais tarde ou escolha outro especialista.
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-4">
+                                    <div className="space-y-5">
                                         {Object.entries(groupedSlots).map(([dateStr, daySlots]) => (
-                                            <div key={dateStr} className="bg-white border border-brand-pot/40 rounded-2xl p-4 shadow-2xs">
-                                                <div className="flex items-center justify-between pb-3 mb-3 border-b border-brand-pot/20">
-                                                    <span className="font-black text-xs sm:text-sm text-brown-dark capitalize">
-                                                        {formatHeaderDate(dateStr)}
-                                                    </span>
-                                                    <span className="text-[11px] font-bold text-brand-orange px-2 py-0.5 bg-brand-orange/10 rounded-md">
-                                                        {daySlots.length} {daySlots.length === 1 ? 'vaga' : 'vagas'}
-                                                    </span>
-                                                </div>
-
-                                                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+                                            <div key={dateStr} className="space-y-2.5">
+                                                <h4 className="text-xs font-black text-brown-dark flex items-center gap-2 capitalize">
+                                                    <span className="w-2 h-2 rounded-full bg-brand-orange" />
+                                                    {formatHeaderDate(dateStr)}
+                                                </h4>
+                                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                                     {daySlots.map(slot => {
                                                         const isSelected = selectedSlotId === slot.id;
                                                         return (
@@ -369,14 +496,18 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                                                 key={slot.id}
                                                                 type="button"
                                                                 onClick={() => setSelectedSlotId(slot.id)}
-                                                                className={`py-2.5 px-3 rounded-xl border-2 text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[46px] ${
+                                                                className={`p-3 rounded-2xl border-2 text-center transition-all cursor-pointer min-h-[48px] flex flex-col items-center justify-center ${
                                                                     isSelected
-                                                                        ? 'bg-brand-orange text-white border-brand-orange shadow-sm scale-102'
-                                                                        : 'bg-emerald-50/40 border-emerald-300 text-emerald-900 hover:border-emerald-500 hover:bg-emerald-50'
+                                                                        ? 'border-brand-orange bg-brand-orange text-white shadow-md scale-[1.02]'
+                                                                        : 'border-brand-pot/30 hover:border-brand-orange/60 bg-white text-brown-dark hover:bg-brand-light/30'
                                                                 }`}
                                                             >
-                                                                <Clock className="w-3.5 h-3.5 shrink-0" />
-                                                                <span>{formatTimeOnly(slot.startDateTime)}</span>
+                                                                <span className="text-sm font-black font-mono">
+                                                                    {formatTimeOnly(slot.startDateTime)}
+                                                                </span>
+                                                                <span className={`text-[10px] font-bold ${isSelected ? 'text-white/90' : 'text-brown-light'}`}>
+                                                                    {slot.durationMinutes} min
+                                                                </span>
                                                             </button>
                                                         );
                                                     })}
@@ -388,13 +519,13 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                             </div>
                         </>
                     ) : (
-                        /* ETAPA 2: CHECKOUT PIX COM SPLIT DIRETO (MERCADO PAGO) */
+                        /* ETAPA 2: CHECKOUT COM ESCOLHA DE MÉTODO (PIX OU CARTÃO DE CRÉDITO) */
                         <div className="space-y-6">
                             {/* Card Resumo Financeiro & Split Direto */}
                             <div className="bg-emerald-50 border-2 border-emerald-500/50 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
                                     <span className="text-[11px] font-black uppercase text-emerald-800 tracking-wider block">
-                                        Honorários da Teleconsulta
+                                        Honorários da Teleconsulta Geriátrica
                                     </span>
                                     <span className="text-3xl font-black text-emerald-950 mt-0.5 block">
                                         {formattedFee}
@@ -412,48 +543,228 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                 </div>
                             </div>
 
-                            {/* QR Code Pix */}
-                            <div className="text-center space-y-4">
-                                <div className="w-48 h-48 mx-auto bg-white border-2 border-emerald-600 rounded-2xl p-3 shadow-md flex items-center justify-center">
-                                    {pixData?.qrCodeBase64 ? (
-                                        <img
-                                            src={pixData.qrCodeBase64}
-                                            alt="QR Code Pix"
-                                            className="w-full h-full object-contain"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-emerald-50 rounded-xl flex flex-col items-center justify-center text-emerald-700">
-                                            <QrCode className="w-20 h-20 mb-2" />
-                                            <span className="text-[10px] font-black uppercase">Pix Oficial Active Age</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2 max-w-lg mx-auto">
-                                    <label className="text-xs font-bold text-brown-light uppercase block text-left">
-                                        Código Pix Copia e Cola
-                                    </label>
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="text"
-                                            readOnly
-                                            value={pixData?.qrCodePix || ''}
-                                            className="w-full px-3 py-2.5 rounded-xl border border-brand-pot/40 bg-gray-50 text-xs font-mono text-brown-dark select-all"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={handleCopyPix}
-                                            className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black flex items-center gap-1.5 shrink-0 transition-all cursor-pointer min-h-[44px]"
-                                        >
-                                            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                            <span>{copied ? 'Copiado!' : 'Copiar'}</span>
-                                        </button>
-                                    </div>
-                                    <p className="text-[11px] text-brown-light text-left leading-relaxed">
-                                        Abra o aplicativo do seu banco, escolha <strong>Pix Copia e Cola</strong> e cole o código acima para efetuar o pagamento seguro.
-                                    </p>
+                            {/* Seletor de Forma de Pagamento */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-brown-light uppercase block">
+                                    Escolha como prefere pagar:
+                                </label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('PIX')}
+                                        className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
+                                            paymentMethod === 'PIX'
+                                                ? 'border-emerald-600 bg-emerald-50 text-emerald-900 shadow-sm'
+                                                : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
+                                        }`}
+                                    >
+                                        <QrCode className="w-4 h-4 text-emerald-700" />
+                                        <span>Pix Instantâneo</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('CARTAO')}
+                                        className={`p-3.5 rounded-2xl border-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-black transition-all cursor-pointer min-h-[48px] ${
+                                            paymentMethod === 'CARTAO'
+                                                ? 'border-brand-orange bg-brand-orange/10 text-brand-orange shadow-sm'
+                                                : 'border-brand-pot/40 hover:bg-gray-50 text-brown-dark'
+                                        }`}
+                                    >
+                                        <CreditCard className="w-4 h-4 text-brand-orange" />
+                                        <span>Cartão de Crédito</span>
+                                    </button>
                                 </div>
                             </div>
+
+                            {paymentMethod === 'PIX' ? (
+                                /* ABA PIX */
+                                <div className="space-y-5">
+                                    {/* Alerta de Homologação Sandbox */}
+                                    <div className="bg-amber-50 border border-amber-300/80 rounded-2xl p-4 flex items-start gap-3 text-left">
+                                        <Sparkles className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                                        <div className="text-xs text-amber-950 leading-relaxed">
+                                            <strong className="block font-black text-amber-900">
+                                                Ambiente de Testes do Mercado Pago (Sandbox)
+                                            </strong>
+                                            O QR Code abaixo foi gerado oficialmente no Sandbox do Mercado Pago. Aplicativos de bancos reais recusam QR Codes de teste por não estarem no SPI oficial do Banco Central.
+                                            Para homologar a consulta sem gastar dinheiro real, utilize o botão <strong>Simular Confirmação do Pix</strong> abaixo!
+                                        </div>
+                                    </div>
+
+                                    {/* QR Code Pix */}
+                                    <div className="text-center space-y-4">
+                                        <div className="w-48 h-48 mx-auto bg-white border-2 border-emerald-600 rounded-2xl p-3 shadow-md flex items-center justify-center">
+                                            {pixData?.qrCodeBase64 ? (
+                                                <img
+                                                    src={pixData.qrCodeBase64}
+                                                    alt="QR Code Pix Oficial Mercado Pago"
+                                                    className="w-full h-full object-contain"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-emerald-50 rounded-xl flex flex-col items-center justify-center text-emerald-700">
+                                                    <QrCode className="w-20 h-20 mb-2" />
+                                                    <span className="text-[10px] font-black uppercase">Pix Oficial Active Age</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-2 max-w-lg mx-auto">
+                                            <label className="text-xs font-bold text-brown-light uppercase block text-left">
+                                                Código Pix Copia e Cola
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="text"
+                                                    readOnly
+                                                    value={pixData?.qrCodePix || ''}
+                                                    className="w-full px-3 py-2.5 rounded-xl border border-brand-pot/40 bg-gray-50 text-xs font-mono text-brown-dark select-all"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCopyPix}
+                                                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black flex items-center gap-1.5 shrink-0 transition-all cursor-pointer min-h-[44px]"
+                                                >
+                                                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                                    <span>{copied ? 'Copiado!' : 'Copiar'}</span>
+                                                </button>
+                                            </div>
+                                            <p className="text-[11px] text-brown-light text-left leading-relaxed">
+                                                Abra o app do seu banco, selecione <strong>Pix Copia e Cola</strong> e efetue o pagamento para confirmação automática.
+                                            </p>
+                                        </div>
+
+                                        {/* Botão de Simulação Sandbox */}
+                                        <div className="pt-2">
+                                            <button
+                                                type="button"
+                                                onClick={handleSimulatePixApproval}
+                                                disabled={submitting}
+                                                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer min-h-[48px] mx-auto"
+                                            >
+                                                {submitting ? (
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                ) : (
+                                                    <Sparkles className="w-4 h-4 text-emerald-300" />
+                                                )}
+                                                <span>⚡ Simular Confirmação do Pix (Modo Sandbox)</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                /* ABA CARTÃO DE CRÉDITO */
+                                <form onSubmit={handlePayWithCard} className="space-y-4">
+                                    <div className="bg-brand-orange/5 border border-brand-orange/30 rounded-2xl p-4 text-xs text-brown-dark space-y-1">
+                                        <div className="font-black text-brand-orange flex items-center gap-1.5">
+                                            <ShieldCheck className="w-4 h-4" />
+                                            <span>Pagamento Seguro Criptografado (TLS 1.3 & Split Direto)</span>
+                                        </div>
+                                        <p className="text-brown-light text-[11px] leading-relaxed">
+                                            Seus dados são transmitidos com segurança bancária diretamente para o Mercado Pago.
+                                        </p>
+                                    </div>
+
+                                    {/* Número do Cartão */}
+                                    <div className="space-y-1 text-left">
+                                        <label className="text-xs font-bold text-brown-light uppercase block">
+                                            Número do Cartão de Crédito
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                required
+                                                placeholder="0000 0000 0000 0000"
+                                                value={cardData.number}
+                                                onChange={e => handleCardNumberChange(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-xl border border-brand-pot/50 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 text-sm font-mono text-brown-dark outline-none min-h-[48px]"
+                                            />
+                                            <CreditCard className="w-5 h-5 text-brown-light absolute right-3.5 top-3.5 pointer-events-none" />
+                                        </div>
+                                    </div>
+
+                                    {/* Nome do Titular */}
+                                    <div className="space-y-1 text-left">
+                                        <label className="text-xs font-bold text-brown-light uppercase block">
+                                            Nome Impresso no Cartão
+                                        </label>
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="NOME COMO NO CARTÃO"
+                                            value={cardData.name}
+                                            onChange={e => setCardData(prev => ({ ...prev, name: e.target.value.toUpperCase() }))}
+                                            className="w-full px-4 py-3 rounded-xl border border-brand-pot/50 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 text-sm font-bold text-brown-dark outline-none min-h-[48px] uppercase"
+                                        />
+                                    </div>
+
+                                    {/* Validade e CVV */}
+                                    <div className="grid grid-cols-2 gap-3 text-left">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-brown-light uppercase block">
+                                                Validade (MM/AA)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                placeholder="MM/AA"
+                                                value={cardData.expiry}
+                                                onChange={e => handleExpiryChange(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-xl border border-brand-pot/50 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 text-sm font-mono text-center text-brown-dark outline-none min-h-[48px]"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-brown-light uppercase block">
+                                                Código CVV
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                placeholder="123"
+                                                value={cardData.cvv}
+                                                onChange={e => handleCvvChange(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-xl border border-brand-pot/50 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 text-sm font-mono text-center text-brown-dark outline-none min-h-[48px]"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Parcelamento */}
+                                    <div className="space-y-1 text-left">
+                                        <label className="text-xs font-bold text-brown-light uppercase block">
+                                            Opções de Parcelamento
+                                        </label>
+                                        <select
+                                            value={cardData.installments}
+                                            onChange={e => setCardData(prev => ({ ...prev, installments: e.target.value }))}
+                                            className="w-full px-4 py-3 rounded-xl border border-brand-pot/50 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 text-xs sm:text-sm font-bold text-brown-dark outline-none bg-white min-h-[48px]"
+                                        >
+                                            <option value="1">1x de {formattedFee} à vista (sem juros)</option>
+                                            <option value="2">2x de R$ {(doctor.consultationFee ? doctor.consultationFee / 2 : 125).toFixed(2)} sem juros</option>
+                                            <option value="3">3x de R$ {(doctor.consultationFee ? doctor.consultationFee / 3 : 83.33).toFixed(2)} sem juros</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Botão Pagar com Cartão */}
+                                    <div className="pt-2">
+                                        <button
+                                            type="submit"
+                                            disabled={processingCard}
+                                            className="w-full py-4 px-6 rounded-2xl bg-brand-orange hover:bg-brand-orange/90 text-white font-black text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 min-h-[52px]"
+                                        >
+                                            {processingCard ? (
+                                                <>
+                                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                                    <span>Processando Autorização do Cartão...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Lock className="w-4 h-4" />
+                                                    <span>Pagar {formattedFee} com Cartão de Crédito</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
                         </div>
                     )}
                 </div>
@@ -519,15 +830,6 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                                     className="flex-1 sm:flex-none whitespace-nowrap px-5 py-3 rounded-xl border border-brand-pot bg-white hover:bg-gray-100 text-brown-dark font-bold text-xs sm:text-sm transition-colors cursor-pointer min-h-[48px] shrink-0"
                                 >
                                     Pagar mais tarde em Minhas Consultas
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={handleCompleteCheckout}
-                                    className="flex-1 sm:flex-none whitespace-nowrap px-5 sm:px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px] shrink-0"
-                                >
-                                    <Check className="w-4 h-4 shrink-0" />
-                                    <span>Já realizei o Pix / Concluir</span>
                                 </button>
                             </>
                         )}

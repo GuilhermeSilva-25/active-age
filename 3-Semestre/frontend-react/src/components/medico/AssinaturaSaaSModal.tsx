@@ -261,6 +261,14 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
                                 </span>
                             </div>
 
+                            {/* Alerta Sandbox */}
+                            <div className="bg-amber-50 border border-amber-300 rounded-2xl p-3 text-left text-xs text-amber-950 flex items-start gap-2.5">
+                                <Sparkles className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                                <div>
+                                    <strong>Modo de Testes Sandbox (Mercado Pago):</strong> O QR Code gerado é de homologação e não é aceito por apps de bancos reais por não estar registrado no BACEN. Para testar a ativação imediata, clique em <strong>Simular Confirmação do Pix</strong> abaixo.
+                                </div>
+                            </div>
+
                             {/* QR Code Simulado / Renderizado */}
                             <div className="w-48 h-48 mx-auto bg-white border-2 border-emerald-500 rounded-2xl p-3 shadow-md flex items-center justify-center">
                                 {pixData?.qrCodeBase64 ? (
@@ -300,6 +308,23 @@ export const AssinaturaSaaSModal: React.FC<AssinaturaSaaSModalProps> = ({
                                         <span>{copied ? 'Copiado!' : 'Copiar'}</span>
                                     </button>
                                 </div>
+                            </div>
+
+                            {/* Botão de Simulação Sandbox */}
+                            <div className="pt-2">
+                                <button
+                                    type="button"
+                                    onClick={handleConfirmActivation}
+                                    disabled={loading}
+                                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer min-h-[48px] mx-auto"
+                                >
+                                    {loading ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <Sparkles className="w-4 h-4 text-emerald-300" />
+                                    )}
+                                    <span>⚡ Simular Confirmação do Pix (Modo Sandbox)</span>
+                                </button>
                             </div>
                         </div>
                     )}
