@@ -5,7 +5,7 @@
 **Disciplinas de Foco:** Sistemas Distribuídos (ILP-038) & Integração e Entrega Contínua (ISW-033)  
 **Líder Técnico & Product Owner (PO):** Guilherme Silva  
 **Arquiteto & Engenheiro de Software:** Antigravity (AI)  
-**Status da Spec:** Aguardando Aprovação do PO 📋  
+**Status da Spec:** Em Execução (Micro Tarefa 16.1 Concluída ✅) 🚀  
 **Data da Elaboração:** 03 de Novembro de 2026
 
 ---
@@ -119,12 +119,12 @@ flowchart LR
     MT3 --> MT4["16.4: Resiliência, Fallback & CI<br>(Reconexão, Modal de Permissões e Workflow GitHub)"]
 ```
 
-#### 📌 Micro Tarefa 16.1: Fundação do Microsserviço (`4-Semestre/ms-teleconsulta-signaling/`)
-- Inicialização do projeto Node.js LTS com TypeScript, Express, Socket.io e CORS;
-- Configuração de `tsconfig.json`, `package.json` com scripts (`dev`, `build`, `test`);
-- Criação de `Dockerfile` multi-stage leve baseado em `node:22-alpine`;
-- Endpoint HTTP de healthcheck: `GET /health` retornando status do microsserviço e uptime;
-- Teste unitário de subida e roteamento HTTP com Jest/Vitest.
+#### 📌 Micro Tarefa 16.1: Fundação do Microsserviço (`4-Semestre/ms-teleconsulta-signaling/`) — [CONCLUÍDA ✅]
+- [x] Inicialização do projeto Node.js LTS com TypeScript, Express, Socket.io e CORS;
+- [x] Configuração de `tsconfig.json`, `package.json` com scripts (`dev`, `build`, `test`);
+- [x] Criação de `Dockerfile` multi-stage leve baseado em `node:22-alpine` com usuário não-root e healthcheck;
+- [x] Endpoint HTTP de healthcheck: `GET /health` retornando status UP, version, uptime e timestamp;
+- [x] Testes automatizados com Vitest e Supertest cobrindo rota raiz `/`, `/health` e rota inexistente (3 testes passando com 100% de sucesso).
 
 #### 📌 Micro Tarefa 16.2: Hub de Sinalização WebRTC & Gerenciamento de Salas
 - Lógica de isolamento de salas por `appointmentId`;

@@ -152,8 +152,9 @@ gantt
      - Retrato humanizado e acolhedor da paciente de teste Dona Maria (Wikimedia Commons) atualizado com resiliência no `DoctorScheduleAutomationService` e suíte expandida para 181 testes automatizados (0 falhas);
      - Criação do custom hook `useBodyScrollLock` e blindagem responsiva universal de todos os modais da aplicação (`max-h-[92vh]`, `overflow-y-auto` e bloqueio de scroll bleed no body);
      - Limpeza da seção estática redundante de infraestrutura em `AdminDashboard.tsx`, otimizando a densidade de informação visual.
-  4. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [PRÓXIMO PASSO]:**
-     - Signaling server dedicado com Node.js, WebSockets / Socket.io e STUN/TURN para chamada audiovisual peer-to-peer de alta performance e baixa latência.
+  4. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [EM ANDAMENTO 🚀]:**
+     - **Micro Tarefa 16.1 [CONCLUÍDA ✅]:** Fundação do microsserviço `4-Semestre/ms-teleconsulta-signaling/` em Node.js LTS, TypeScript, Express, Socket.io, Dockerfile multi-stage, healthcheck (`GET /health`) e testes unitários Vitest.
+     - **Micro Tarefa 16.2 [PRÓXIMO PASSO]:** Hub de sinalização WebRTC com isolamento de salas por `appointmentId` e roteamento de SDP Offer/Answer e ICE Candidates.
   5. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
      - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022).
   6. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**

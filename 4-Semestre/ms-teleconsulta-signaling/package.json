@@ -1,0 +1,37 @@
+{
+  "name": "ms-teleconsulta-signaling",
+  "version": "1.0.0",
+  "description": "Microsserviço de Sinalização WebRTC para Teleconsulta Geriátrica - Active Age (4º Semestre)",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "webrtc",
+    "signaling",
+    "socket.io",
+    "active-age",
+    "telehealth",
+    "express"
+  ],
+  "author": "Active Age Team / Guilherme Silva",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.0",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

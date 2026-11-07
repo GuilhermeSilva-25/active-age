@@ -119,11 +119,36 @@ jobs:
           retention-days: 14
 
   # =========================================================================
-  # JOB 3: DevSecOps & Container Docker (Trivy Scan + Docker Multi-Stage)
+  # JOB 3: Signaling CI (Node 22 + TypeScript + Vitest + ms-teleconsulta-signaling)
+  # =========================================================================
+  signaling-ci:
+    name: WebRTC Signaling (Node 22 / Vitest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Código-Fonte
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar Dependências e Executar Testes Unitários
+        run: |
+          cd 4-Semestre/ms-teleconsulta-signaling
+          npm ci
+          npm run test
+          npm run build
+
+  # =========================================================================
+  # JOB 4: DevSecOps & Container Docker (Trivy Scan + Docker Multi-Stage)
   # =========================================================================
   security-and-docker-ci:
     name: DevSecOps & Container Docker
-    needs: [backend-ci, frontend-ci]
+    needs: [backend-ci, frontend-ci, signaling-ci]
     runs-on: ubuntu-latest
 
     steps:
@@ -163,7 +188,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Pilar da Esteira | Tecnologia / Ferramenta | Status | Detalhes |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
-          echo "| **Backend Core** | Java 21 LTS + Spring Boot 3 | ✅ Passou | 180 testes automatizados (JUnit 5 + Mockito + MockMvc) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Backend Core** | Java 21 LTS + Spring Boot 3 | ✅ Passou | 181 testes automatizados (JUnit 5 + Mockito + MockMvc) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **WebRTC Signaling** | Node.js LTS + Socket.io + Express | ✅ Passou | 3 testes unitários (Vitest) e build de produção (TypeScript) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Cobertura de Código** | Jacoco Maven Plugin (v0.8.12) | ✅ 84% Instruções / 56% Branches | 100% das 45 classes auditadas (0 classes ausentes) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Frontend SPA** | React 19 + TypeScript + Vite | ✅ Passou | Tipagem estática validada e build de produção gerado |" >> $GITHUB_STEP_SUMMARY
           echo "| **Análise Estática (Linter)** | oxlint (JavaScript/TypeScript) | ✅ Passou | 0 erros de sintaxe ou conformidade |" >> $GITHUB_STEP_SUMMARY
