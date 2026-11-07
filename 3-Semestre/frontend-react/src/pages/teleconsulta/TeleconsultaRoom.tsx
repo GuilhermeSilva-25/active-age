@@ -63,6 +63,7 @@ export const TeleconsultaRoom: React.FC = () => {
         peerVideoOff,
         peerName,
         errorMessage: rtcError,
+        retryMedia,
         toggleAudio,
         toggleVideo,
         leaveRoom,
@@ -132,17 +133,20 @@ export const TeleconsultaRoom: React.FC = () => {
         message: '',
     });
 
-    // Notificação amigável de erro de WebRTC/mídia
+    // Notificação amigável de erro de WebRTC/mídia com suporte a Retry (SPEC-16.4)
     useEffect(() => {
         if (rtcError) {
             setFeedback({
                 isOpen: true,
                 type: 'warning',
-                title: 'Aviso de Mídia / WebRTC',
+                title: 'Permissão de Câmera / Microfone',
                 message: rtcError,
+                actionToConfirm: () => {
+                    retryMedia();
+                },
             });
         }
-    }, [rtcError]);
+    }, [rtcError, retryMedia]);
 
     // Timer da Consulta
     useEffect(() => {
@@ -767,6 +771,22 @@ export const TeleconsultaRoom: React.FC = () => {
                                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                             Inicializando câmera e microfone...
                                         </p>
+                                    )}
+
+                                    {connectionStatus === 'error' && (
+                                        <div className="mt-3">
+                                            <p className="text-xs text-red-400 font-bold mb-2">
+                                                Falha temporária ao inicializar a mídia.
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onClick={retryMedia}
+                                                className="px-4 py-2 bg-brand-orange hover:bg-brand-orange/90 text-white text-xs font-bold rounded-xl transition-all shadow-md cursor-pointer inline-flex items-center gap-1.5"
+                                            >
+                                                <Loader2 className="w-3.5 h-3.5" />
+                                                Tentar Reconectar Câmera
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
                             </div>

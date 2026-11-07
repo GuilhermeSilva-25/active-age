@@ -152,12 +152,12 @@ gantt
      - Retrato humanizado e acolhedor da paciente de teste Dona Maria (Wikimedia Commons) atualizado com resiliência no `DoctorScheduleAutomationService` e suíte expandida para 181 testes automatizados (0 falhas);
      - Criação do custom hook `useBodyScrollLock` e blindagem responsiva universal de todos os modais da aplicação (`max-h-[92vh]`, `overflow-y-auto` e bloqueio de scroll bleed no body);
      - Limpeza da seção estática redundante de infraestrutura em `AdminDashboard.tsx`, otimizando a densidade de informação visual.
-  4. [ ] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [EM ANDAMENTO 🚀]:**
+  4. [x] **Microsserviço de Teleconsulta Real com WebRTC Nativo e Servidor de Sinalização (SPEC-16 / UC12) — [CONCLUÍDO / LIVE ✅]:**
      - **Micro Tarefa 16.1 [CONCLUÍDA ✅]:** Fundação do microsserviço `4-Semestre/ms-teleconsulta-signaling/` em Node.js LTS, TypeScript, Express, Socket.io, Dockerfile multi-stage, healthcheck (`GET /health`) e testes unitários Vitest.
      - **Micro Tarefa 16.2 [CONCLUÍDA ✅]:** Hub de sinalização WebRTC com isolamento de salas por `appointmentId`, trava de 2 participantes (CFM/LGPD), roteamento de SDP Offer/Answer e ICE Candidates e 10 testes automatizados (SPEC-16.2).
      - **Micro Tarefa 16.3 [CONCLUÍDA ✅]:** Cliente WebRTC no Frontend React 19 (`TeleconsultaRoom.tsx`) com hook `useWebRTC.ts`, feeds de vídeo remoto e local PiP, sincronização de mute e STUN Google (SPEC-16.3).
-     - **Micro Tarefa 16.4 [PRÓXIMO PASSO]:** Resiliência de rede, fallback de permissões e workflow no GitHub Actions.
-  5. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005):**
+     - **Micro Tarefa 16.4 [CONCLUÍDA ✅]:** Resiliência de rede com ICE restart, reconexão automática, fallback acessível de permissões de hardware (cadeado 🔒) com `retryMedia` e esteira de CI/CD industrial com escaneamento Docker Trivy (SPEC-16.4).
+  5. [ ] **Microsserviço de Gateway de Pagamento com Split Direto regulado pelo BACEN (SPEC-17 / UC06 / RN005) — [PRÓXIMO MARCO]:**
      - Rateio automático de honorários diretamente na subconta médica sem dicotomia (Res. CFM nº 2.314/2022).
   6. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.

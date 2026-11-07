@@ -46,6 +46,21 @@ const ICE_SERVERS: RTCConfiguration = {
   ],
 };
 
+function formatMediaErrorMessage(err: unknown): string {
+  if (err instanceof DOMException) {
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      return 'O acesso à câmera e microfone foi bloqueado pelo seu navegador. Por favor, clique no ícone de cadeado 🔒 na barra de endereços do seu navegador e autorize o acesso à Câmera e Microfone.';
+    }
+    if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+      return 'Nenhum dispositivo de câmera ou microfone foi detectado no seu computador ou celular. Verifique se estão devidamente conectados.';
+    }
+    if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+      return 'Sua câmera ou microfone já estão em uso por outro aplicativo (Zoom, Teams ou outra aba). Feche outros programas e tente novamente.';
+    }
+  }
+  return 'Não foi possível acessar a câmera ou microfone. Verifique as configurações de mídia do seu navegador.';
+}
+
 export function useWebRTC({
   appointmentId,
   userId,
@@ -100,7 +115,7 @@ export function useWebRTC({
     }
   }, []);
 
-  // Criação e configuração do RTCPeerConnection
+  // Criação e configuração do RTCPeerConnection com Resiliência (ICE Restart)
   const createPeerConnection = useCallback(
     (targetSocketId: string): RTCPeerConnection => {
       if (peerConnectionRef.current) {
@@ -152,6 +167,27 @@ export function useWebRTC({
         }
       };
 
+      // Resiliência de Rede: Detecção de queda ICE e tentativa automática de ICE Restart
+      pc.oniceconnectionstatechange = async () => {
+        if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+          setConnectionStatus('reconnecting');
+          if (remoteSocketIdRef.current && socketRef.current) {
+            try {
+              const offer = await pc.createOffer({ iceRestart: true });
+              await pc.setLocalDescription(offer);
+              socketRef.current.emit('offer', {
+                toSocketId: remoteSocketIdRef.current,
+                sdp: offer,
+              });
+            } catch {
+              // Silencioso em caso de tentativa de renegotiate concorrente
+            }
+          }
+        } else if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
+          setConnectionStatus('connected');
+        }
+      };
+
       return pc;
     },
     []
@@ -177,8 +213,8 @@ export function useWebRTC({
           video: true,
           audio: true,
         });
-      } catch {
-        // Fallback: tenta apenas áudio se a câmera estiver ocupada ou indisponível
+      } catch (mediaErr) {
+        // Fallback: tenta apenas áudio se a câmera estiver ocupada ou bloqueada
         try {
           stream = await navigator.mediaDevices.getUserMedia({
             video: false,
@@ -187,9 +223,7 @@ export function useWebRTC({
           setIsVideoOff(true);
         } catch {
           if (isMounted) {
-            setErrorMessage(
-              'Não foi possível acessar a câmera ou microfone. Verifique as permissões de mídia do seu navegador.'
-            );
+            setErrorMessage(formatMediaErrorMessage(mediaErr));
             setConnectionStatus('error');
           }
           return;
@@ -209,10 +243,25 @@ export function useWebRTC({
       const socket = io(signalingUrl, {
         transports: ['websocket', 'polling'],
         forceNew: true,
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
       });
       socketRef.current = socket;
 
       socket.on('connect', () => {
+        socket.emit('join-room', {
+          appointmentId,
+          userId,
+          userRole: userRole || 'PACIENTE',
+          userName: userName || 'Participante',
+        });
+      });
+
+      // Reconexão automática em caso de oscilação momentânea do Wi-Fi
+      socket.on('reconnect', () => {
+        if (!isMounted) return;
+        setConnectionStatus('waiting');
         socket.emit('join-room', {
           appointmentId,
           userId,
@@ -406,6 +455,57 @@ export function useWebRTC({
     }
   }, [appointmentId]);
 
+  // Tentativa de recuperação de mídia (permissões ou periféricos) sem recarregar a tela
+  const retryMedia = useCallback(async () => {
+    setConnectionStatus('acquiring');
+    setErrorMessage(null);
+
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
+      localStreamRef.current = null;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      localStreamRef.current = stream;
+      setLocalStream(stream);
+      setIsVideoOff(false);
+      setIsMuted(false);
+      setConnectionStatus(remoteStream ? 'connected' : 'waiting');
+
+      // Se houver conexão aberta, substitui as faixas de mídia
+      if (peerConnectionRef.current) {
+        const senders = peerConnectionRef.current.getSenders();
+        stream.getTracks().forEach((track) => {
+          const sender = senders.find((s) => s.track?.kind === track.kind);
+          if (sender) {
+            sender.replaceTrack(track);
+          } else {
+            peerConnectionRef.current?.addTrack(track, stream);
+          }
+        });
+      }
+    } catch (mediaErr) {
+      try {
+        const audioOnlyStream = await navigator.mediaDevices.getUserMedia({
+          video: false,
+          audio: true,
+        });
+        localStreamRef.current = audioOnlyStream;
+        setLocalStream(audioOnlyStream);
+        setIsVideoOff(true);
+        setConnectionStatus(remoteStream ? 'connected' : 'waiting');
+      } catch (audioErr) {
+        setErrorMessage(formatMediaErrorMessage(audioErr));
+        setConnectionStatus('error');
+      }
+    }
+  }, [remoteStream]);
+
   // Saída voluntária da sala
   const leaveRoom = useCallback(() => {
     if (localStreamRef.current) {
@@ -436,6 +536,7 @@ export function useWebRTC({
     peerVideoOff,
     peerName,
     errorMessage,
+    retryMedia,
     toggleAudio,
     toggleVideo,
     leaveRoom,

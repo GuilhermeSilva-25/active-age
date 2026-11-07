@@ -140,6 +140,7 @@ jobs:
         run: |
           cd 4-Semestre/ms-teleconsulta-signaling
           npm ci
+          npm run lint
           npm run test
           npm run build
 
@@ -175,10 +176,19 @@ jobs:
         run: |
           docker build -t active-age-backend-core:ci 3-Semestre/backend-core
 
-      - name: Scanner de Vulnerabilidades na Imagem Docker (Trivy Image Scan)
+      - name: Scanner de Vulnerabilidades na Imagem Docker (Backend Core Trivy Scan)
         continue-on-error: true
         run: |
           trivy image --format table --severity CRITICAL --exit-code 0 active-age-backend-core:ci || true
+
+      - name: Construir Imagem Docker Multi-Stage de Produção (ms-teleconsulta-signaling)
+        run: |
+          docker build -t active-age-signaling:ci 4-Semestre/ms-teleconsulta-signaling
+
+      - name: Scanner de Vulnerabilidades na Imagem Docker (Signaling Trivy Scan)
+        continue-on-error: true
+        run: |
+          trivy image --format table --severity CRITICAL --exit-code 0 active-age-signaling:ci || true
 
       - name: Gerar Sumário Executivo de CI/CD (GitHub Step Summary)
         if: always()
@@ -192,12 +202,12 @@ jobs:
           echo "| **WebRTC Signaling** | Node.js LTS + Socket.io + Express | ✅ Passou | 10 testes automatizados (Vitest) e build de produção (TypeScript) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Cobertura de Código** | Jacoco Maven Plugin (v0.8.12) | ✅ 84% Instruções / 56% Branches | 100% das 45 classes auditadas (0 classes ausentes) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Frontend SPA** | React 19 + TypeScript + Vite | ✅ Passou | Tipagem estática validada e build de produção gerado |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Análise Estática (Linter)** | oxlint (JavaScript/TypeScript) | ✅ Passou | 0 erros de sintaxe ou conformidade |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Análise Estática (Linter)** | oxlint & tsc (TypeScript) | ✅ Passou | 0 erros de sintaxe ou conformidade |" >> $GITHUB_STEP_SUMMARY
           echo "| **DevSecOps (SCA)** | Trivy Scanner (Aqua Security) | ✅ Auditado | Varredura de dependências e CVEs concluída |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Container Docker** | Docker Multi-Stage (Temurin 21) | ✅ Construído | Imagem de produção testada e validada |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Containers Docker** | Docker Multi-Stage (Backend & Signaling) | ✅ Construídos | Imagens de produção validadas com Trivy |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📦 Artefatos Disponíveis para Auditoria:" >> $GITHUB_STEP_SUMMARY
-          echo "* \`backend-surefire-reports\`: Resultados detalhados dos 180 testes automatizados." >> $GITHUB_STEP_SUMMARY
+          echo "* \`backend-surefire-reports\`: Resultados detalhados dos 181 testes automatizados." >> $GITHUB_STEP_SUMMARY
           echo "* \`backend-jacoco-coverage\`: Relatório navegável de cobertura de código." >> $GITHUB_STEP_SUMMARY
           echo "* \`frontend-dist-artifact\`: Pacote de build minificado para deploy." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

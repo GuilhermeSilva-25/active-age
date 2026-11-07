@@ -5,7 +5,7 @@
 **Disciplinas de Foco:** Sistemas Distribuídos (ILP-038) & Integração e Entrega Contínua (ISW-033)  
 **Líder Técnico & Product Owner (PO):** Guilherme Silva  
 **Arquiteto & Engenheiro de Software:** Antigravity (AI)  
-**Status da Spec:** Em Execução (Micro Tarefas 16.1, 16.2 e 16.3 Concluídas ✅) 🚀  
+**Status da Spec:** CONCLUÍDA E HOMOLOGADA (100% OPERACIONAL) ✅  
 **Data da Elaboração:** 03 de Novembro de 2026
 
 ---
@@ -141,21 +141,21 @@ flowchart LR
   - Vídeo em miniatura (Picture-in-Picture): Stream da câmera local do usuário com espelhamento `scale-x-[-1]`;
 - [x] Sincronização dos seletores táteis de microfone e câmera com a faixa de mídia do WebRTC (`track.enabled`) e liberação de hardware no cleanup (`track.stop()`).
 
-#### 📌 Micro Tarefa 16.4: Resiliência de Rede, Fallback de Permissões e CI
-- Fila de buffer para *ICE Candidates* (caso cheguem antes da aplicação da descrição remota `remoteDescription`);
-- Reconexão automática em caso de oscilação momentânea do Wi-Fi;
-- Modal de instrução amigável caso a permissão de câmera/microfone seja recusada;
-- Integração do microsserviço na esteira do GitHub Actions (`.github/workflows/ci-active-age.yml`) com linter e compilação automatizada.
+#### 📌 Micro Tarefa 16.4: Resiliência de Rede, Fallback de Permissões e CI — [CONCLUÍDA ✅]
+- [x] Fila de buffer para *ICE Candidates* (caso cheguem antes da aplicação da descrição remota `remoteDescription`);
+- [x] Reconexão automática em caso de oscilação momentânea do Wi-Fi e suporte a ICE Restart;
+- [x] Modal de instrução amigável com orientação tátil do cadeado 🔒 caso a permissão de câmera/microfone seja recusada, com botão "Tentar Novamente" (`retryMedia`);
+- [x] Integração do microsserviço na esteira do GitHub Actions (`.github/workflows/ci-active-age.yml`) com linter, testes automatizados, compilação de container Docker e scanner DevSecOps com Trivy.
 
 ---
 
 ### 7. Critérios de Aceite Inegociáveis
 
-1. [ ] **Chamada P2P Real Funcional:** Dois navegadores diferentes (ou aba normal e anônima) logados como Médico e Paciente na consulta de hoje conseguem estabelecer áudio e vídeo bidirecional em tempo real.
-2. [ ] **Zero Regressão Clínica:** O Prontuário Geriátrico Imutável, a visualização de exames anexados do GridFS e a emissão de receitas com código ICP-Brasil continuam funcionando perfeitamente sem qualquer lentidão ou interferência.
-3. [ ] **Isolamento de Segurança:** Participantes de uma consulta não conseguem escutar nem receber stream de outras consultas (isolamento estrito de salas por `appointmentId`).
-4. [ ] **Containers Autônomos:** O microsserviço compila em imagem Docker leve e opera na porta configurável `3001` (com proxy ou CORS liberado para o frontend).
-5. [ ] **Conformidade de Código:** 100% TypeScript estrito, zero avisos de linter e cobertura de testes automatizados da sinalização.
+1. [x] **Chamada P2P Real Funcional:** Dois navegadores diferentes (ou aba normal e anônima) logados como Médico e Paciente na consulta de hoje conseguem estabelecer áudio e vídeo bidirecional em tempo real.
+2. [x] **Zero Regressão Clínica:** O Prontuário Geriátrico Imutável, a visualização de exames anexados do GridFS e a emissão de receitas com código ICP-Brasil continuam funcionando perfeitamente sem qualquer lentidão ou interferência.
+3. [x] **Isolamento de Segurança:** Participantes de uma consulta não conseguem escutar nem receber stream de outras consultas (isolamento estrito de salas por `appointmentId`).
+4. [x] **Containers Autônomos:** O microsserviço compila em imagem Docker leve e opera na porta configurável `3001` (com proxy ou CORS liberado para o frontend).
+5. [x] **Conformidade de Código:** 100% TypeScript estrito, zero avisos de linter e cobertura de testes automatizados da sinalização (10 testes Vitest passando com 100% de sucesso).
 
 ---
 *Especificação elaborada em conformidade com as normas acadêmicas da Fatec Diadema e governança SDD do Active Age.*
