@@ -5,7 +5,9 @@ import {
     ShieldCheck,
     CheckCircle2,
     Receipt,
-    Lock
+    Lock,
+    Loader2,
+    CreditCard
 } from 'lucide-react';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
@@ -45,7 +47,7 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
     useBodyScrollLock(isOpen);
 
     const [pagamentos, setPagamentos] = useState<PagamentoItem[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const authCode = useMemo(() => {
         const hash = doctorId ? doctorId.substring(0, 6).toUpperCase() : 'MED001';
@@ -142,7 +144,10 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
 
     useEffect(() => {
         if (isOpen && doctorId) {
+            setLoading(true);
             fetchExtrato();
+        } else if (!isOpen) {
+            setLoading(true);
         }
 
         const handleUpdate = () => {
@@ -178,36 +183,87 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
 
     if (!isOpen) return null;
 
-    // Estado Vazio: Enquanto não assinar, NÃO gera relatório
-    if (pagamentos.length === 0 && !loading) {
+    // 1. Estado de Carregamento Acessível (Elimina qualquer flash de UI)
+    if (loading) {
         return (
             <div
-                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-200 overscroll-contain"
                 role="dialog"
                 aria-modal="true"
             >
                 <div
-                    className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-200 flex flex-col items-center text-center space-y-4"
+                    className="relative w-full max-w-md bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-brand-pot/40 text-center flex flex-col items-center justify-center space-y-4 animate-in zoom-in-95 duration-200"
                     onClick={e => e.stopPropagation()}
                 >
-                    <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
-                        <Receipt className="w-7 h-7" />
+                    <div className="w-20 h-20 rounded-2xl border-2 bg-orange-50 border-orange-200 flex items-center justify-center shadow-xs">
+                        <Loader2 className="w-10 h-10 animate-spin text-brand-orange" />
                     </div>
-
-                    <div className="space-y-1.5">
-                        <h2 className="text-xl font-bold text-black">
-                            Nenhum Comprovante Disponível
-                        </h2>
-                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-sm mx-auto">
-                            O comprovante fiscal e o extrato financeiro só são gerados após a confirmação e liquidação da assinatura do Consultório Virtual Pro.
+                    <div className="space-y-1">
+                        <h3 className="text-xl md:text-2xl font-extrabold text-brown-dark tracking-tight">
+                            Consultando Extrato...
+                        </h3>
+                        <p className="text-sm md:text-base text-brown-dark/75 font-medium leading-relaxed">
+                            Buscando registros e liquidações do seu consultório.
                         </p>
                     </div>
+                </div>
+            </div>
+        );
+    }
 
-                    <div className="w-full pt-3 flex flex-col sm:flex-row gap-2.5">
+    // 2. Estado Vazio Oficial no Padrão FeedbackModal (Enquanto não assinar, NÃO gera relatório timbrado)
+    if (pagamentos.length === 0) {
+        return (
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-200 overscroll-contain"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="empty-extrato-title"
+                aria-describedby="empty-extrato-description"
+            >
+                <div
+                    className="relative w-full max-w-md bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-brand-pot/40 text-center transform transition-all animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto overscroll-contain"
+                    onClick={e => e.stopPropagation()}
+                >
+                    {/* Botão de Fechar no topo */}
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Fechar modal"
+                        className="absolute top-4 right-4 p-2 text-gray-400 hover:text-brown-dark rounded-full hover:bg-gray-100 transition-colors focus:ring-2 focus:ring-brand-orange outline-none cursor-pointer"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+
+                    {/* Ícone Descritivo em Destaque */}
+                    <div className="flex justify-center mb-5">
+                        <div className="w-20 h-20 rounded-2xl border-2 flex items-center justify-center shadow-xs bg-amber-50 border-amber-200">
+                            <Receipt className="w-10 h-10 text-brand-orange" aria-hidden="true" />
+                        </div>
+                    </div>
+
+                    {/* Título Acessível */}
+                    <h3
+                        id="empty-extrato-title"
+                        className="text-2xl md:text-3xl font-extrabold text-brown-dark mb-3 tracking-tight"
+                    >
+                        Nenhum Comprovante Disponível
+                    </h3>
+
+                    {/* Descrição / Mensagem */}
+                    <p
+                        id="empty-extrato-description"
+                        className="text-base md:text-lg text-brown-dark/80 leading-relaxed mb-8 font-medium"
+                    >
+                        O comprovante fiscal e o extrato financeiro são gerados automaticamente após a contratação e liquidação do plano do Consultório Virtual Pro.
+                    </p>
+
+                    {/* Botões de Ação com Alvos Táteis Ampliados (Padrão Oficial FeedbackModal) */}
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-100 text-xs sm:text-sm font-bold text-gray-700 transition-colors cursor-pointer min-h-[44px]"
+                            className="w-full sm:w-auto flex-1 min-h-[50px] px-6 py-3 rounded-xl border-2 border-brand-pot text-brown-dark font-bold hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 outline-none transition-all shadow-xs cursor-pointer"
                         >
                             Fechar
                         </button>
@@ -215,8 +271,9 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                             <button
                                 type="button"
                                 onClick={onOpenSubscribe}
-                                className="flex-1 px-4 py-2.5 rounded-lg bg-black hover:bg-gray-800 text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 min-h-[44px]"
+                                className="w-full sm:w-auto flex-1 min-h-[50px] px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-lg focus:ring-4 focus:ring-orange-200 outline-none transition-all transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-2.5 cursor-pointer bg-brand-orange hover:bg-orange-600 text-white"
                             >
+                                <CreditCard className="w-5 h-5 text-white" />
                                 <span>Assinar Consultório</span>
                             </button>
                         )}
@@ -226,6 +283,7 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
         );
     }
 
+    // 3. Documento Oficial em Preto e Branco Puro (P&B) Renderizado Exclusivamente Pós-Liquidação
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overscroll-contain print:p-0 print:bg-white print:static"

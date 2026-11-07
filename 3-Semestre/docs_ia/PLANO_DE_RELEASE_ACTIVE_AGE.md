@@ -198,8 +198,10 @@ gantt
    13. [x] **Filtragem de Extrato Liquidado & Estado Vazio Pré-Assinatura (SPEC-17I) — [CONCLUÍDO ✅]:**
       - **Exibição Estrita de Faturas Liquidadas:** Filtragem exclusiva de transações aprovadas (`status == APROVADO`), descartando tentativas pendentes e deduplicando faturas para evitar repetições no extrato;
       - **Trava de Emissão Pré-Assinatura:** Eliminação de mock de fallback sintético. Enquanto a assinatura não estiver confirmada, o modal exibe o estado vazio informativo com botão para contratação do plano, sem emitir o relatório contábil timbrado.
-   14. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
-
+   14. [x] **Padronização Visual do Modal de Extrato & Prevenção de Flash de Conteúdo (SPEC-17J) — [CONCLUÍDO ✅]:**
+      - **Eliminação de FOUC:** Inicialização de `loading` protegida e exibição de spinner `Loader2` acessível enquanto consulta o backend, impedindo qualquer flash de tela antes da verificação da assinatura;
+      - **Alinhamento ao Design System:** Refatoração do modal de estado vazio para seguir estritamente o `FeedbackModal.tsx` (`rounded-3xl`, `border-2 border-brand-pot/40`, ícone de recibo `w-20 h-20 bg-amber-50`, tipografia `text-2xl font-extrabold text-brown-dark` e botões táteis ampliados `min-h-[50px]`).
+   15. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
 #### 📅 5º Semestre — Aplicativo Mobile Multiplataforma, Mensageria & Saúde 4.0 — [FUTURO]
 * **Objetivo:** Desenvolvimento do ecossistema mobile e mensageria avançada:
   1. **Aplicativo Mobile Multiplataforma (React Native / Expo):** Focado no idoso e cuidador familiar (acessibilidade, receitas offline e botão SOS).
