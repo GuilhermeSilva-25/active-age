@@ -107,7 +107,7 @@ export function DoctorDetailModal({
                             {/* Selo Homologado CFM */}
                             <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold mb-1.5">
                                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                                <span>Homologado CFM & Active Age</span>
+                                <span>Homologado</span>
                             </div>
 
                             <h2 id="modal-doctor-title" className="text-xl sm:text-2xl font-black text-brown-dark leading-snug">
@@ -121,7 +121,7 @@ export function DoctorDetailModal({
                                 {doctor.rqe && (
                                     <span className="bg-brand-orange/10 border border-brand-orange/20 text-brand-orange px-2 py-0.5 rounded-md font-bold inline-flex items-center gap-1">
                                         <Award className="w-3.5 h-3.5" />
-                                        RQE {doctor.rqe}
+                                        RQE {doctor.rqe.replace(/^RQE[:\s]*/i, '').trim()}
                                     </span>
                                 )}
                             </div>
@@ -208,11 +208,7 @@ export function DoctorDetailModal({
                         </div>
                     )}
 
-                    {/* Nota Ética de Conformidade CFM */}
-                    <div className="p-3 bg-amber-50/80 rounded-xl border border-amber-200/70 text-xs text-amber-900 leading-snug">
-                        <strong>Nota Ética CFM:</strong> Atendimento por telemedicina regulamentado pelas Resoluções CFM nº 2.314/2022 e 2.336/2023. Prescrições digitais e atestados com assinatura padrão ICP-Brasil.
                     </div>
-                </div>
 
                 {/* Rodapé com Botão Principal de Agendamento */}
                 <div className="p-4 sm:p-5 bg-gray-50 border-t border-brand-pot/30 flex flex-col sm:flex-row items-center justify-between gap-3">

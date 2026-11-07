@@ -318,16 +318,27 @@ public class DoctorScheduleAutomationService {
         Optional<User> patientOpt = userRepository.findByEmail(TEST_PATIENT_EMAIL);
         if (patientOpt.isPresent()) {
             User p = patientOpt.get();
+            boolean updated = false;
+
+            if (p.getFullName() != null && (p.getFullName().contains("Dona") || p.getFullName().contains("Paciente Teste"))) {
+                p.setFullName("Maria de Lourdes Silva");
+                updated = true;
+            }
+
             if (p.getAvatarUrl() == null || p.getAvatarUrl().isBlank() || p.getAvatarUrl().contains("1581579438747")) {
                 p.setAvatarUrl(TEST_PATIENT_AVATAR_URL);
+                updated = true;
+            }
+
+            if (updated) {
                 userRepository.save(p);
-                logger.info(">>> [AUTOMAÇÃO] Foto de perfil atribuída à paciente de teste já existente: {}", TEST_PATIENT_EMAIL);
+                logger.info(">>> [AUTOMAÇÃO] Paciente de teste atualizada com sucesso: {}", p.getFullName());
             }
             return p;
         }
 
         User p = new User();
-        p.setFullName("Dona Maria de Lourdes Silva (Paciente Teste)");
+        p.setFullName("Maria de Lourdes Silva");
         p.setEmail(TEST_PATIENT_EMAIL);
         p.setPassword(passwordEncoder.encode("123456"));
         p.setCpf("123.456.789-00");

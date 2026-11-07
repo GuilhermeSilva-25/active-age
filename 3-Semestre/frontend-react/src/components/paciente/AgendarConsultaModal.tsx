@@ -215,7 +215,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                     body: JSON.stringify({
                         appointmentId: apptData.id,
                         patientId: apptData.patientId || 'paciente.activeage@gmail.com',
-                        patientNome: apptData.patientName || 'Dona Maria da Silva',
+                        patientNome: apptData.patientName || 'Maria de Lourdes Silva',
                         patientCpf: '111.444.777-35',
                         doctorId: doctor.id,
                         doctorNome: doctor.fullName,
@@ -309,7 +309,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                 body: JSON.stringify({
                     appointmentId: currentAppointmentId,
                     patientId: 'paciente.activeage@gmail.com',
-                    patientNome: cardData.name || 'Dona Maria da Silva',
+                    patientNome: cardData.name || 'Maria de Lourdes Silva',
                     patientCpf: '111.444.777-35',
                     doctorId: doctor.id,
                     doctorNome: doctor.fullName,
@@ -357,7 +357,7 @@ export const AgendarConsultaModal: React.FC<AgendarConsultaModalProps> = ({
                 body: JSON.stringify({
                     appointmentId: currentAppointmentId,
                     patientId: 'paciente.activeage@gmail.com',
-                    patientNome: 'Dona Maria da Silva',
+                    patientNome: 'Maria de Lourdes Silva',
                     patientCpf: '111.444.777-35',
                     doctorId: doctor.id,
                     doctorNome: doctor.fullName,

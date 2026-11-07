@@ -73,7 +73,7 @@ class DoctorScheduleAutomationServiceTest {
         testPatient = new User();
         testPatient.setId("pac-teste-456");
         testPatient.setEmail("paciente@teste.com");
-        testPatient.setFullName("Dona Maria de Lourdes Silva (Paciente Teste)");
+        testPatient.setFullName("Maria de Lourdes Silva");
         testPatient.setRole(Role.ROLE_PACIENTE);
         testPatient.setAvatarUrl(DoctorScheduleAutomationService.TEST_PATIENT_AVATAR_URL);
     }

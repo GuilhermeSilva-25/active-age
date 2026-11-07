@@ -168,7 +168,13 @@ gantt
      - **Extrato Financeiro do Consultório Médico (ExtratoFinanceiroModal.tsx):** Balanço consolidado de recebíveis de consultas vs faturas SaaS da plataforma (R$ 149,90/mês), filtros por tipo e impressão direta;
      - **Auditoria Administrativa Perimetral:** Rastreabilidade em audit_logs no InternalCallbackController e AppointmentService para confirmações e cancelamentos por expiração de tempo;
      - **Expansão de Qualidade:** Suíte elevada para 39 testes no microsserviço de pagamento e 184 testes no core (total de 233 testes em todo o repositório, 100% aprovados).
-  7. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+   7. [x] **Ajustes de Usabilidade e Humanização no Portal do Paciente e Médicos (SPEC-17C) — [CONCLUÍDO ✅]:**
+      - **Nome do Paciente de Teste:** Normalização para `"Maria de Lourdes Silva"`, removendo o prefixo "Dona" e o sufixo "(Paciente Teste)" na automação do backend, testes e fallbacks do frontend;
+      - **Busca de Médicos Mais Limpa:** Remoção do badge "Pesquisa Neutra & Homologada CFM" na busca;
+      - **Higienização do RQE:** Correção da duplicidade do prefixo RQE nos cards e modal de detalhes (`RQE {rqe.replace(/^RQE[:\s]*/i, '').trim()}`);
+      - **Remoção de Nota Ética:** Exclusão do callout informativo no perfil detalhado do médico;
+      - **Simplificação de Badges:** Ajuste de "Homologado CFM" para apenas "Homologado" nos cards e modal de médicos.
+   8. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---

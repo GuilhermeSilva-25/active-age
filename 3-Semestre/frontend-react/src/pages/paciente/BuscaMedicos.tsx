@@ -7,7 +7,6 @@ import {
     ShieldCheck,
     Clock,
     Award,
-    Sparkles,
     CalendarCheck,
     RotateCcw,
     SlidersHorizontal,
@@ -164,10 +163,6 @@ export function BuscaMedicos() {
                 {/* Banner de Apresentação e Busca Inteligente */}
                 <div className="bg-gradient-to-r from-orange-50 via-white to-amber-50 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-orange-200/60 shadow-sm relative overflow-hidden">
                     <div className="max-w-3xl space-y-3">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-orange/15 text-brand-orange text-xs sm:text-sm font-bold">
-                            <Sparkles className="w-4 h-4" />
-                            Pesquisa Neutra & Homologada CFM
-                        </span>
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-brown-dark tracking-tight">
                             Encontre o médico geriatra ideal para você.
                         </h2>
@@ -374,7 +369,7 @@ export function BuscaMedicos() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold mb-1">
                                                     <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                                                    <span>Homologado CFM</span>
+                                                    <span>Homologado</span>
                                                 </div>
 
                                                 <h4 className="text-base sm:text-lg font-black text-brown-dark truncate group-hover:text-brand-orange transition-colors" title={doctor.fullName}>
@@ -388,7 +383,7 @@ export function BuscaMedicos() {
                                                     {doctor.rqe && (
                                                         <span className="bg-brand-orange/10 text-brand-orange px-2 py-0.5 rounded-md font-bold inline-flex items-center gap-0.5">
                                                             <Award className="w-3 h-3" />
-                                                            RQE {doctor.rqe}
+                                                            RQE {doctor.rqe.replace(/^RQE[:\s]*/i, '').trim()}
                                                         </span>
                                                     )}
                                                 </div>
