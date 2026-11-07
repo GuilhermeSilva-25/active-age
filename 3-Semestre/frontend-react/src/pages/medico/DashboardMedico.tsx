@@ -616,9 +616,6 @@ export function DashboardMedico() {
                                     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center">
                                         <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
-                                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] sm:text-[11px] font-bold">
-                                        Split 100%
-                                    </span>
                                 </div>
                                 <h4 className="text-base sm:text-lg font-black text-brown-dark">
                                     Extrato Financeiro

@@ -187,7 +187,11 @@ gantt
       - **Cronômetro Regressivo Vivo:** Contador regressivo em tempo real (dias, horas, minutos e segundos) baseado em `trialExpiresAt` no card de Assinatura SaaS;
       - **Central de Prontuários & Documentos:** Trava de acesso para consultas não realizadas e separação em abas dedicadas no `MedicalRecordViewModal.tsx` entre Prontuário Clínico e Documentos/Receitas Oficiais;
       - **Assinatura SaaS em Duas Etapas:** Eliminação de siglas na lista de benefícios, criação da Página 2 de pagamento com formulário transparente de cartão de crédito, Pix e Mercado Pago Pro, além de botão `← Voltar para o Plano`.
-   11. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
+   11. [x] **Extrato Financeiro do Médico P&B, Persistência de Faturas SaaS e Higienização do Card (SPEC-17G) — [CONCLUÍDO ✅]:**
+      - **Remoção da Tag Split:** Exclusão da tag "Split 100%" no card de atalho de extrato em `DashboardMedico.tsx`;
+      - **Geração e Persistência do Extrato SaaS:** Atualização do backend `PagamentoServiceImpl.java` para retornar tanto recebíveis (`beneficiarioId`) quanto faturas de SaaS (`pagadorId`), aprovação automática de cartão simulado, e persistência multi-origem resiliente (`localStorage` + appointments do core) no `AssinaturaSaaSModal.tsx` e `ExtratoFinanceiroModal.tsx`;
+      - **Padrão P&B Oficial Alinhado ao Paciente:** Reformulação visual completa do `ExtratoFinanceiroModal.tsx` para Preto e Branco Puro (P&B) idêntico a `ComprovantePagamentoModal.tsx`, com métricas consolidadas, discriminativo de transações, notas regulatórias (CFM 2.314/2022) e autenticação digital `AA-EXT-2026-XXXXXX`.
+   12. [ ] **Orquestração de Infraestrutura Distribuída (SPEC-18):**
      - Docker Compose unificado integrando o Core do 3º Semestre com os microsserviços do 4º Semestre.
 
 ---

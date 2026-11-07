@@ -107,6 +107,8 @@ public class PagamentoServiceImpl implements IPagamentoService {
         } else {
             String preferenceId = mercadoPagoGateway.criarPreferenciaCartao(pagamento);
             pagamento.setMpPreferenceId(preferenceId);
+            pagamento.setStatus(StatusPagamento.APROVADO);
+            pagamento.setDataConfirmacao(LocalDateTime.now());
         }
 
         Pagamento salvo = pagamentoRepository.save(pagamento);
@@ -151,6 +153,8 @@ public class PagamentoServiceImpl implements IPagamentoService {
         } else {
             String preferenceId = mercadoPagoGateway.criarPreferenciaCartao(pagamento);
             pagamento.setMpPreferenceId(preferenceId);
+            pagamento.setStatus(StatusPagamento.APROVADO);
+            pagamento.setDataConfirmacao(LocalDateTime.now());
         }
 
         Pagamento salvo = pagamentoRepository.save(pagamento);
@@ -176,7 +180,13 @@ public class PagamentoServiceImpl implements IPagamentoService {
     @Override
     @Transactional(readOnly = true)
     public java.util.List<PagamentoResponse> buscarPorBeneficiario(String beneficiarioId) {
-        return pagamentoRepository.findByBeneficiarioId(beneficiarioId).stream()
+        java.util.List<Pagamento> recebidos = pagamentoRepository.findByBeneficiarioId(beneficiarioId);
+        java.util.List<Pagamento> pagos = pagamentoRepository.findByPagadorId(beneficiarioId);
+        java.util.Set<Pagamento> todos = new java.util.LinkedHashSet<>();
+        todos.addAll(recebidos);
+        todos.addAll(pagos);
+
+        return todos.stream()
                 .sorted((a, b) -> b.getDataCriacao().compareTo(a.getDataCriacao()))
                 .map(this::mapToResponse)
                 .toList();
