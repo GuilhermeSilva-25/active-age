@@ -202,8 +202,15 @@ export function useWebRTC({
     let isMounted = true;
     setConnectionStatus('acquiring');
 
+    const envSignalingUrl =
+      import.meta.env.VITE_SIGNALING_URL ||
+      (import.meta.env as unknown as Record<string, string | undefined>)['SIGNALING_URL'];
+
     const signalingUrl =
-      import.meta.env.VITE_SIGNALING_URL || 'http://localhost:3001';
+      envSignalingUrl ||
+      (import.meta.env.PROD
+        ? 'https://active-age-signaling.onrender.com'
+        : 'http://localhost:3001');
 
     async function startCall() {
       // 1. Aquisição de Mídia Local (Webcam + Microfone)
