@@ -123,4 +123,16 @@ public class AppointmentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+
+    @PostMapping("/api/doctor/subscription/activate")
+    @PreAuthorize("hasRole('MEDICO')")
+    public ResponseEntity<Map<String, Object>> activateSubscription() {
+        String email = getAuthenticatedEmail();
+        doctorScheduleService.activateDoctorSubscription(email);
+        return ResponseEntity.ok(Map.of(
+                "status", "ASSINATURA_ATIVA",
+                "message", "Assinatura ativada com sucesso."
+        ));
+    }
+
 }

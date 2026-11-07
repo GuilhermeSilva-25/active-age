@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
     Stethoscope,
@@ -69,6 +69,15 @@ export function DashboardMedico() {
     const [stats, setStats] = useState<DoctorStats | null>(null);
     const navigate = useNavigate();
     const [profile, setProfile] = useState<DoctorProfile | null>(null);
+
+    const isSubscribed = useMemo(() => {
+        if (stats?.subscriptionStatus === 'ASSINATURA_ATIVA') return true;
+        const key1 = 'activeage_doctor_subscription_' + (profile?.id || profile?.email);
+        if (localStorage.getItem(key1) === 'ASSINATURA_ATIVA') return true;
+        if (localStorage.getItem('activeage_doctor_subscription_medico@teste.com') === 'ASSINATURA_ATIVA') return true;
+        return false;
+    }, [stats?.subscriptionStatus, profile?.id, profile?.email]);
+
     const [selectedApptForRecord, setSelectedApptForRecord] = useState<DoctorTodayAppointment | null>(null);
     const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
     const [isRecordsManagerOpen, setIsRecordsManagerOpen] = useState(false);
@@ -415,25 +424,52 @@ export function DashboardMedico() {
 
                     {/* Card 3: Assinatura SaaS / Degustação Gratuita */}
                     <div
-                        onClick={() => setIsSaaSModalOpen(true)}
-                        className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-brand-pot/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 cursor-pointer hover:border-emerald-600 transition-all group"
-                        title="Gerenciar assinatura do consultório virtual"
+                        onClick={() => {
+                            if (isSubscribed) {
+                                setFeedback({
+                                    isOpen: true,
+                                    title: 'Assinatura SaaS Ativa',
+                                    message: 'Seu consultório virtual Pro está ativo com acesso completo a teleconsultas e emissão de prontuários. Próxima renovação automática em 30 dias. Para ver seu comprovante de pagamento, acesse o Extrato Financeiro.',
+                                    type: 'success',
+                                });
+                            } else {
+                                setIsSaaSModalOpen(true);
+                            }
+                        }}
+                        className={`bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 cursor-pointer transition-all group ${
+                            isSubscribed ? 'border-emerald-300 hover:border-emerald-600' : 'border-brand-pot/40 hover:border-emerald-600'
+                        }`}
+                        title={isSubscribed ? 'Consultório Pro Ativo (Clique para detalhes)' : 'Assinar Consultório Virtual Pro'}
                     >
                         <div>
-                            <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
-                                Assinatura SaaS
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] sm:text-xs font-bold text-brown-light uppercase tracking-wider block">
+                                    Assinatura SaaS
+                                </span>
+                                {isSubscribed && (
+                                    <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">
+                                        Ativo
+                                    </span>
+                                )}
+                            </div>
                             <div className="mt-0.5 sm:mt-1">
                                 <span className="text-sm sm:text-base md:text-lg font-black font-mono text-emerald-800 flex items-center gap-1.5">
-                                    <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
-                                    {stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
-                                        ? 'Ativo (30 Dias)'
-                                        : (saasTimeRemaining || 'Calculando...')}
+                                    {isSubscribed ? (
+                                        <>
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                                            <span>Plano Pro Ativo</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
+                                            <span>{saasTimeRemaining || 'Calculando...'}</span>
+                                        </>
+                                    )}
                                 </span>
                             </div>
                             <span className="text-[10px] sm:text-[11px] text-emerald-800 font-bold mt-0.5 block truncate group-hover:underline">
-                                {stats?.subscriptionStatus === 'ASSINATURA_ATIVA'
-                                    ? 'Consultório Digital Ativo'
+                                {isSubscribed
+                                    ? 'Renovação em 30 dias • Consultório Pro'
                                     : '100% honorários • Assinar Plano'}
                             </span>
                         </div>
@@ -621,7 +657,7 @@ export function DashboardMedico() {
                                     Extrato Financeiro
                                 </h4>
                                 <p className="text-brown-light text-xs sm:text-sm mt-1 leading-snug">
-                                    Acompanhe honorários de teleconsultas, faturamento da assinatura SaaS e balanço consolidado.
+                                    Acompanhe as faturas e comprovantes de pagamento da assinatura do seu consultório virtual.
                                 </p>
                             </div>
                             <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-pot/30 flex items-center justify-between text-xs font-bold text-emerald-800">

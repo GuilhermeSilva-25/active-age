@@ -1,6 +1,7 @@
 package com.activeage.core.services;
 
 import com.activeage.core.domain.enums.DoctorDossierStatus;
+import com.activeage.core.domain.enums.DoctorSubscriptionStatus;
 import com.activeage.core.domain.enums.Role;
 import com.activeage.core.domain.enums.SlotStatus;
 import com.activeage.core.domain.models.DoctorScheduleSlot;
@@ -311,4 +312,13 @@ public class DoctorScheduleService {
                 .notes(slot.getNotes())
                 .build();
     }
+
+    public void activateDoctorSubscription(String doctorEmail) {
+        User doctor = getAuthenticatedDoctor(doctorEmail);
+        doctor.setSubscriptionStatus(DoctorSubscriptionStatus.ASSINATURA_ATIVA);
+        doctor.setSubscriptionExpiresAt(LocalDateTime.now().plusMonths(1));
+        userRepository.save(doctor);
+        log.info("Assinatura SaaS ativada com sucesso para o médico: {}", doctorEmail);
+    }
+
 }

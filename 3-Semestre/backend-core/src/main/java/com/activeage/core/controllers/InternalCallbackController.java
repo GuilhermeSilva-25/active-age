@@ -55,6 +55,7 @@ public class InternalCallbackController {
         log.info("Callback interno recebido: activateDoctorSubscription para médico {}", doctorId);
 
         User doctor = userRepository.findById(doctorId)
+                .or(() -> userRepository.findByEmail(doctorId))
                 .orElseThrow(() -> new IllegalArgumentException("Médico não encontrado com ID: " + doctorId));
 
         LocalDateTime agora = LocalDateTime.now();

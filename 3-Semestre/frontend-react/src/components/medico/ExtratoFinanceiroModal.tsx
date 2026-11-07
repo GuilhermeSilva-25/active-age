@@ -12,7 +12,7 @@ import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 export interface PagamentoItem {
     id: number;
-    tipo: 'CONSULTA_TELEMEDICINA' | 'ASSINATURA_SAAS_MEDICO';
+    tipo: 'ASSINATURA_SAAS_MEDICO';
     referenciaId: string;
     pagadorNome: string;
     beneficiarioId: string;
@@ -43,11 +43,10 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
 
     const [pagamentos, setPagamentos] = useState<PagamentoItem[]>([]);
     const [loading, setLoading] = useState(false);
-    const [filter, setFilter] = useState<'TODOS' | 'CONSULTAS' | 'SAAS'>('TODOS');
 
     const authCode = useMemo(() => {
         const hash = doctorId ? doctorId.substring(0, 6).toUpperCase() : 'MED001';
-        return `AA-EXT-2026-${hash}`;
+        return `AA-SAAS-2026-${hash}`;
     }, [doctorId]);
 
     const fetchExtrato = async () => {
@@ -55,103 +54,59 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
         try {
             const combined: PagamentoItem[] = [];
 
-            // 1. Consulta o microsserviço ms-pagamento-faturamento
+            // 1. Consulta o microsserviço ms-pagamento-faturamento (apenas faturas SaaS)
             try {
                 const res = await fetch(`/api/v1/pagamentos/medico/${doctorId}`);
                 if (res.ok) {
                     const json = await res.json();
                     if (Array.isArray(json.data) && json.data.length > 0) {
-                        combined.push(...json.data);
+                        const saasOnly = json.data.filter((p: any) => p.tipo === 'ASSINATURA_SAAS_MEDICO');
+                        combined.push(...saasOnly);
                     }
                 }
             } catch (err) {
                 console.warn('ms-pagamento offline ou inacessível no momento:', err);
             }
 
-            // 2. Carrega pagamentos locais de assinatura SaaS do médico persistidos
+            // 2. Carrega pagamentos locais de assinatura SaaS persistidos em localStorage
             try {
-                const storageKey = `activeage_doctor_payments_${doctorId}`;
-                const localRecords = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                if (Array.isArray(localRecords)) {
-                    localRecords.forEach((item: PagamentoItem) => {
+                const key1 = `activeage_doctor_payments_${doctorId}`;
+                const key2 = 'activeage_doctor_payments_medico@teste.com';
+                const local1 = JSON.parse(localStorage.getItem(key1) || '[]');
+                const local2 = JSON.parse(localStorage.getItem(key2) || '[]');
+                const mergedLocals = [...local1, ...local2];
+
+                mergedLocals.forEach((item: any) => {
+                    if (item.tipo === 'ASSINATURA_SAAS_MEDICO') {
                         const exists = combined.some(
                             c => c.id === item.id || (c.tipo === item.tipo && c.mpPaymentId === item.mpPaymentId)
                         );
                         if (!exists) {
                             combined.push(item);
                         }
-                    });
-                }
+                    }
+                });
             } catch (err) {
                 console.warn('Erro ao carregar pagamentos locais:', err);
             }
 
-            // 3. Consulta teleconsultas ativas do médico no Core (/api/doctor/appointments)
-            try {
-                const appRes = await fetch('/api/doctor/appointments');
-                if (appRes.ok) {
-                    const appointments = await appRes.json();
-                    if (Array.isArray(appointments)) {
-                        appointments.forEach((app: any, idx: number) => {
-                            const exists = combined.some(c => c.referenciaId === app.id);
-                            if (!exists && (app.status === 'AGENDADA' || app.status === 'REALIZADA')) {
-                                combined.push({
-                                    id: 5000 + idx,
-                                    tipo: 'CONSULTA_TELEMEDICINA',
-                                    referenciaId: app.id,
-                                    pagadorNome: app.patientName || 'Maria Silva',
-                                    beneficiarioId: doctorId,
-                                    valorTotal: Number(app.consultationFee || 250),
-                                    valorBeneficiario: Number(app.consultationFee || 250),
-                                    taxaPlataforma: 0,
-                                    metodo: 'PIX',
-                                    status: 'APROVADO',
-                                    mpPaymentId: 'MP-REC-' + (app.id || 'CONS').substring(0, 8).toUpperCase(),
-                                    dataCriacao: app.startDateTime || new Date().toISOString(),
-                                    dataConfirmacao: app.startDateTime || new Date().toISOString(),
-                                });
-                            }
-                        });
-                    }
-                }
-            } catch (err) {
-                console.warn('Core appointments não retornou dados:', err);
-            }
-
-            // 4. Caso o médico não tenha registros (ex: médico teste na primeira execução), popula com modelo exemplar
+            // 3. Fallback: Se ainda não tiver faturas registradas, gera a fatura exemplar de R$ 149,90
             if (combined.length === 0) {
-                combined.push(
-                    {
-                        id: 1,
-                        tipo: 'CONSULTA_TELEMEDICINA',
-                        referenciaId: 'apt-maria-silva',
-                        pagadorNome: 'Maria Silva',
-                        beneficiarioId: doctorId,
-                        valorTotal: 250.00,
-                        valorBeneficiario: 250.00,
-                        taxaPlataforma: 0,
-                        metodo: 'PIX',
-                        status: 'APROVADO',
-                        mpPaymentId: 'MP-PAY-7821901',
-                        dataCriacao: new Date().toISOString(),
-                        dataConfirmacao: new Date().toISOString(),
-                    },
-                    {
-                        id: 2,
-                        tipo: 'ASSINATURA_SAAS_MEDICO',
-                        referenciaId: doctorId,
-                        pagadorNome: doctorName,
-                        beneficiarioId: 'ACTIVE_AGE_PLATAFORMA',
-                        valorTotal: 149.90,
-                        valorBeneficiario: 0,
-                        taxaPlataforma: 149.90,
-                        metodo: 'CARTAO_CREDITO',
-                        status: 'APROVADO',
-                        mpPaymentId: 'MP-SAAS-994120',
-                        dataCriacao: new Date().toISOString(),
-                        dataConfirmacao: new Date().toISOString(),
-                    }
-                );
+                combined.push({
+                    id: 1,
+                    tipo: 'ASSINATURA_SAAS_MEDICO',
+                    referenciaId: doctorId || 'DOC-MEDICO',
+                    pagadorNome: doctorName || 'Dr. Marcos Silveira',
+                    beneficiarioId: 'ACTIVE_AGE_PLATAFORMA',
+                    valorTotal: 149.90,
+                    valorBeneficiario: 0,
+                    taxaPlataforma: 149.90,
+                    metodo: 'CARTAO_CREDITO',
+                    status: 'APROVADO',
+                    mpPaymentId: 'MP-SAAS-994120',
+                    dataCriacao: new Date().toISOString(),
+                    dataConfirmacao: new Date().toISOString(),
+                });
             }
 
             // Ordena cronologicamente decrescente
@@ -176,36 +131,6 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
         window.addEventListener('activeage_payment_updated', handleUpdate);
         return () => window.removeEventListener('activeage_payment_updated', handleUpdate);
     }, [isOpen, doctorId]);
-
-    // Cálculos consolidados
-    const metrics = useMemo(() => {
-        let totalConsultas = 0;
-        let totalSaas = 0;
-
-        pagamentos.forEach(p => {
-            if (p.status === 'APROVADO' || p.status === 'PENDENTE') {
-                if (p.tipo === 'CONSULTA_TELEMEDICINA') {
-                    totalConsultas += Number(p.valorBeneficiario || p.valorTotal);
-                } else if (p.tipo === 'ASSINATURA_SAAS_MEDICO') {
-                    totalSaas += Number(p.valorTotal);
-                }
-            }
-        });
-
-        return {
-            totalConsultas,
-            totalSaas,
-            saldoLiquido: totalConsultas - totalSaas,
-        };
-    }, [pagamentos]);
-
-    const filteredList = useMemo(() => {
-        return pagamentos.filter(p => {
-            if (filter === 'CONSULTAS') return p.tipo === 'CONSULTA_TELEMEDICINA';
-            if (filter === 'SAAS') return p.tipo === 'ASSINATURA_SAAS_MEDICO';
-            return true;
-        });
-    }, [pagamentos, filter]);
 
     const formatDate = (isoStr: string) => {
         try {
@@ -246,7 +171,7 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                 <div className="p-4 bg-gray-100 border-b border-gray-300 flex items-center justify-between gap-3 shrink-0 print:hidden">
                     <div className="flex items-center gap-2">
                         <span className="px-2.5 py-1 bg-black text-white text-xs font-bold rounded">
-                            Extrato Financeiro Oficial
+                            Extrato da Assinatura SaaS
                         </span>
                         <span className="text-xs text-gray-700 font-mono font-bold">
                             {authCode}
@@ -282,7 +207,7 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                                 ACTIVE AGE • TELESSAÚDE GERIÁTRICA
                             </span>
                             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-black mt-0.5">
-                                Extrato Financeiro Consolidado de Consultório
+                                Comprovante de Pagamento &amp; Assinatura SaaS
                             </h1>
                             <p className="text-xs text-gray-800 font-medium">
                                 CNPJ 54.321.987/0001-00 • São Paulo - SP
@@ -292,10 +217,10 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                         <div className="text-left sm:text-right text-xs text-gray-700">
                             <p className="font-semibold flex items-center sm:justify-end gap-1 text-black">
                                 <ShieldCheck className="w-3.5 h-3.5 text-black" />
-                                Split Direto Regulado (BACEN)
+                                Licenciamento SaaS Tecnológico
                             </p>
                             <p className="text-[11px] text-gray-600">
-                                Resolução CFM nº 2.314/2022 • Vedação à Dicotomia
+                                Resolução CFM nº 2.314/2022 • Valor Fixo Mensal
                             </p>
                             <p className="text-[10px] text-gray-500 font-mono mt-0.5">
                                 Emissão: {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR').substring(0, 5)}
@@ -303,11 +228,11 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                         </div>
                     </header>
 
-                    {/* Identificação do Médico Assistente e Processamento */}
+                    {/* Identificação do Médico Contratante e Fornecedora */}
                     <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div className="border border-gray-300 p-3.5 rounded-lg space-y-1">
                             <span className="text-gray-600 uppercase font-semibold text-[10px] block">
-                                Médico Assistente (Titular do Consultório):
+                                Médico Titular (Contratante do Consultório):
                             </span>
                             <p className="font-bold text-sm text-black">
                                 {doctorName}
@@ -319,136 +244,98 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
 
                         <div className="border border-gray-300 p-3.5 rounded-lg space-y-1 sm:text-right">
                             <span className="text-gray-600 uppercase font-semibold text-[10px] block">
-                                Instituição Processadora & Gateway:
+                                Empresa Provedora &amp; Processamento:
                             </span>
                             <p className="font-bold text-sm text-black">
-                                Mercado Pago IP LTDA (BACEN)
+                                Active Age Tecnologia LTDA / Mercado Pago IP
                             </p>
                             <p className="text-gray-700 text-[11px]">
-                                Modelo Tecnológico SaaS Fixo (R$ 149,90/mês)
+                                Licenciamento Mensal de Infraestrutura de Telessaúde
                             </p>
                         </div>
                     </section>
 
-                    {/* Cards de Métricas Consolidadas em Preto e Branco */}
+                    {/* Cards de Resumo da Assinatura SaaS em Preto e Branco */}
                     <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="border border-gray-300 p-4 rounded-lg space-y-1">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-600 block">
-                                Honorários Recebidos (Consultas)
+                                Plano Contratado
                             </span>
-                            <span className="text-2xl font-bold font-mono text-black block">
-                                {formatCurrency(metrics.totalConsultas)}
+                            <span className="text-lg font-bold text-black block">
+                                Consultório Virtual Pro
                             </span>
                             <span className="text-[11px] text-gray-600 font-medium block">
-                                Repasse Líquido Direto (100% Médico)
+                                Acesso total a teleconsultas e agenda
                             </span>
                         </div>
 
                         <div className="border border-gray-300 p-4 rounded-lg space-y-1">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-600 block">
-                                Assinatura SaaS Plataforma
+                                Mensalidade SaaS
                             </span>
                             <span className="text-2xl font-bold font-mono text-black block">
-                                - {formatCurrency(metrics.totalSaas)}
+                                {formatCurrency(149.90)}
                             </span>
                             <span className="text-[11px] text-gray-600 font-medium block">
-                                R$ 149,90/mês (Consultório Pro)
+                                Taxa fixa mensal sem dicotomia
                             </span>
                         </div>
 
                         <div className="border-2 border-black p-4 rounded-lg space-y-1 bg-gray-50">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-black block">
-                                Balanço Líquido do Período
+                                Status da Licença
                             </span>
-                            <span className="text-2xl font-bold font-mono text-black block">
-                                {formatCurrency(metrics.saldoLiquido)}
-                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                                <CheckCircle2 className="w-4 h-4 text-black" />
+                                <span className="text-lg font-bold text-black font-mono">
+                                    Liquidado &amp; Ativo
+                                </span>
+                            </div>
                             <span className="text-[11px] text-gray-700 font-medium block">
-                                Saldo Disponível Consolidado
+                                Cobertura garantida por 30 dias
                             </span>
                         </div>
                     </section>
 
-                    {/* Filtros de Navegação (Ocultos na Impressão) */}
-                    <div className="flex items-center justify-between border-b border-gray-200 pb-3 print:hidden">
-                        <span className="text-xs font-bold uppercase text-gray-600 tracking-wider">
-                            Demonstrativo de Movimentações ({filteredList.length})
-                        </span>
-                        <div className="flex items-center bg-gray-100 p-1 rounded-lg border border-gray-300">
-                            <button
-                                type="button"
-                                onClick={() => setFilter('TODOS')}
-                                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                                    filter === 'TODOS'
-                                        ? 'bg-black text-white shadow-xs'
-                                        : 'text-gray-700 hover:text-black'
-                                }`}
-                            >
-                                Todas
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setFilter('CONSULTAS')}
-                                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                                    filter === 'CONSULTAS'
-                                        ? 'bg-black text-white shadow-xs'
-                                        : 'text-gray-700 hover:text-black'
-                                }`}
-                            >
-                                Consultas
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setFilter('SAAS')}
-                                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                                    filter === 'SAAS'
-                                        ? 'bg-black text-white shadow-xs'
-                                        : 'text-gray-700 hover:text-black'
-                                }`}
-                            >
-                                Faturas SaaS
-                            </button>
-                        </div>
-                    </div>
+                    {/* Demonstrativo de Faturas da Assinatura */}
+                    <div className="space-y-3">
+                        <h2 className="text-xs font-bold uppercase text-gray-600 tracking-wider">
+                            Demonstrativo de Faturas da Assinatura ({pagamentos.length})
+                        </h2>
 
-                    {/* Tabela de Transações em Preto e Branco */}
-                    {loading ? (
-                        <div className="py-12 text-center text-gray-600">
-                            <p className="text-xs font-bold">Compilando demonstrativo financeiro...</p>
-                        </div>
-                    ) : filteredList.length === 0 ? (
-                        <div className="py-10 text-center border border-dashed border-gray-300 rounded-lg space-y-2">
-                            <Receipt className="w-8 h-8 text-gray-500 mx-auto" />
-                            <p className="text-sm font-bold text-black">Nenhuma movimentação registrada no filtro</p>
-                            <p className="text-xs text-gray-600">
-                                Transações de teleconsultas e faturas SaaS aparecerão aqui.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto border border-black rounded-lg">
-                            <table className="w-full text-left text-xs">
-                                <thead className="bg-gray-100 text-black font-bold uppercase text-[10px] tracking-wider border-b border-black">
-                                    <tr>
-                                        <th className="p-3">Data / Hora</th>
-                                        <th className="p-3">Descrição da Operação</th>
-                                        <th className="p-3">Método</th>
-                                        <th className="p-3">Status</th>
-                                        <th className="p-3 text-right">Valor Líquido</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-300">
-                                    {filteredList.map(p => {
-                                        const isConsulta = p.tipo === 'CONSULTA_TELEMEDICINA';
-                                        return (
+                        {loading ? (
+                            <div className="py-12 text-center text-gray-600">
+                                <p className="text-xs font-bold">Compilando demonstrativo da assinatura SaaS...</p>
+                            </div>
+                        ) : pagamentos.length === 0 ? (
+                            <div className="py-10 text-center border border-dashed border-gray-300 rounded-lg space-y-2">
+                                <Receipt className="w-8 h-8 text-gray-500 mx-auto" />
+                                <p className="text-sm font-bold text-black">Nenhuma fatura localizada</p>
+                                <p className="text-xs text-gray-600">
+                                    Os comprovantes de mensalidade do seu consultório aparecerão aqui.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto border border-black rounded-lg">
+                                <table className="w-full text-left text-xs">
+                                    <thead className="bg-gray-100 text-black font-bold uppercase text-[10px] tracking-wider border-b border-black">
+                                        <tr>
+                                            <th className="p-3">Data / Hora</th>
+                                            <th className="p-3">Descrição da Fatura</th>
+                                            <th className="p-3">Método</th>
+                                            <th className="p-3">Status</th>
+                                            <th className="p-3 text-right">Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-300">
+                                        {pagamentos.map(p => (
                                             <tr key={p.id} className="hover:bg-gray-50/80 transition-colors">
                                                 <td className="p-3 font-mono text-[11px] text-gray-700 whitespace-nowrap">
                                                     {formatDate(p.dataCriacao)}
                                                 </td>
                                                 <td className="p-3">
                                                     <span className="font-bold text-black block">
-                                                        {isConsulta
-                                                            ? `Teleconsulta com ${p.pagadorNome}`
-                                                            : 'Assinatura SaaS Mensal (Consultório Pro)'}
+                                                        Assinatura SaaS Mensal (Consultório Virtual Pro)
                                                     </span>
                                                     <span className="text-[10px] font-mono text-gray-600">
                                                         ID: {p.mpPaymentId || 'REF-' + p.referenciaId}
@@ -466,39 +353,35 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                                                 <td className="p-3 whitespace-nowrap">
                                                     {p.status === 'APROVADO' ? (
                                                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black border border-black px-2 py-0.5 rounded">
-                                                            <CheckCircle2 className="w-3 h-3 text-black" /> Aprovado
-                                                        </span>
-                                                    ) : p.status === 'PENDENTE' || p.status === 'PENDENTE_CONTINGENCIA' ? (
-                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 border border-gray-400 px-2 py-0.5 rounded">
-                                                            <Clock className="w-3 h-3 text-gray-700" /> Pendente
+                                                            <CheckCircle2 className="w-3 h-3 text-black" /> Liquidado
                                                         </span>
                                                     ) : (
-                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-black border border-gray-300 px-2 py-0.5 rounded">
-                                                            {p.status}
+                                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 border border-gray-400 px-2 py-0.5 rounded">
+                                                            <Clock className="w-3 h-3 text-gray-700" /> Pendente
                                                         </span>
                                                     )}
                                                 </td>
                                                 <td className="p-3 text-right whitespace-nowrap font-bold font-mono">
                                                     <span className="text-black">
-                                                        {isConsulta ? '+' : '-'} {formatCurrency(p.valorTotal)}
+                                                        {formatCurrency(p.valorTotal)}
                                                     </span>
                                                 </td>
                                             </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Nota Legal e LGPD */}
                     <aside className="p-3.5 border border-gray-400 rounded-lg text-xs space-y-1">
                         <h3 className="font-bold text-black uppercase text-[11px] tracking-wide flex items-center gap-1.5">
                             <Lock className="w-3.5 h-3.5 text-black" />
-                            <span>Conformidade Ético-Regulatória &amp; Proteção de Dados (LGPD):</span>
+                            <span>Conformidade Fiscal e Termos de Uso do Consultório Virtual:</span>
                         </h3>
                         <p className="text-gray-800 leading-relaxed text-[11px]">
-                            Documento emitido exclusivamente para controle financeiro, contábil e fiscal do consultório médico. Em cumprimento estrito à Resolução CFM nº 2.314/2022 (vedação à dicotomia de honorários médicos) e à Lei Geral de Proteção de Dados (Lei nº 13.709/2018), a plataforma Active Age opera como intermediadora tecnológica sob modelo SaaS fixo, vedando retenção percentual sobre teleconsultas. Este extrato consolida lançamentos financeiros sem expor diagnósticos, CID-11 ou dados clínicos confidenciais.
+                            O presente documento comprova a quitação da taxa mensal de licenciamento do software de consultório virtual (Active Age SaaS). Em consonância estrita com a Resolução CFM nº 2.314/2022 (vedação à dicotomia de honorários médicos) e a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), a plataforma opera sob modelo de taxa fixa mensal independente do volume de atendimentos realizados, inexistindo cobranças percentuais sobre atos médicos ou exposição de prontuários clínicos neste documento contábil.
                         </p>
                     </aside>
 
@@ -519,10 +402,10 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                         <div className="border border-black p-3.5 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                             <div className="space-y-0.5">
                                 <p className="font-bold text-black">
-                                    Demonstrativo Consolidado Emitido Eletronicamente via Active Age
+                                    Comprovante Fiscal Eletrônico Emitido via Active Age
                                 </p>
                                 <p className="text-[11px] text-gray-700">
-                                    Válido para comprovação fiscal, contábil e declaração de IRPF perante a Receita Federal.
+                                    Válido para comprovação fiscal, contábil e dedução de despesas operacionais de consultório.
                                 </p>
                             </div>
                             <div className="text-left sm:text-right border-t sm:border-t-0 sm:border-l border-gray-400 pt-2 sm:pt-0 sm:pl-3 shrink-0">
@@ -536,7 +419,7 @@ export const ExtratoFinanceiroModal: React.FC<ExtratoFinanceiroModalProps> = ({
                         </div>
 
                         <p className="text-center text-[10px] text-gray-600 print:text-[9px]">
-                            Validação pública de demonstrativos e recibos em:{' '}
+                            Validação pública de demonstrativos e faturas em:{' '}
                             <strong className="text-black font-semibold">
                                 activeage.com/validar-documento
                             </strong>
