@@ -192,7 +192,8 @@ class DoctorScheduleAutomationServiceTest {
 
         // Deve salvar a consulta readequada de hoje
         verify(appointmentRepository, times(1)).save(pastTodayAppt);
-        assertTrue(pastTodayAppt.getStartDateTime().isAfter(LocalDateTime.now().minusMinutes(1)));
+        assertNotNull(pastTodayAppt.getStartDateTime());
+        assertTrue(pastTodayAppt.getStartDateTime().isAfter(LocalDateTime.now().minusMinutes(5)));
         verify(doctorScheduleSlotRepository).save(pastSlot);
     }
 

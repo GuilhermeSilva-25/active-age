@@ -175,15 +175,20 @@ public class DoctorScheduleAutomationService {
         );
 
         // Define um horário estratégico para hoje: sempre futuro se possível
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime targetTime;
-        LocalTime nowTime = LocalTime.now();
+        LocalTime nowTime = now.toLocalTime();
         if (nowTime.isBefore(LocalTime.of(14, 0))) {
-            targetTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0));
-        } else if (nowTime.isBefore(LocalTime.of(21, 0))) {
-            // Se já passou das 14h mas é antes das 21h, agenda para a próxima hora cheia
-            targetTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(Math.min(nowTime.getHour() + 1, 22), 0));
+            targetTime = LocalDateTime.of(now.toLocalDate(), LocalTime.of(14, 0));
+        } else if (nowTime.getHour() < 23) {
+            targetTime = LocalDateTime.of(now.toLocalDate(), LocalTime.of(nowTime.getHour() + 1, 0));
         } else {
-            targetTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 0));
+            // Se já são 23h, agenda para alguns minutos no futuro para manter a consulta válida no dia atual
+            int targetMinute = Math.min(nowTime.getMinute() + 5, 59);
+            targetTime = LocalDateTime.of(now.toLocalDate(), LocalTime.of(23, targetMinute));
+            if (!targetTime.isAfter(now)) {
+                targetTime = now.plusMinutes(2).withSecond(0).withNano(0);
+            }
         }
 
         if (todayAppointments.isEmpty()) {
@@ -209,10 +214,11 @@ public class DoctorScheduleAutomationService {
                 updated = true;
 
                 // Sincroniza o slot correspondente
+                final LocalDateTime scheduledTime = targetTime;
                 if (existing.getSlotId() != null) {
                     doctorScheduleSlotRepository.findById(existing.getSlotId()).ifPresent(slot -> {
-                        slot.setStartDateTime(targetTime);
-                        slot.setEndDateTime(targetTime.plusMinutes(DURATION_MINUTES));
+                        slot.setStartDateTime(scheduledTime);
+                        slot.setEndDateTime(scheduledTime.plusMinutes(DURATION_MINUTES));
                         slot.setStatus(SlotStatus.OCUPADO);
                         slot.setUpdatedAt(LocalDateTime.now());
                         doctorScheduleSlotRepository.save(slot);
