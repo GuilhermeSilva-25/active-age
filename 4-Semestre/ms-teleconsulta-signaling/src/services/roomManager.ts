@@ -27,11 +27,16 @@ export class RoomManager {
 
     const currentParticipants = this.rooms.get(appointmentId) || [];
 
-    // Se o socket já estiver registrado nesta sala, retorna idempotente
-    const alreadyPresent = currentParticipants.find(
-      (p) => p.socketId === participant.socketId
+    // Se o participante já estiver registrado (por socketId ou pelo mesmo userId no caso de F5/reconexão)
+    const existingIndex = currentParticipants.findIndex(
+      (p) => p.socketId === participant.socketId || p.userId === participant.userId
     );
-    if (alreadyPresent) {
+    if (existingIndex !== -1) {
+      const oldParticipant = currentParticipants[existingIndex];
+      this.socketToRoom.delete(oldParticipant.socketId);
+      currentParticipants[existingIndex] = participant;
+      this.socketToRoom.set(participant.socketId, appointmentId);
+
       return {
         success: true,
         existingParticipants: currentParticipants.filter(

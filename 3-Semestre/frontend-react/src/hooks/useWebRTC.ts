@@ -43,6 +43,15 @@ const ICE_SERVERS: RTCConfiguration = {
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun2.l.google.com:19302' },
+    {
+      urls: [
+        'turn:openrelay.metered.ca:80',
+        'turn:openrelay.metered.ca:443',
+        'turn:openrelay.metered.ca:443?transport=tcp',
+      ],
+      username: 'openrelayproject',
+      credential: 'openrelayproject',
+    },
   ],
 };
 
@@ -89,15 +98,22 @@ export function useWebRTC({
 
   // Vincula localStream ao elemento de vídeo local
   useEffect(() => {
-    if (localVideoRef.current) {
+    if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
+      localVideoRef.current.play().catch(() => {});
     }
   }, [localStream]);
 
-  // Vincula remoteStream ao elemento de vídeo remoto
+  // Vincula remoteStream ao elemento de vídeo remoto com desbloqueio de Autoplay
   useEffect(() => {
-    if (remoteVideoRef.current) {
+    if (remoteVideoRef.current && remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream;
+      const playPromise = remoteVideoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('[WebRTC] Autoplay bloqueado pelo navegador, aguardando clique do usuário:', err);
+        });
+      }
     }
   }, [remoteStream]);
 
@@ -217,8 +233,16 @@ export function useWebRTC({
       let stream: MediaStream | null = null;
       try {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 24, max: 30 },
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
         });
       } catch (mediaErr) {
         // Fallback: tenta apenas áudio se a câmera estiver ocupada ou bloqueada
@@ -251,8 +275,8 @@ export function useWebRTC({
         transports: ['websocket', 'polling'],
         forceNew: true,
         reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000,
+        reconnectionAttempts: 30,
+        reconnectionDelay: 1500,
       });
       socketRef.current = socket;
 
@@ -369,9 +393,14 @@ export function useWebRTC({
         }
       });
 
-      // Desconexão do par remoto
+      // Desconexão do par remoto com tolerância a oscilações temporárias de socket
       socket.on('user-disconnected', () => {
         if (!isMounted) return;
+        const pc = peerConnectionRef.current;
+        if (pc && pc.connectionState === 'connected') {
+          console.warn('[WebRTC] Socket oscilou momentaneamente, mas mídia P2P/TURN continua ativa.');
+          return;
+        }
         setRemoteStream(null);
         setConnectionStatus('waiting');
         setPeerName(null);

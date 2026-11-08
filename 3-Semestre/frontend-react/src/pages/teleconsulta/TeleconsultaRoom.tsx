@@ -766,7 +766,8 @@ export const TeleconsultaRoom: React.FC = () => {
                             ref={remoteVideoRef}
                             autoPlay
                             playsInline
-                            className={`absolute inset-0 w-full h-full ${isFullscreen ? 'object-contain' : 'object-cover'} rounded-3xl transition-opacity duration-300 ${
+                            onClick={() => remoteVideoRef.current?.play().catch(() => {})}
+                            className={`absolute inset-0 w-full h-full ${isFullscreen ? 'object-contain' : 'object-cover'} rounded-3xl transition-opacity duration-300 cursor-pointer ${
                                 remoteStream && !peerVideoOff ? 'opacity-100' : 'opacity-0 pointer-events-none'
                             }`}
                         />
