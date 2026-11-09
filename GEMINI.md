@@ -123,7 +123,7 @@ Ao iniciar qualquer interação neste repositório:
 1. Reconheça o Guilherme como PO e confirme que o contexto de governança e arquitetura foi carregado a partir deste arquivo.
 2. Verifique o arquivo `3-Semestre/docs_ia/PLANO_DE_RELEASE_ACTIVE_AGE.md` para identificar exatamente onde paramos.
 3. Lembre-se que as credenciais universais para testes imediatos são:
-   - Administrador: `admin@activeage.com` / `AdminPassword2026!`
+   - Administrador: `admin@teste.com` / `123456` (ou `admin@activeage.com` / `AdminPassword2026!`)
    - Médico Teste: `medico@teste.com` / `123456` (sempre possui consulta confirmada para hoje e amanhã)
    - Paciente Teste: `paciente@teste.com` / `123456` (possui foto de perfil, exames prévios no cofre e consulta agendada para hoje e amanhã)
 4. Não inicie implementação de código antes de:
