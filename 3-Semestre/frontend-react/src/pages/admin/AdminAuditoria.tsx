@@ -237,11 +237,42 @@ export function AdminAuditoria() {
             </div>
 
             {/* Painel de Filtros e Busca */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-brand-pot/30 shadow-sm space-y-3 sm:space-y-4">
-                <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
-                    
-                    {/* Tabs de Filtro de Ação */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 scrollbar-none">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-brand-pot/30 shadow-sm space-y-3.5 sm:space-y-4">
+                {/* Linha Superior: Busca Textual + Contador e Limpar Filtros */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <div className="relative w-full sm:w-80 md:w-96">
+                        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-brown" />
+                        <input
+                            type="text"
+                            placeholder="Buscar por Operador, IP, Detalhes..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-brand-pot/40 text-xs text-brown-dark focus:border-emerald-600 outline-none bg-brand-pot/5 transition-colors"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-brown">
+                        <span>
+                            Exibindo <strong className="text-brown-dark font-extrabold">{filteredLogs.length}</strong> {filteredLogs.length === 1 ? 'registro' : 'registros'}
+                        </span>
+                        {(actionFilter !== 'ALL' || searchTerm.trim()) && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setActionFilter('ALL');
+                                    setSearchTerm('');
+                                }}
+                                className="text-xs text-emerald-700 hover:text-emerald-800 font-bold underline transition-colors"
+                            >
+                                Limpar filtros
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Linha Inferior: Badges de Filtro com flex-wrap (responsivo, nunca quebra nem trunca texto) */}
+                <div className="pt-2.5 border-t border-brand-pot/15">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                         {[
                             { label: 'Todas as Ações', value: 'ALL' },
                             { label: 'Consultas Agendadas', value: 'APPOINTMENT_CREATED' },
@@ -256,7 +287,7 @@ export function AdminAuditoria() {
                                 key={tab.value}
                                 type="button"
                                 onClick={() => setActionFilter(tab.value)}
-                                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                                className={`px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all ${
                                     actionFilter === tab.value
                                         ? 'bg-emerald-600 text-white shadow-xs'
                                         : 'bg-brand-pot/10 text-brown hover:bg-brand-pot/20 hover:text-brown-dark'
@@ -266,19 +297,6 @@ export function AdminAuditoria() {
                             </button>
                         ))}
                     </div>
-
-                    {/* Busca Textual */}
-                    <div className="relative w-full lg:w-72">
-                        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-brown" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por Operador, IP, Detalhes..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 rounded-xl border border-brand-pot/40 text-xs text-brown-dark focus:border-emerald-600 outline-none bg-brand-pot/5"
-                        />
-                    </div>
-
                 </div>
             </div>
 
