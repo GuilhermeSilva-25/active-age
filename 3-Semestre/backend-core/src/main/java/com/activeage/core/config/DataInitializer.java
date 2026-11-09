@@ -52,28 +52,31 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     /**
-     * Semeia o usuário Administrador padrão para acesso ao Painel de Gestão.
+     * Semeia os usuários Administradores para acesso ao Painel de Gestão.
      */
     private void seedAdminUser() {
-        String adminEmail = "admin@activeage.com";
+        seedSingleAdmin("Administrador do Sistema", "admin@activeage.com", "AdminPassword2026!", "000.000.000-00", "(11) 99999-9999");
+        seedSingleAdmin("Administrador Teste", "admin@teste.com", "123456", "000.000.000-01", "(11) 98888-8888");
+    }
 
-        if (!userRepository.existsByEmail(adminEmail)) {
+    private void seedSingleAdmin(String name, String email, String rawPassword, String cpf, String phone) {
+        if (!userRepository.existsByEmail(email)) {
             User admin = new User();
-            admin.setFullName("Administrador do Sistema");
-            admin.setEmail(adminEmail);
-            admin.setPassword(passwordEncoder.encode("AdminPassword2026!"));
-            admin.setCpf("000.000.000-00");
-            admin.setPhone("(11) 99999-9999");
-            admin.setBirthDate("1980-01-01");
+            admin.setFullName(name);
+            admin.setEmail(email);
+            admin.setPassword(passwordEncoder.encode(rawPassword));
+            admin.setCpf(cpf);
+            admin.setPhone(phone);
+            admin.setBirthDate("1985-05-20");
             admin.setRole(Role.ROLE_ADMIN);
             admin.setTermsAccepted(true);
             admin.setActive(true);
             admin.setCreatedAt(LocalDateTime.now());
 
             userRepository.save(admin);
-            logger.info(">>> [SEED] Usuário administrador padrão criado com sucesso: {}", adminEmail);
+            logger.info(">>> [SEED] Usuário administrador criado com sucesso: {}", email);
         } else {
-            logger.info(">>> [SEED] Usuário administrador padrão já existente: {}", adminEmail);
+            logger.info(">>> [SEED] Usuário administrador já existente: {}", email);
         }
     }
 
